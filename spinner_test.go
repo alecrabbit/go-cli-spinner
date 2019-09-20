@@ -10,8 +10,9 @@ import (
 func TestNew(t *testing.T) {
     for i := 0; i < len(CharSets); i++ {
         s := New(i, 100*time.Millisecond)
-        if reflect.TypeOf(s).String() != "*spinner.Spinner" {
-            t.Errorf("New returned incorrect type kind=%d", i)
+        tp := reflect.TypeOf(s).String()
+        if tp != "*spinner.Spinner" {
+            t.Errorf("New returned incorrect type kind=%d %v", i,  tp)
         }
         if s.IsActive() != false {
 	        t.Errorf("Expected new instance to be inactive (%d)", i)
@@ -26,7 +27,7 @@ Benchmarks
 // BenchmarkNew runs a benchmark for the New() function
 func BenchmarkNew(b *testing.B) {
     for n := 0; n < b.N; n++ {
-        New(Arrows, 1*time.Second)
+        New(BouncingBlock, 1*time.Second)
     }
 }
 
