@@ -160,7 +160,7 @@ func init() {
         CharSets[HalfClock] = append(CharSets[HalfClock], string([]rune{clockOneOClock + i}), string([]rune{clockOneThirty + i}))
     }
     // Check CharSets for width conformity
-    for n, _ := range CharSets {
+    for n := range CharSets {
         var widths []int
         for _, c := range CharSets[n] {
             width := runewidth.StringWidth(c)

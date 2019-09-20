@@ -16,13 +16,18 @@ func init() {
     fmt.Println("Init")
 }
 
+// ColorLevel is holding color support level
 type ColorLevel int
 
 const (
+    // NoColor no color support
     NoColor            = iota
+    // Color represents 16 color level support
     Color   ColorLevel = 1 << (4 * iota)
+    // Color256 represents 256 color level support
     Color256
-    Truecolor
+    // TrueColor represents true color level support
+    TrueColor
 )
 
 // Spinner struct to hold the provided options
@@ -136,6 +141,7 @@ func (s *Spinner) strip(in string) string {
     return s.r.ReplaceAllString(in, "")
 }
 
+// Erase erases spinner output
 func (s *Spinner) Erase() {
     s.lock.Lock()
     s.erase()
@@ -152,18 +158,21 @@ func (s *Spinner) erase() {
     }
 }
 
+// Last prints out last spinner output
 func (s *Spinner) Last() {
     s.lock.Lock()
     _, _ = fmt.Fprint(s.Writer, s.lastOutput)
     s.lock.Unlock()
 }
 
+// Message sets current spinner message
 func (s *Spinner) Message(m string) {
     s.lock.Lock()
     s.currentMSG = m
     s.lock.Unlock()
 }
 
+// Progress set current spinner progress
 func (s *Spinner) Progress(f float32) {
     if f < 0 {
         f = 0
