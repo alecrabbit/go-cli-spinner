@@ -1,1 +1,1 @@
-go-yspnr
+go-cli-spinner
