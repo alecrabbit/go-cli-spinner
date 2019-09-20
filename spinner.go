@@ -180,7 +180,7 @@ func (s *Spinner) Progress(f float32) {
 	if f > 1 {
 		f = 1
 	}
-	r := fmt.Sprintf("%3.0f%%", f*float32(100))
+	r := fmt.Sprintf("%.0f%%", f*float32(100))
 	s.lock.Lock()
 	if f > 0 {
 		s.progress = r
