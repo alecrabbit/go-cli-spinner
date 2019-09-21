@@ -37,8 +37,8 @@ type Spinner struct {
 	frames     *ring.Ring    // frames holds chosen character set
 	active     bool          // active holds the state of the spinner
 	FinalMSG   string        // spinner final message, displayed after Stop()
-	currentMSG string        // string 
-	progress   string        // string 
+	currentMSG string        // string
+	progress   string        // string
 	colorLevel ColorLevel
 	lock       *sync.RWMutex //
 	Writer     io.Writer     // to make testing better, exported so users have access
