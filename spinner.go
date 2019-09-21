@@ -13,7 +13,8 @@ import (
 )
 
 func init() {
-	fmt.Println("Init")
+	// Initialize here
+	// fmt.Println("Init")
 }
 
 // ColorLevel is holding color support level
@@ -21,7 +22,7 @@ type ColorLevel int
 
 const (
 	// NoColor no color support
-	NoColor = iota
+	NoColor ColorLevel = iota
 	// Color represents 16 color level support
 	Color ColorLevel = 1 << (4 * iota)
 	// Color256 represents 256 color level support
@@ -32,12 +33,12 @@ const (
 
 // Spinner struct to hold the provided options
 type Spinner struct {
-	Interval   time.Duration // Delay is the speed of the indicator
-	frames     *ring.Ring    // chars holds the chosen character set
+	Interval   time.Duration // interval between spinner refreshes
+	frames     *ring.Ring    // frames holds chosen character set
 	active     bool          // active holds the state of the spinner
-	FinalMSG   string        // string displayed after Stop() is called
-	currentMSG string        // string displayed after Stop() is called
-	progress   string        // string displayed after Stop() is called
+	FinalMSG   string        // spinner final message, displayed after Stop()
+	currentMSG string        // string 
+	progress   string        // string 
 	colorLevel ColorLevel
 	lock       *sync.RWMutex //
 	Writer     io.Writer     // to make testing better, exported so users have access
