@@ -33,19 +33,19 @@ const (
 
 // Spinner struct to hold the provided options
 type Spinner struct {
-	Interval   time.Duration // interval between spinner refreshes
-	frames     *ring.Ring    // frames holds chosen character set
-	active     bool          // active holds the state of the spinner
-	FinalMSG   string        // spinner final message, displayed after Stop()
-	currentMSG string        // string
-	progress   string        // string
-	colorLevel ColorLevel
-	lock       *sync.RWMutex //
-	Writer     io.Writer     // to make testing better, exported so users have access
-	stop       chan bool     // stopChan is a channel used to stop the indicator
-	HideCursor bool          // hideCursor determines if the cursor is visible
-	r          *regexp.Regexp
-	lastOutput string // last character(set) written
+	Interval       time.Duration // interval between spinner refreshes
+	frames         *ring.Ring    // frames holds chosen character set
+	active         bool          // active holds the state of the spinner
+	FinalMessage   string        // spinner final message, displayed after Stop()
+	currentMessage string        // string
+	progress       string        // string
+	colorLevel     ColorLevel
+	lock           *sync.RWMutex //
+	Writer         io.Writer     // to make testing better, exported so users have access
+	stop           chan bool     // stopChan is a channel used to stop the indicator
+	HideCursor     bool          // hideCursor determines if the cursor is visible
+	r              *regexp.Regexp
+	lastOutput     string // last character(set) written
 	// color      func(a ...interface{}) string // default color is white
 	// enabled  bool          // active holds the state of the spinner
 	// Prefix     string                        // Prefix is the text preppended to the indicator
@@ -57,22 +57,23 @@ func New(t int, d time.Duration) *Spinner {
 	strings := CharSets[t]
 	k := len(strings)
 	s := Spinner{
-		Interval:   d,
-		frames:     ring.New(k),
-		lock:       &sync.RWMutex{},
-		Writer:     os.Stderr,
-		colorLevel: Color256,
-		FinalMSG:   "",
-		currentMSG: "",
-		stop:       make(chan bool),
-		HideCursor: true,
-		r:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+		Interval:       d,
+		frames:         ring.New(k),
+		lock:           &sync.RWMutex{},
+		Writer:         os.Stderr,
+		colorLevel:     Color256,
+		FinalMessage:   "",
+		currentMessage: "",
+		stop:           make(chan bool),
+		HideCursor:     true,
+		r:              regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
 	}
 	for i := 0; i < k; i++ {
 		s.frames.Value = strings[i]
 		s.frames = s.frames.Next()
 	}
 	return &s
+	// return ESC . "[38;5;{$value}m" . $format . ESC . '[0m';
 }
 
 // IsActive will return whether or not the spinner is currently active
@@ -82,7 +83,7 @@ func (s *Spinner) IsActive() bool {
 
 func (s *Spinner) getFrame() string {
 	s.frames = s.frames.Next()
-	return s.frames.Value.(string) + " " + s.currentMSG + " " + s.progress
+	return s.frames.Value.(string) + " " + s.currentMessage + " " + s.progress
 }
 
 // Start will start the indicator
@@ -131,8 +132,8 @@ func (s *Spinner) Stop() {
 			_, _ = fmt.Fprint(s.Writer, "\033[?25h")
 		}
 
-		if s.FinalMSG != "" {
-			_, _ = fmt.Fprint(s.Writer, s.FinalMSG)
+		if s.FinalMessage != "" {
+			_, _ = fmt.Fprint(s.Writer, s.FinalMessage)
 		}
 		s.stop <- true
 	}
@@ -169,7 +170,7 @@ func (s *Spinner) Last() {
 // Message sets current spinner message
 func (s *Spinner) Message(m string) {
 	s.lock.Lock()
-	s.currentMSG = m
+	s.currentMessage = m
 	s.lock.Unlock()
 }
 

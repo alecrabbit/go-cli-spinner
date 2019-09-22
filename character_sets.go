@@ -36,6 +36,7 @@ const (
 	Dots25
 	Dots26
 	Arrows03
+	Dev
 )
 
 // CharSets contains the available character sets
@@ -50,6 +51,7 @@ var CharSets = map[int][]string{
 	// ↙ 2
 	// Arrows: {"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width
 
+	Dev:  {"▁"},
 	BlockVertical:  {"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
 	BouncingBlock:  {"▖", "▘", "▝", "▗"},
 	RotatingCircle: {"◐", "◓", "◑", "◒"},
