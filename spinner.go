@@ -42,6 +42,7 @@ type Spinner struct {
     FinalMessage   string        // spinner final message, displayed after Stop()
     currentMessage string        // string
     progress       string        // string
+    Reversed       bool        // string
     colorLevel     ColorLevel
     lock           *sync.RWMutex //
     Writer         io.Writer     // to make testing better, exported so users have access
@@ -98,7 +99,11 @@ func (s *Spinner) IsActive() bool {
 }
 
 func (s *Spinner) getFrame() string {
-    s.frames = s.frames.Next()
+    if s.Reversed {
+        s.frames = s.frames.Prev()
+    } else {
+        s.frames = s.frames.Next()
+    }
     return fmt.Sprintf("%s %s %s", s.frames.Value.(string), s.currentMessage, s.progress)
     // return s.frames.Value.(string) + " " + s.currentMessage + " " + s.progress
 }
