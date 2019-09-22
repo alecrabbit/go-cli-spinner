@@ -6,10 +6,13 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"runtime"
 	"sync"
 	"time"
 
 	"github.com/mattn/go-runewidth"
+
+	"github.com/alecrabbit/go-cli-spinner/aux"
 )
 
 func init() {
@@ -94,8 +97,10 @@ func (s *Spinner) Start() {
 		return
 	}
 	if s.HideCursor {
-		// hide the cursor
-		_, _ = fmt.Fprint(s.Writer, "\033[?25l")
+		if runtime.GOOS != aux.WINDOWS {
+			// hide the cursor
+			_, _ = fmt.Fprint(s.Writer, "\033[?25l")
+		}
 	}
 
 	s.active = true
@@ -108,12 +113,10 @@ func (s *Spinner) Start() {
 				return
 			case <-ticker.C:
 				s.lock.Lock()
-				s.lastOutput = s.getFrame()
-				s.lastOutput += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(s.lastOutput))
-				_, err := fmt.Fprint(s.Writer, s.lastOutput)
-				if err != nil {
-					fmt.Println(err)
-				}
+				frame := s.getFrame()
+				frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
+				s.lastOutput = frame
+				_, _ = fmt.Fprint(s.Writer, s.lastOutput)
 				s.lock.Unlock()
 			}
 		}

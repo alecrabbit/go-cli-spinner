@@ -2,8 +2,11 @@ package spinner
 
 import (
 	"reflect"
+	"runtime"
 	"testing"
 	"time"
+
+	"github.com/alecrabbit/go-cli-spinner/aux"
 )
 
 // TestNew verifies that the returned instance is of the proper type
@@ -23,12 +26,38 @@ func TestNew(t *testing.T) {
 /*
 Benchmarks
 */
+var result interface{}
 
 // BenchmarkNew runs a benchmark for the New() function
 func BenchmarkNew(b *testing.B) {
+	var s *Spinner
 	for n := 0; n < b.N; n++ {
-		New(BouncingBlock, 1*time.Second)
+		s = New(BouncingBlock, 1*time.Second)
 	}
+	result = s
+}
+
+// BenchmarkIfOne ...
+func BenchmarkIfOne(b *testing.B) {
+	var d int
+	for n := 0; n < b.N; n++ {
+		if runtime.GOOS != aux.WINDOWS {
+			d = 0
+		}
+	}
+	result = d
+}
+
+// BenchmarkIfTwo ...
+func BenchmarkIfTwo(b *testing.B) {
+	var d int
+	notWindows := runtime.GOOS != aux.WINDOWS
+	for n := 0; n < b.N; n++ {
+		if notWindows {
+			d = 0
+		}
+	}
+	result = d
 }
 
 // func BenchmarkNewStartStop(b *testing.B) {
