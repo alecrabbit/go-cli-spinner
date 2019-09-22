@@ -51,7 +51,7 @@ var CharSets = map[int][]string{
 	// ↙ 2
 	// Arrows: {"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width
 
-	Dev:  {"▁"},
+	Dev:            {"▁"},
 	BlockVertical:  {"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
 	BouncingBlock:  {"▖", "▘", "▝", "▗"},
 	RotatingCircle: {"◐", "◓", "◑", "◒"},
