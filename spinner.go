@@ -38,6 +38,7 @@ const (
 type Spinner struct {
     Interval       time.Duration // interval between spinner refreshes
     frames         *ring.Ring    // frames holds chosen character set
+    colors         *ring.Ring    // colors holds chosen colorize set
     active         bool          // active holds the state of the spinner
     FinalMessage   string        // spinner final message, displayed after Stop()
     currentMessage string        // string
@@ -48,7 +49,7 @@ type Spinner struct {
     Writer         io.Writer     // to make testing better, exported so users have access
     stop           chan bool     // stopChan is a channel used to stop the indicator
     HideCursor     bool          // hideCursor determines if the cursor is visible
-    r              *regexp.Regexp
+    regExp         *regexp.Regexp
     lastOutput     string // last character(set) written
     // color      func(a ...interface{}) string // default color is white
     // enabled  bool          // active holds the state of the spinner
@@ -59,10 +60,13 @@ type Spinner struct {
 // New provides a pointer to an instance of Spinner with the supplied options
 func New(t int, d time.Duration) *Spinner {
     strings := CharSets[t]
+    colors := aux.ColorsSets[aux.C256Rainbow]
     k := len(strings)
+    u := len(colors)
     s := Spinner{
         Interval:       d,
         frames:         ring.New(k),
+        colors:         ring.New(u),
         lock:           &sync.RWMutex{},
         Writer:         os.Stderr,
         colorLevel:     Color256,
@@ -70,12 +74,17 @@ func New(t int, d time.Duration) *Spinner {
         currentMessage: "",
         stop:           make(chan bool),
         HideCursor:     true,
-        r:              regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+        regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
     for i := 0; i < k; i++ {
         s.frames.Value = strings[i]
         s.frames = s.frames.Next()
     }
+    for i := 0; i < u; i++ {
+        s.colors.Value = colors[i]
+        s.colors = s.colors.Next()
+    }
+
     // Override os specific settings
     s = specificSettings(s)
 
@@ -104,8 +113,7 @@ func (s *Spinner) getFrame() string {
     } else {
         s.frames = s.frames.Next()
     }
-    return fmt.Sprintf("%s %s %s", s.frames.Value.(string), s.currentMessage, s.progress)
-    // return s.frames.Value.(string) + " " + s.currentMessage + " " + s.progress
+    return fmt.Sprintf("%s %s %s", s.colorize(s.frames.Value.(string)), s.currentMessage, s.progress)
 }
 
 // Start will start the indicator
@@ -159,8 +167,9 @@ func (s *Spinner) Stop() {
     }
 }
 
+// remove all ansi codes from in string
 func (s *Spinner) strip(in string) string {
-    return s.r.ReplaceAllString(in, "")
+    return s.regExp.ReplaceAllString(in, "")
 }
 
 // Erase erases spinner output
@@ -210,4 +219,9 @@ func (s *Spinner) Progress(f float32) {
         s.progress = ""
     }
     s.lock.Unlock()
+}
+
+// Colorize in string
+func (s *Spinner) colorize(in string) string {
+    return in
 }
