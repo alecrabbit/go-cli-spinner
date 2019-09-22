@@ -43,7 +43,7 @@ type Spinner struct {
     FinalMessage   string        // spinner final message, displayed after Stop()
     currentMessage string        // string
     progress       string        // string
-    Reversed       bool        // string
+    Reversed       bool          // string
     colorLevel     ColorLevel
     lock           *sync.RWMutex //
     Writer         io.Writer     // to make testing better, exported so users have access
@@ -76,12 +76,14 @@ func New(t int, d time.Duration) *Spinner {
         HideCursor:     true,
         regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
+    // Initialize frames
     for i := 0; i < k; i++ {
         s.frames.Value = strings[i]
         s.frames = s.frames.Next()
     }
+    // Initialize colors
     for i := 0; i < u; i++ {
-        s.colors.Value = colors[i]
+        s.colors.Value = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", colors[i], "%s")
         s.colors = s.colors.Next()
     }
 
@@ -89,7 +91,6 @@ func New(t int, d time.Duration) *Spinner {
     s = specificSettings(s)
 
     return &s
-    // return ESC . "[38;5;{$value}m" . $format . ESC . '[0m';
 }
 
 func specificSettings(s Spinner) Spinner {
@@ -107,13 +108,23 @@ func (s *Spinner) IsActive() bool {
     return s.active
 }
 
+// Get current frame
 func (s *Spinner) getFrame() string {
+    // Rotate Ring
     if s.Reversed {
-        s.frames = s.frames.Prev()
+        s.frames = s.frames.Prev() // Backward
     } else {
-        s.frames = s.frames.Next()
+        s.frames = s.frames.Next() // Forward
     }
     return fmt.Sprintf("%s %s %s", s.colorize(s.frames.Value.(string)), s.currentMessage, s.progress)
+}
+
+// Colorize in string
+func (s *Spinner) colorize(in string) string {
+    // Rotate Ring
+    s.colors = s.colors.Next()
+    // Sprintf accordignly to colors format
+    return fmt.Sprintf(s.colors.Value.(string), in)
 }
 
 // Start will start the indicator
@@ -138,14 +149,18 @@ func (s *Spinner) Start() {
                 return
             case <-ticker.C:
                 s.lock.Lock()
-                frame := s.getFrame()
-                frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
-                s.lastOutput = frame
-                _, _ = fmt.Fprint(s.Writer, s.lastOutput)
+                s.updateLastOutput()
+                s.last()
                 s.lock.Unlock()
             }
         }
     }()
+}
+
+func (s *Spinner) updateLastOutput() {
+    frame := s.getFrame()
+    frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
+    s.lastOutput = frame
 }
 
 // Stop stops the indicator
@@ -192,14 +207,22 @@ func (s *Spinner) erase() {
 // Last prints out last spinner output
 func (s *Spinner) Last() {
     s.lock.Lock()
-    _, _ = fmt.Fprint(s.Writer, s.lastOutput)
+    s.last()
     s.lock.Unlock()
+}
+
+func (s *Spinner) last() {
+    // Note: external lock is needed
+    _, _ = fmt.Fprint(s.Writer, s.lastOutput)
 }
 
 // Message sets current spinner message
 func (s *Spinner) Message(m string) {
     s.lock.Lock()
+    s.erase()
     s.currentMessage = m
+    s.updateLastOutput()
+    s.last()
     s.lock.Unlock()
 }
 
@@ -219,9 +242,4 @@ func (s *Spinner) Progress(f float32) {
         s.progress = ""
     }
     s.lock.Unlock()
-}
-
-// Colorize in string
-func (s *Spinner) colorize(in string) string {
-    return in
 }
