@@ -117,7 +117,7 @@ func (s *Spinner) IsActive() bool {
     return s.active
 }
 
-// Get current frame
+// Get current spinner frame
 func (s *Spinner) getFrame() string {
     // Note: external lock
     // Rotate Ring
@@ -126,34 +126,33 @@ func (s *Spinner) getFrame() string {
     } else {
         s.frames = s.frames.Next() // Forward
     }
-    frame := s.frames.Value.(string)
-    // format := s.createFormat(frame)
-    return fmt.Sprintf(s.outputFormat, s.colorize(frame), s.currentMessage, s.progress)
-    // return fmt.Sprintf(format, s.colorize(frame), s.currentMessage, s.progress)
+    // current frame
+    return s.frames.Value.(string)
 }
 
-func (s *Spinner) createFormat(frame string) string {
-    // Note: external lock
-    var format string
-    if frame != "" {
-        format += s.FormatFrames
-    }
-    if s.currentMessage != "" {
-        format += s.FormatMessage
-    }
-    if s.progress != "" {
-        format += s.FormatProgress
-    }
-    return format
-}
+// func (s *Spinner) createFormat(frame string) string {
+//     // Note: external lock
+//     var format string
+//     if frame != "" {
+//         format += s.FormatFrames
+//     }
+//     if s.currentMessage != "" {
+//         format += s.FormatMessage
+//     }
+//     if s.progress != "" {
+//         format += s.FormatProgress
+//     }
+//     return format
+// }
 
 // Colorize in string
 func (s *Spinner) colorize(in string) string {
+    // TODO: use colorizing callback here?
     // Note: external lock
-    if s.colorLevel >= Color256 {
+    if s.colorLevel >= Color16 {
         // Rotate Ring
         s.colors = s.colors.Next()
-        // Sprintf accordignly to colors format
+        // apply colors format
         return fmt.Sprintf(s.colors.Value.(string), in)
     }
     return in
@@ -193,9 +192,9 @@ func (s *Spinner) Start() {
 // Get current frame and assign it to lastOutput
 func (s *Spinner) updateLastOutput() {
     // Note: external lock
-    frame := s.getFrame()
+    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.getFrame()), s.currentMessage, s.progress)
     // Add move cursor back ansi sequence
-    s.lastOutput = frame + fmt.Sprintf("\x1b[%vD", s.frameWidth(frame))
+    s.lastOutput = sp + fmt.Sprintf("\x1b[%vD", s.frameWidth(sp))
 }
 
 func (s *Spinner) updateOutputFormat() {
@@ -254,6 +253,7 @@ func (s *Spinner) Last() {
     s.lock.Unlock()
 }
 
+// Write last to output
 func (s *Spinner) last() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.lastOutput)
@@ -272,13 +272,11 @@ func (s *Spinner) Message(m string) {
 // Progress sets current spinner progress value 0..1
 func (s *Spinner) Progress(p float32) {
     p = aux.Bounds(p)
-    r := fmt.Sprintf("%.0f%%", p*float32(100))
     s.lock.Lock()
     if p > 0 {
-        s.progress = r
+        s.progress = fmt.Sprintf("%.0f%%", p*float32(100))
     } else {
         s.progress = ""
-        // s.FormatProgress = ""
     }
     s.lock.Unlock()
 }
