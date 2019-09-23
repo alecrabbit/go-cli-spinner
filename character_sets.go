@@ -11,7 +11,7 @@ const (
     clockOneThirty = '\U0001F55C'
 )
 
-// Declare spinner types
+// Declared spinner types
 const (
     BlockVertical int = iota
     // Arrows
@@ -100,8 +100,8 @@ func init() {
             width := runewidth.StringWidth(c)
             widths = append(widths, width)
         }
-        for _, e := range widths {
-            if e != widths[0] {
+        for _, w := range widths {
+            if w != widths[0] {
                 panic(fmt.Sprintf("\nAmbiguous widths for char set [%v]\n %v\n %v\n", n, CharSets[n], widths))
             }
         }
