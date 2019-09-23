@@ -1,3 +1,4 @@
+// Package spinner
 package spinner
 
 import (
@@ -20,7 +21,7 @@ func init() {
     // fmt.Println("Init")
 }
 
-// ColorLevel is holding color support level
+// ColorLevel represents color support level
 type ColorLevel int
 
 const (
@@ -34,30 +35,30 @@ const (
     TrueColor
 )
 
-// Spinner struct to hold the provided options
+// Spinner struct representing spinner instance
 type Spinner struct {
-    Interval       time.Duration // interval between spinner refreshes
-    frames         *ring.Ring    // frames holds chosen character set
-    colors         *ring.Ring    // colors holds chosen colorize set
-    active         bool          // active holds the state of the spinner
-    FinalMessage   string        // spinner final message, displayed after Stop()
-    currentMessage string        // string
-    progress       string        // string
-    Reversed       bool          // string
-    colorLevel     ColorLevel
-    lock           *sync.RWMutex //
-    Writer         io.Writer     // to make testing better, exported so users have access
-    stop           chan bool     // stopChan is a channel used to stop the indicator
-    HideCursor     bool          // hideCursor determines if the cursor is visible
-    regExp         *regexp.Regexp
-    lastOutput     string // last character(set) written
+    Interval       time.Duration  // interval between spinner refreshes
+    frames         *ring.Ring     // frames holds chosen character set
+    colors         *ring.Ring     // colors holds chosen colorize set
+    active         bool           // active holds the state of the spinner
+    FinalMessage   string         // spinner final message, displayed after Stop()
+    currentMessage string         // string
+    progress       string         // string
+    Reversed       bool           // flag, spin in the opposite direction
+    colorLevel     ColorLevel     // current color level
+    lock           *sync.RWMutex  // lock
+    Writer         io.Writer      // to make testing better, exported so users have access
+    stop           chan bool      // stop, channel to stop the spinner
+    HideCursor     bool           // flag, hide cursor
+    regExp         *regexp.Regexp // regExp instance
+    lastOutput     string         // last string written to output
     // color      func(a ...interface{}) string // default color is white
     // enabled  bool          // active holds the state of the spinner
-    // Prefix     string                        // Prefix is the text preppended to the indicator
+    // Prefix     string                        // Prefix is the text prepended to the indicator
     // Suffix     string                        // Suffix is the text appended to the indicator
 }
 
-// New provides a pointer to an instance of Spinner with the supplied options
+// New provides a pointer to an instance of Spinner
 func New(t int, d time.Duration) *Spinner {
     strings := CharSets[t]
     colors := aux.ColorsSets[aux.C256Rainbow]
@@ -110,6 +111,7 @@ func (s *Spinner) IsActive() bool {
 
 // Get current frame
 func (s *Spinner) getFrame() string {
+    // Note: external lock is needed
     // Rotate Ring
     if s.Reversed {
         s.frames = s.frames.Prev() // Backward
@@ -158,7 +160,9 @@ func (s *Spinner) Start() {
 }
 
 func (s *Spinner) updateLastOutput() {
+    // Note: external lock is needed
     frame := s.getFrame()
+    // Add move cursor back ansi sequence
     frame += fmt.Sprintf("\x1b[%vD", runewidth.StringWidth(frame))
     s.lastOutput = frame
 }
