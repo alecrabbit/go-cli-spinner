@@ -1,3 +1,4 @@
+// Contains auxiliary constants, functions and variables
 package aux
 
 const WINDOWS = "windows"

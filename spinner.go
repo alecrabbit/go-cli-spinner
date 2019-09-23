@@ -1,4 +1,4 @@
-// Package spinner
+// Package spinner implements a colorful console spinner
 package spinner
 
 import (
@@ -167,7 +167,7 @@ func (s *Spinner) updateLastOutput() {
     s.lastOutput = frame
 }
 
-// Stop stops the indicator
+// Stop stops the spinner
 func (s *Spinner) Stop() {
     s.lock.Lock()
     defer s.lock.Unlock()
@@ -230,20 +230,16 @@ func (s *Spinner) Message(m string) {
     s.lock.Unlock()
 }
 
-// Progress set current spinner progress
-func (s *Spinner) Progress(f float32) {
-    if f < 0 {
-        f = 0
-    }
-    if f > 1 {
-        f = 1
-    }
-    r := fmt.Sprintf("%.0f%%", f*float32(100))
+// Progress sets current spinner progress value 0..1
+func (s *Spinner) Progress(p float32) {
+    p = aux.Bounds(p)
+    r := fmt.Sprintf("%.0f%%", p*float32(100))
     s.lock.Lock()
-    if f > 0 {
+    if p > 0 {
         s.progress = r
     } else {
         s.progress = ""
     }
     s.lock.Unlock()
 }
+
