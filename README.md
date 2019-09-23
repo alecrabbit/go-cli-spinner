@@ -46,7 +46,6 @@ func main() {
     s := spinner.New(spinner.Snake3, 100*time.Millisecond)
     s.FinalMessage = "Done!\n"
     // s.HideCursor = false
-    s.HideCursor = false
     // s.Reversed = true
 
     rand.Seed(time.Now().UnixNano())
