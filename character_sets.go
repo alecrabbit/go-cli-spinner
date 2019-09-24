@@ -38,6 +38,9 @@ const (
     Dots25
     Dots26
     Dev
+    Dev2
+    // Weather
+    Simple
 )
 
 // CharSets contains the available character sets
@@ -56,7 +59,8 @@ var CharSets = map[int][]string{
     Arrows02:       {"↖", "↗", "↘", "↙"},
     Arrows03:       {"⇐", "⇖", "⇑", "⇗", "⇒", "⇘", "⇓", "⇙"},
     Arrows04:       {"▹▹▹▹▹", "▸▹▹▹▹", "▹▸▹▹▹", "▹▹▸▹▹", "▹▹▹▸▹", "▹▹▹▹▸"},
-    Dev:            {"+"}, // Singe character used for dev purposes
+    Dev:            {"+"},                                              // Singe character used for dev purposes
+    Dev2:           {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}, // Number characters used for dev purposes
     BlockVertical:  {"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
     BouncingBlock:  {"▖", "▘", "▝", "▗"},
     RotatingCircle: {"◐", "◓", "◑", "◒"},
@@ -86,6 +90,11 @@ var CharSets = map[int][]string{
     // □ 1
     // ▪ 2
     // ▫ 2
+    // Weather: { // Ambiguous width
+    //     "🌤 ", "🌤 ", "🌤 ", "🌤 ", "⛅️", "🌥 ", "☁️ ", "🌧 ", "🌨 ", "🌧 ", "🌨 ", "🌧 ", "🌨 ", "⛈ ",
+    //     "⛈ ", "🌨 ", "⛈ ", "🌧 ", "🌨 ", "☁️ ", "🌥 ", "⛅️", "🌤 ",
+    // },
+    Simple: {"/", "|", "\\", "─",},
 }
 
 func init() {

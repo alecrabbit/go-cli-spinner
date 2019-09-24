@@ -5,12 +5,12 @@ import (
     "container/ring"
     "fmt"
     "io"
-    "os"
     "regexp"
     "runtime"
     "sync"
     "time"
 
+    "github.com/mattn/go-colorable"
     "github.com/mattn/go-runewidth"
 
     "github.com/alecrabbit/go-cli-spinner/aux"
@@ -18,7 +18,6 @@ import (
 
 func init() {
     // Initialize here
-    // fmt.Println("Init")
 }
 
 // ColorLevel represents color support level
@@ -73,7 +72,7 @@ func New(t int, d time.Duration) *Spinner {
         frames:         ring.New(k),
         colors:         ring.New(u),
         lock:           &sync.RWMutex{},
-        Writer:         os.Stderr,
+        Writer:         colorable.NewColorableStderr(),
         colorLevel:     Color256,
         FinalMessage:   "",
         FormatMessage:  "%s ",
@@ -101,7 +100,7 @@ func New(t int, d time.Duration) *Spinner {
     return &s
 }
 
-// Method to override settings
+// Override platform dependent settings
 func platformOverrides(s Spinner) Spinner {
     // if s.Writer == os.Stderr {
     // 	s.colorLevel = NoColor
@@ -262,10 +261,10 @@ func (s *Spinner) last() {
 // Message sets current spinner message
 func (s *Spinner) Message(m string) {
     s.lock.Lock()
-    s.erase()
+    // s.erase()
     s.currentMessage = m
-    s.updateLastOutput()
-    s.last()
+    // s.updateLastOutput()
+    // s.last()
     s.lock.Unlock()
 }
 
@@ -278,5 +277,7 @@ func (s *Spinner) Progress(p float32) {
     } else {
         s.progress = ""
     }
+    // s.updateLastOutput()
+    // s.last()
     s.lock.Unlock()
 }
