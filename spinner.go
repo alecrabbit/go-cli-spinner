@@ -7,6 +7,8 @@ import (
     "io"
     "regexp"
     "runtime"
+    "strings"
+    // "strconv"
     "sync"
     "time"
 
@@ -36,16 +38,12 @@ const (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    Interval       time.Duration // interval between spinner refreshes
-    frames         *ring.Ring    // frames holds chosen character set
-    colors         *ring.Ring    // colors holds chosen colorize set
-    active         bool          // active holds the state of the spinner
-    FinalMessage   string        // spinner final message, displayed after Stop()
-    currentMessage string        // string
-    FormatMessage  string
-    FormatFrames   string
-    FormatProgress string
-    outputFormat   string
+    Interval       time.Duration  // interval between spinner refreshes
+    frames         *ring.Ring     // frames holds chosen character set
+    colors         *ring.Ring     // colors holds chosen colorize set
+    active         bool           // active holds the state of the spinner
+    FinalMessage   string         // spinner final message, displayed after Stop()
+    currentMessage string         // string
     progress       string         // string
     Reversed       bool           // flag, spin in the opposite direction
     colorLevel     ColorLevel     // current color level
@@ -55,10 +53,12 @@ type Spinner struct {
     HideCursor     bool           // flag, hide cursor
     regExp         *regexp.Regexp // regExp instance
     lastOutput     string         // last string written to output
-    // color      func(a ...interface{}) string // default color is white
-    // enabled  bool          // active holds the state of the spinner
-    // Prefix     string                        // Prefix is the text prepended to the indicator
-    // Suffix     string                        // Suffix is the text appended to the indicator
+    currentWidth   int
+    previousWidth  int
+    FormatMessage  string
+    FormatFrames   string
+    FormatProgress string
+    outputFormat   string
 }
 
 // New provides a pointer to an instance of Spinner
@@ -129,21 +129,6 @@ func (s *Spinner) getFrame() string {
     return s.frames.Value.(string)
 }
 
-// func (s *Spinner) createFormat(frame string) string {
-//     // Note: external lock
-//     var format string
-//     if frame != "" {
-//         format += s.FormatFrames
-//     }
-//     if s.currentMessage != "" {
-//         format += s.FormatMessage
-//     }
-//     if s.progress != "" {
-//         format += s.FormatProgress
-//     }
-//     return format
-// }
-
 // Colorize in string
 func (s *Spinner) colorize(in string) string {
     // TODO: use colorizing callback here?
@@ -191,9 +176,19 @@ func (s *Spinner) Start() {
 // Get current frame and assign it to lastOutput
 func (s *Spinner) updateLastOutput() {
     // Note: external lock
+    s.previousWidth = s.currentWidth
+    // Current spinner frame
     sp := fmt.Sprintf(s.outputFormat, s.colorize(s.getFrame()), s.currentMessage, s.progress)
-    // Add move cursor back ansi sequence
-    s.lastOutput = sp + fmt.Sprintf("\x1b[%vD", s.frameWidth(sp))
+    s.currentWidth = s.frameWidth(sp)
+
+    // Add erase and move cursor back ansi sequences
+    // debugStr := strconv.Itoa(s.previousWidth-s.currentWidth) + " " + strconv.Itoa(s.previousWidth) + " " + strconv.Itoa(s.currentWidth) + " "
+    debugStr := ""
+    s.lastOutput = sp + s.moveBackSequence(s.currentWidth) + debugStr + s.eraseSequence(s.previousWidth-s.currentWidth)
+}
+
+func (s *Spinner) moveBackSequence(w int) string {
+    return fmt.Sprintf("\x1b[%vD", w)
 }
 
 func (s *Spinner) updateOutputFormat() {
@@ -220,9 +215,14 @@ func (s *Spinner) Stop() {
     }
 }
 
-// remove all ansi codes from in string
+// remove all ansi codes from string
 func (s *Spinner) strip(in string) string {
     return s.regExp.ReplaceAllString(in, "")
+}
+
+// replace all escapes "\x1b" to "\e"
+func (s *Spinner) debugReplace(in string) string {
+    return strings.ReplaceAll(in, "\x1b", `\e`)
 }
 
 // Erase erases spinner output
@@ -236,7 +236,7 @@ func (s *Spinner) Erase() {
 func (s *Spinner) erase() {
     // Note: external lock
     if s.active {
-        _, _ = fmt.Fprint(s.Writer, fmt.Sprintf("\x1b[%vX", s.frameWidth(s.lastOutput)))
+        _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentWidth)/*+s.moveBackSequence(s.currentWidth)*/)
     }
 }
 
@@ -256,28 +256,33 @@ func (s *Spinner) Last() {
 func (s *Spinner) last() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.lastOutput)
+    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.lastOutput)+"\n")
+}
+
+func (s *Spinner) eraseSequence(w int) string {
+    if w < 0 {
+        return ""
+    }
+    // return strings.Repeat("-", w)
+    return fmt.Sprintf("\x1b[%vX", w)
 }
 
 // Message sets current spinner message
 func (s *Spinner) Message(m string) {
     s.lock.Lock()
-    // s.erase()
+    defer s.lock.Unlock()
     s.currentMessage = m
-    // s.updateLastOutput()
-    // s.last()
-    s.lock.Unlock()
 }
 
 // Progress sets current spinner progress value 0..1
 func (s *Spinner) Progress(p float32) {
     p = aux.Bounds(p)
     s.lock.Lock()
-    if p > 0 {
+    defer s.lock.Unlock()
+    switch {
+    case p > 0:
         s.progress = fmt.Sprintf("%.0f%%", p*float32(100))
-    } else {
+    default:
         s.progress = ""
     }
-    // s.updateLastOutput()
-    // s.last()
-    s.lock.Unlock()
 }
