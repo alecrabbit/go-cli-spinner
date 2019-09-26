@@ -7,6 +7,11 @@
 ### Features todo list
 - [x] progress indication during spin `spinner.Progress(0.5)` ➙ `50%`
 - [x]  messages during spin `spinner.Message("message")`
+- [x]  separated format settings for chars, messages and progress
+
+    ```go
+    spinner.FormatProgress = "[%4s]" // [  7%]
+    ```
 - [ ]  separated color settings for chars, messages and progress
 - [ ]  has `Disable()` and `Enable()` methods (questionable)
 - [x]  hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
