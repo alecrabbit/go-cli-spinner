@@ -5,6 +5,6 @@ const WINDOWS = "windows"
 
 // Names for colorizing sets
 const (
-    C256Rainbow = iota
-    C256YellowWhite
+	C256Rainbow = iota
+	C256YellowWhite
 )
