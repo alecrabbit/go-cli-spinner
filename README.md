@@ -47,11 +47,12 @@ func main() {
     s := spinner.New(spinner.Snake2, 150*time.Millisecond)
     s.FinalMessage = "Done!\n"
     // s.HideCursor = false
-    s.Reversed = true 
+    s.Reversed = true
     // s.Prefix = " " // spinner prefix
     s.FormatProgress = "[%4s]" // [  7%]
 
     rand.Seed(time.Now().UnixNano())
+    // Start spinner
     s.Start()
     // for _, m := range messages {
     l := len(messages)
@@ -72,12 +73,12 @@ func main() {
             s.Message(fmt.Sprintf("Message at %s", time.Now().Format("15:04:05")))
         }
         // Doing some work 2
-        time.Sleep(500 * time.Millisecond)
+        time.Sleep(600 * time.Millisecond)
         // Simulating spinner progress
-        f := float32(i) / float32(l)
-        s.Progress(f)
+        s.Progress(float32(i) / float32(l)) // float32 0..1
     }
     time.Sleep(1 * time.Second)
+    // Stop spinner
     s.Stop()
     time.Sleep(1 * time.Second)
 }
