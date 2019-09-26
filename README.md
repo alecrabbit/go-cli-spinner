@@ -85,3 +85,12 @@ func main() {
     time.Sleep(1 * time.Second)
 }
 ``` 
+
+> Also try to  redirect 
+> ```
+> go run main.go > out.txt
+> ```
+> and pipe 
+> ```
+> go run main.go | grep cess
+> ```
