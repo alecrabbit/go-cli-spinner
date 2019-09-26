@@ -4,7 +4,7 @@
 
 ```*** COMING SOON ***```
  
-It's a proof of concept, and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
+It's a proof of concept and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
 
 For now you can **try it as is** and shape it's development if you wish
 
