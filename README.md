@@ -4,6 +4,17 @@
 
 ```*** COMING SOON ***```
  
+### Features todo list
+- [x] progress indication during spin `spinner.Progress(0.5)` ➙ `50%`
+- [x]  messages during spin `spinner.Message("message")`
+- [ ]  separated color settings for chars, messages and progress
+- [ ]  has `Disable()` and `Enable()` methods (questionable)
+- [x]  hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
+- [x]  cursor hide can be disabled `spinner.HideCursor = false` 
+- [x]  has `Erase()` method
+- [x]  final message `spinner.FinalMessage = "final message\n"`
+- [x]  supports unix pipe `|` and redirect `>` output
+
 It's a proof of concept and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
 
 > API is a subject to change
