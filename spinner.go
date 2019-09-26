@@ -6,7 +6,6 @@ import (
     "fmt"
     "io"
     "regexp"
-    "runtime"
     "strings"
     // "strconv"
     "sync"
@@ -38,39 +37,39 @@ const (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    Interval       time.Duration  // interval between spinner refreshes
-    frames         *ring.Ring     // frames holds chosen character set
-    colors         *ring.Ring     // colors holds chosen colorize set
-    active         bool           // active holds the state of the spinner
-    FinalMessage   string         // spinner final message, displayed after Stop()
-    currentMessage string         // string
-    progress       string         // string
-    Reversed       bool           // flag, spin in the opposite direction
-    colorLevel     ColorLevel     // current color level
-    lock           *sync.RWMutex  // lock
-    Writer         io.Writer      // to make testing better, exported so users have access
-    stop           chan bool      // stop, channel to stop the spinner
-    HideCursor     bool           // flag, hide cursor
-    regExp         *regexp.Regexp // regExp instance
-    lastOutput     string         // last string written to output
-    currentWidth   int
-    previousWidth  int
-    FormatMessage  string
-    FormatFrames   string
-    FormatProgress string
-    outputFormat   string
+    Interval           time.Duration  // interval between spinner refreshes
+    charSet            *ring.Ring     // charSet holds chosen character set
+    colorSet           *ring.Ring     // colorSet holds chosen colorize set
+    active             bool           // active holds the state of the spinner
+    FinalMessage       string         // spinner final message, displayed after Stop()
+    currentMessage     string         // string
+    progress           string         // string
+    Reversed           bool           // flag, spin in the opposite direction
+    colorLevel         ColorLevel     // current color level
+    lock               *sync.RWMutex  // lock
+    Writer             io.Writer      // to make testing better, exported so users have access
+    stop               chan bool      // stop, channel to stop the spinner
+    HideCursor         bool           // flag, hide cursor
+    regExp             *regexp.Regexp // regExp instance
+    currentFrame       string         // current string written to output
+    currentFrameWidth  int
+    previousFrameWidth int
+    FormatMessage      string
+    FormatFrames       string
+    FormatProgress     string
+    outputFormat       string
 }
 
 // New provides a pointer to an instance of Spinner
 func New(t int, d time.Duration) *Spinner {
-    strings := CharSets[t]
-    colors := aux.ColorsSets[aux.C256Rainbow]
-    k := len(strings)
+    charSet := CharSets[t]
+    colors := aux.ColorSets[aux.C256Rainbow]
+    k := len(charSet)
     u := len(colors)
     s := Spinner{
         Interval:       d,
-        frames:         ring.New(k),
-        colors:         ring.New(u),
+        charSet:        ring.New(k),
+        colorSet:       ring.New(u),
         lock:           &sync.RWMutex{},
         Writer:         colorable.NewColorableStderr(),
         colorLevel:     Color256,
@@ -83,32 +82,19 @@ func New(t int, d time.Duration) *Spinner {
         HideCursor:     true,
         regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
-    // Initialize frames
+    // Initialize charSet
     for i := 0; i < k; i++ {
-        s.frames.Value = strings[i]
-        s.frames = s.frames.Next()
+        s.charSet.Value = charSet[i]
+        s.charSet = s.charSet.Next()
     }
-    // Initialize colors
+    // Initialize colorSet
     for i := 0; i < u; i++ {
-        s.colors.Value = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", colors[i], "%s")
-        s.colors = s.colors.Next()
+        s.colorSet.Value = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", colors[i], "%s")
+        s.colorSet = s.colorSet.Next()
     }
     s.updateOutputFormat()
-    // Override os specific settings
-    s = platformOverrides(s)
 
     return &s
-}
-
-// Override platform dependent settings
-func platformOverrides(s Spinner) Spinner {
-    // if s.Writer == os.Stderr {
-    // 	s.colorLevel = NoColor
-    // }
-    if runtime.GOOS == aux.WINDOWS {
-        s.HideCursor = false
-    }
-    return s
 }
 
 // IsActive returns true if spinner is currently active
@@ -117,16 +103,16 @@ func (s *Spinner) IsActive() bool {
 }
 
 // Get current spinner frame
-func (s *Spinner) getFrame() string {
+func (s *Spinner) getCurrentChar() string {
     // Note: external lock
     // Rotate Ring
     if s.Reversed {
-        s.frames = s.frames.Prev() // Backward
+        s.charSet = s.charSet.Prev() // Backward
     } else {
-        s.frames = s.frames.Next() // Forward
+        s.charSet = s.charSet.Next() // Forward
     }
     // current frame
-    return s.frames.Value.(string)
+    return s.charSet.Value.(string)
 }
 
 // Colorize in string
@@ -135,9 +121,9 @@ func (s *Spinner) colorize(in string) string {
     // Note: external lock
     if s.colorLevel >= Color16 {
         // Rotate Ring
-        s.colors = s.colors.Next()
-        // apply colors format
-        return fmt.Sprintf(s.colors.Value.(string), in)
+        s.colorSet = s.colorSet.Next()
+        // apply colorSet format
+        return fmt.Sprintf(s.colorSet.Value.(string), in)
     }
     return in
 }
@@ -166,25 +152,25 @@ func (s *Spinner) Start() {
             case <-ticker.C:
                 s.lock.Lock()
                 s.updateLastOutput()
-                s.last()
+                s.current()
                 s.lock.Unlock()
             }
         }
     }()
 }
 
-// Get current frame and assign it to lastOutput
+// Get current frame and assign it to currentFrame
 func (s *Spinner) updateLastOutput() {
     // Note: external lock
-    s.previousWidth = s.currentWidth
+    s.previousFrameWidth = s.currentFrameWidth
     // Current spinner frame
-    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.getFrame()), s.currentMessage, s.progress)
-    s.currentWidth = s.frameWidth(sp)
+    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.getCurrentChar()), s.currentMessage, s.progress)
+    s.currentFrameWidth = s.frameWidth(sp)
 
     // Add erase and move cursor back ansi sequences
-    // debugStr := strconv.Itoa(s.previousWidth-s.currentWidth) + " " + strconv.Itoa(s.previousWidth) + " " + strconv.Itoa(s.currentWidth) + " "
+    // debugStr := strconv.Itoa(s.previousFrameWidth-s.currentFrameWidth) + " " + strconv.Itoa(s.previousFrameWidth) + " " + strconv.Itoa(s.currentFrameWidth) + " "
     debugStr := ""
-    s.lastOutput = sp + s.moveBackSequence(s.currentWidth) + debugStr + s.eraseSequence(s.previousWidth-s.currentWidth)
+    s.currentFrame = sp + s.moveBackSequence(s.currentFrameWidth) + debugStr + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth)
 }
 
 func (s *Spinner) moveBackSequence(w int) string {
@@ -236,7 +222,7 @@ func (s *Spinner) Erase() {
 func (s *Spinner) erase() {
     // Note: external lock
     if s.active {
-        _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentWidth)/*+s.moveBackSequence(s.currentWidth)*/)
+        _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth) /*+s.moveBackSequence(s.currentFrameWidth)*/)
     }
 }
 
@@ -245,18 +231,18 @@ func (s *Spinner) frameWidth(f string) int {
     return runewidth.StringWidth(s.strip(f))
 }
 
-// Last prints out last spinner output
-func (s *Spinner) Last() {
+// Current prints out current frame
+func (s *Spinner) Current() {
     s.lock.Lock()
-    s.last()
+    s.current()
     s.lock.Unlock()
 }
 
-// Write last to output
-func (s *Spinner) last() {
+// Write current to output
+func (s *Spinner) current() {
     // Note: external lock
-    _, _ = fmt.Fprint(s.Writer, s.lastOutput)
-    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.lastOutput)+"\n")
+    _, _ = fmt.Fprint(s.Writer, s.currentFrame)
+    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.currentFrame)+"\n")
 }
 
 func (s *Spinner) eraseSequence(w int) string {

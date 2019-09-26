@@ -1,7 +1,7 @@
 package aux
 
 // ColorSets contains colorizing sets
-var ColorsSets = map[int][]int{
+var ColorSets = map[int][]int{
 	C256Rainbow: {
 		196, 196, 202, 202, 208, 208, 214, 214, 220, 220, 226, 226,
 		190, 190, 154, 154, 118, 118, 82, 82, 46, 46, 47, 47, 48, 48,
