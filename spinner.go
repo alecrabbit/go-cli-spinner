@@ -37,28 +37,29 @@ const (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    Interval           time.Duration // interval between spinner refreshes
-    charSet            *ring.Ring    // charSet holds chosen character set
-    colorSet           *ring.Ring    // colorSet holds chosen colorize set
-    active             bool          // active holds the state of the spinner
-    FinalMessage       string        // spinner final message, displayed after Stop()
-    currentMessage     string        // string
-    currentChar        string
-    currentProgress    string         // string
-    Reversed           bool           // flag, spin in the opposite direction
-    colorLevel         ColorLevel     // writeCurrentFrame color level
     lock               *sync.RWMutex  // lock
-    Writer             io.Writer      // to make testing better, exported so users have access
+    charSet            *ring.Ring     // charSet holds chosen character set
+    colorSet           *ring.Ring     // colorSet holds chosen colorize set
+    active             bool           // active holds the state of the spinner
+    currentChar        string         // current spinner symbol
+    currentMessage     string         // current message
+    currentProgress    string         // current progress string
+    colorLevel         ColorLevel     // writeCurrentFrame color level
     stop               chan bool      // stop, channel to stop the spinner
-    HideCursor         bool           // flag, hide cursor
     regExp             *regexp.Regexp // regExp instance
-    currentFrame       string         // writeCurrentFrame string written to output
+    outputFormat       string         // output format string e.g"%s %s %s"
+    currentFrame       string         // writeCurrentFrame string to write to output
     currentFrameWidth  int
     previousFrameWidth int
+    Interval           time.Duration // interval between spinner refreshes
+    FinalMessage       string        // spinner final message, displayed after Stop()
+    Reversed           bool          // flag, spin in the opposite direction
+    Writer             io.Writer     // to make testing better, exported so users have access
+    HideCursor         bool          // flag, hide cursor
     FormatMessage      string
     FormatFrames       string
     FormatProgress     string
-    outputFormat       string
+    Prefix             string
 }
 
 // New provides a pointer to an instance of Spinner
@@ -168,21 +169,15 @@ func (s *Spinner) updateCurrentFrame() {
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-
-    sp := fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
-    s.currentFrameWidth = s.frameWidth(sp)
-
-    // Add erase and move cursor back ansi sequences
-    // debugStr := " [" +strconv.Itoa(s.previousFrameWidth-s.currentFrameWidth) + "] " + strconv.Itoa(s.previousFrameWidth) + " " + strconv.Itoa(s.currentFrameWidth) + " "
-    debugStr := ""
-    s.currentFrame = sp + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + s.moveBackSequence(s.currentFrameWidth) + debugStr
+    preFrame := s.Prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
+    s.currentFrameWidth = s.frameWidth(preFrame)
+    s.currentFrame = preFrame + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + s.moveBackSequence(s.currentFrameWidth)
 }
 
 // Write writeCurrentFrame to output
 func (s *Spinner) writeCurrentFrame() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
-    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.currentFrame)+"\n")
 }
 
 func (s *Spinner) moveBackSequence(w int) string {
@@ -191,7 +186,18 @@ func (s *Spinner) moveBackSequence(w int) string {
 
 func (s *Spinner) updateOutputFormat() {
     // Note: external lock
-    s.outputFormat = fmt.Sprintf("%s%s%s", s.FormatFrames, s.FormatMessage, s.FormatProgress)
+    s.outputFormat = fmt.Sprintf("%s%s%s",
+        s.prepFmt(s.currentChar, s.FormatFrames),
+        s.prepFmt(s.currentMessage, s.FormatMessage),
+        s.prepFmt(s.currentProgress, s.FormatProgress),
+    )
+}
+
+func (s *Spinner) prepFmt(f string, format string) string {
+    if f == "" {
+        return "%s"
+    }
+    return format
 }
 
 // Stop stops the spinner
@@ -235,7 +241,6 @@ func (s *Spinner) erase() {
     // Note: external lock
     if s.active {
         _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth))
-        // _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth)+s.moveBackSequence(s.currentFrameWidth))
     }
 }
 
@@ -255,7 +260,6 @@ func (s *Spinner) eraseSequence(w int) string {
     if w < 0 {
         return ""
     }
-    // return strings.Repeat("-", w)
     return fmt.Sprintf("\x1b[%vX", w)
 }
 
@@ -264,7 +268,7 @@ func (s *Spinner) Message(m string) {
     s.lock.Lock()
     defer s.lock.Unlock()
     s.currentMessage = m
-    // s.assembleCurrentFrame()
+    s.updateOutputFormat()
 }
 
 // Progress sets writeCurrentFrame spinner currentProgress value 0..1
@@ -278,5 +282,5 @@ func (s *Spinner) Progress(p float32) {
     default:
         s.currentProgress = ""
     }
-    // s.assembleCurrentFrame()
+    s.updateOutputFormat()
 }
