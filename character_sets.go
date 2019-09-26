@@ -43,6 +43,7 @@ const (
 	Simple
 )
 
+// Line is alias for Simple
 const Line = Simple
 
 // CharSets contains the available character sets
