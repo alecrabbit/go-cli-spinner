@@ -43,25 +43,29 @@ func main() {
         "Be patient",
     }
 
-    s := spinner.New(spinner.Snake3, 100*time.Millisecond)
+    s := spinner.New(spinner.Snake2, 150*time.Millisecond)
     s.FinalMessage = "Done!\n"
     // s.HideCursor = false
-    // s.Reversed = true
+    s.Reversed = true 
+    // s.Prefix = " " // spinner prefix
+    s.FormatProgress = "[%4s]" // [  7%]
 
     rand.Seed(time.Now().UnixNano())
     s.Start()
+    // for _, m := range messages {
     l := len(messages)
     for i, m := range messages {
         // Doing some work 1
         time.Sleep(500 * time.Millisecond)
         // Printing execution message
         {
-            s.Erase()
+            s.Erase() // optional if you're absolutely sure that your messages are longer
             fmt.Println(m)
-            s.Last()
+            fmt.Print("..................................") // string to show that spinner can be used in inline mode
+            s.Current() // Write current frame to output(optional - for smooth amination)
         }
         // Simulating spinner message
-        if rand.Intn(16) > 12 {
+        if rand.Intn(16) > 7 {
             s.Message("") // Sometimes there are no messages
         } else {
             s.Message(fmt.Sprintf("Message at %s", time.Now().Format("15:04:05")))
@@ -72,7 +76,8 @@ func main() {
         f := float32(i) / float32(l)
         s.Progress(f)
     }
-    time.Sleep(3 * time.Second)
+    time.Sleep(1 * time.Second)
     s.Stop()
+    time.Sleep(1 * time.Second)
 }
 ``` 
