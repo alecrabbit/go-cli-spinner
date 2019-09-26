@@ -152,6 +152,7 @@ func (s *Spinner) Start() {
             case <-ticker.C:
                 s.lock.Lock()
                 s.updateCurrentFrame()
+                s.assembleCurrentFrame()
                 s.writeCurrentFrame()
                 s.lock.Unlock()
             }
@@ -159,19 +160,29 @@ func (s *Spinner) Start() {
     }()
 }
 
-// Get writeCurrentFrame frame and assign it to currentFrame
 func (s *Spinner) updateCurrentFrame() {
     // Note: external lock
+    s.currentChar = s.colorize(s.getCurrentChar())
+}
+
+func (s *Spinner) assembleCurrentFrame() {
+    // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    // Current spinner frame
-    s.currentChar = s.getCurrentChar()
-    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.currentChar), s.currentMessage, s.currentProgress)
+
+    sp := fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
     s.currentFrameWidth = s.frameWidth(sp)
 
     // Add erase and move cursor back ansi sequences
-    // debugStr := strconv.Itoa(s.previousFrameWidth-s.currentFrameWidth) + " " + strconv.Itoa(s.previousFrameWidth) + " " + strconv.Itoa(s.currentFrameWidth) + " "
+    // debugStr := " [" +strconv.Itoa(s.previousFrameWidth-s.currentFrameWidth) + "] " + strconv.Itoa(s.previousFrameWidth) + " " + strconv.Itoa(s.currentFrameWidth) + " "
     debugStr := ""
-    s.currentFrame = sp + s.moveBackSequence(s.currentFrameWidth) + debugStr + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth)
+    s.currentFrame = sp + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + s.moveBackSequence(s.currentFrameWidth) + debugStr
+}
+
+// Write writeCurrentFrame to output
+func (s *Spinner) writeCurrentFrame() {
+    // Note: external lock
+    _, _ = fmt.Fprint(s.Writer, s.currentFrame)
+    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.currentFrame)+"\n")
 }
 
 func (s *Spinner) moveBackSequence(w int) string {
@@ -223,7 +234,8 @@ func (s *Spinner) Erase() {
 func (s *Spinner) erase() {
     // Note: external lock
     if s.active {
-        _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth) /*+s.moveBackSequence(s.currentFrameWidth)*/)
+        _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth))
+        // _, _ = fmt.Fprint(s.Writer, s.eraseSequence(s.currentFrameWidth)+s.moveBackSequence(s.currentFrameWidth))
     }
 }
 
@@ -239,13 +251,6 @@ func (s *Spinner) Current() {
     s.lock.Unlock()
 }
 
-// Write writeCurrentFrame to output
-func (s *Spinner) writeCurrentFrame() {
-    // Note: external lock
-    _, _ = fmt.Fprint(s.Writer, s.currentFrame)
-    // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.currentFrame)+"\n")
-}
-
 func (s *Spinner) eraseSequence(w int) string {
     if w < 0 {
         return ""
@@ -259,6 +264,7 @@ func (s *Spinner) Message(m string) {
     s.lock.Lock()
     defer s.lock.Unlock()
     s.currentMessage = m
+    // s.assembleCurrentFrame()
 }
 
 // Progress sets writeCurrentFrame spinner currentProgress value 0..1
@@ -272,4 +278,5 @@ func (s *Spinner) Progress(p float32) {
     default:
         s.currentProgress = ""
     }
+    // s.assembleCurrentFrame()
 }
