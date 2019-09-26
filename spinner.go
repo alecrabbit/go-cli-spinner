@@ -37,21 +37,22 @@ const (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    Interval           time.Duration  // interval between spinner refreshes
-    charSet            *ring.Ring     // charSet holds chosen character set
-    colorSet           *ring.Ring     // colorSet holds chosen colorize set
-    active             bool           // active holds the state of the spinner
-    FinalMessage       string         // spinner final message, displayed after Stop()
-    currentMessage     string         // string
-    progress           string         // string
+    Interval           time.Duration // interval between spinner refreshes
+    charSet            *ring.Ring    // charSet holds chosen character set
+    colorSet           *ring.Ring    // colorSet holds chosen colorize set
+    active             bool          // active holds the state of the spinner
+    FinalMessage       string        // spinner final message, displayed after Stop()
+    currentMessage     string        // string
+    currentChar        string
+    currentProgress    string         // string
     Reversed           bool           // flag, spin in the opposite direction
-    colorLevel         ColorLevel     // current color level
+    colorLevel         ColorLevel     // writeCurrentFrame color level
     lock               *sync.RWMutex  // lock
     Writer             io.Writer      // to make testing better, exported so users have access
     stop               chan bool      // stop, channel to stop the spinner
     HideCursor         bool           // flag, hide cursor
     regExp             *regexp.Regexp // regExp instance
-    currentFrame       string         // current string written to output
+    currentFrame       string         // writeCurrentFrame string written to output
     currentFrameWidth  int
     previousFrameWidth int
     FormatMessage      string
@@ -102,7 +103,7 @@ func (s *Spinner) IsActive() bool {
     return s.active
 }
 
-// Get current spinner frame
+// Get writeCurrentFrame spinner frame
 func (s *Spinner) getCurrentChar() string {
     // Note: external lock
     // Rotate Ring
@@ -111,7 +112,7 @@ func (s *Spinner) getCurrentChar() string {
     } else {
         s.charSet = s.charSet.Next() // Forward
     }
-    // current frame
+    // writeCurrentFrame frame
     return s.charSet.Value.(string)
 }
 
@@ -132,7 +133,6 @@ func (s *Spinner) colorize(in string) string {
 func (s *Spinner) Start() {
     s.lock.Lock()
     if s.active {
-        // If already active - do nothing
         s.lock.Unlock()
         return
     }
@@ -151,20 +151,21 @@ func (s *Spinner) Start() {
                 return
             case <-ticker.C:
                 s.lock.Lock()
-                s.updateLastOutput()
-                s.current()
+                s.updateCurrentFrame()
+                s.writeCurrentFrame()
                 s.lock.Unlock()
             }
         }
     }()
 }
 
-// Get current frame and assign it to currentFrame
-func (s *Spinner) updateLastOutput() {
+// Get writeCurrentFrame frame and assign it to currentFrame
+func (s *Spinner) updateCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
     // Current spinner frame
-    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.getCurrentChar()), s.currentMessage, s.progress)
+    s.currentChar = s.getCurrentChar()
+    sp := fmt.Sprintf(s.outputFormat, s.colorize(s.currentChar), s.currentMessage, s.currentProgress)
     s.currentFrameWidth = s.frameWidth(sp)
 
     // Add erase and move cursor back ansi sequences
@@ -206,7 +207,7 @@ func (s *Spinner) strip(in string) string {
     return s.regExp.ReplaceAllString(in, "")
 }
 
-// replace all escapes "\x1b" to "\e"
+// replace all "\x1b" to `\e`
 func (s *Spinner) debugReplace(in string) string {
     return strings.ReplaceAll(in, "\x1b", `\e`)
 }
@@ -231,15 +232,15 @@ func (s *Spinner) frameWidth(f string) int {
     return runewidth.StringWidth(s.strip(f))
 }
 
-// Current prints out current frame
+// Current prints out writeCurrentFrame frame
 func (s *Spinner) Current() {
     s.lock.Lock()
-    s.current()
+    s.writeCurrentFrame()
     s.lock.Unlock()
 }
 
-// Write current to output
-func (s *Spinner) current() {
+// Write writeCurrentFrame to output
+func (s *Spinner) writeCurrentFrame() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
     // _, _ = fmt.Fprint(s.Writer, s.debugReplace(s.currentFrame)+"\n")
@@ -253,22 +254,22 @@ func (s *Spinner) eraseSequence(w int) string {
     return fmt.Sprintf("\x1b[%vX", w)
 }
 
-// Message sets current spinner message
+// Message sets writeCurrentFrame spinner message
 func (s *Spinner) Message(m string) {
     s.lock.Lock()
     defer s.lock.Unlock()
     s.currentMessage = m
 }
 
-// Progress sets current spinner progress value 0..1
+// Progress sets writeCurrentFrame spinner currentProgress value 0..1
 func (s *Spinner) Progress(p float32) {
     p = aux.Bounds(p)
     s.lock.Lock()
     defer s.lock.Unlock()
     switch {
     case p > 0:
-        s.progress = fmt.Sprintf("%.0f%%", p*float32(100))
+        s.currentProgress = fmt.Sprintf("%.0f%%", p*float32(100))
     default:
-        s.progress = ""
+        s.currentProgress = ""
     }
 }
