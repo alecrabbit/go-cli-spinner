@@ -20,6 +20,7 @@
 - [x]  hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
 - [x]  cursor hide can be disabled `spinner.HideCursor = false` 
 - [x]  has `Erase()` method
+- [x]  has `Current()` method for smooth animation
 - [x]  final message `spinner.FinalMessage = "final message\n"`
 - [x]  supports unix pipe `|` and redirect `>` output
 
@@ -102,11 +103,11 @@ func main() {
 }
 ``` 
 
-> Also try to  redirect 
+> redirect 
 > ```
 > go run main.go > out.txt
 > ```
-> and pipe 
+> pipe 
 > ```
 > go run main.go | grep cess
 > ```

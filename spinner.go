@@ -65,7 +65,7 @@ type Spinner struct {
 // New provides a pointer to an instance of Spinner
 func New(t int, d time.Duration) *Spinner {
 	charSet := CharSets[t]
-	colors := aux.ColorSets[aux.C256Rainbow]
+	colors := ColorSets[C256Rainbow]
 	k := len(charSet)
 	u := len(colors)
 	s := Spinner{
