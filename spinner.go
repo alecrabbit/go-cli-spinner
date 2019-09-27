@@ -35,6 +35,12 @@ const (
 	TrueColor
 )
 
+// type juggler struct {
+// 	Format   string
+// 	Spacer   string
+// 	colorSet *ring.Ring // colorSet holds chosen colorize set
+// }
+
 // Spinner struct representing spinner instance
 type Spinner struct {
 	lock               *sync.RWMutex  // lock
