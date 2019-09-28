@@ -58,11 +58,8 @@ type Spinner struct {
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
-    // charSet := CharSets[Line]
-    // k := len(charSet)
     s := Spinner{
         interval:       120 * time.Millisecond,
-        // charSet:        ring.New(k),
         lock:           &sync.RWMutex{},
         Writer:         colorable.NewColorableStderr(),
         colorLevel:     Color256,
@@ -75,18 +72,13 @@ func New(options ...Option) (*Spinner, error) {
         HideCursor:     true,
         regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
-    // // Initialize charSet
-    // for i := 0; i < k; i++ {
-    //     s.charSet.Value = charSet[i]
-    //     s.charSet = s.charSet.Next()
-    // }
     s.charSet = applyCharSet(CharSets[Line])
     s.charColorsSet = applyColorSet(ColorSet{Set256: ColorSets[C256Rainbow]})
     s.updateOutputFormat()
 
     // Process option
-    for _, op := range options {
-        err := op(&s)
+    for _, option := range options {
+        err := option(&s)
         if err != nil {
             return nil, err
         }
