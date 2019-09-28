@@ -74,14 +74,12 @@ type Spinner struct {
 }
 
 // New provides a pointer to an instance of Spinner
-func New(t int, d time.Duration, options ...Option) (*Spinner, error) {
-    charSet := CharSets[t]
+func New(options ...Option) (*Spinner, error) {
+    charSet := CharSets[Line]
     k := len(charSet)
-    // u := len(colors)
     s := Spinner{
-        interval: d,
-        charSet:  ring.New(k),
-        // charColorsSet:       ring.New(u),
+        interval:       120 * time.Millisecond,
+        charSet:        ring.New(k),
         lock:           &sync.RWMutex{},
         Writer:         colorable.NewColorableStderr(),
         colorLevel:     Color256,
@@ -115,7 +113,17 @@ func New(t int, d time.Duration, options ...Option) (*Spinner, error) {
 // SetColorLevel sets color level support for spinner - NoColor, Color16, Color256, TrueColor
 func SetColorLevel(cl ColorLevel) Option {
     return func(s *Spinner) error {
+        // TODO: check for correct value
         s.colorLevel = cl
+        return nil
+    }
+}
+
+// SetInterval sets interval between spinner refreshes
+func SetInterval(d time.Duration) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.interval = d * time.Millisecond
         return nil
     }
 }
