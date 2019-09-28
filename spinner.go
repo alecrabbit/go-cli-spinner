@@ -58,11 +58,11 @@ type Spinner struct {
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
-    charSet := CharSets[Line]
-    k := len(charSet)
+    // charSet := CharSets[Line]
+    // k := len(charSet)
     s := Spinner{
         interval:       120 * time.Millisecond,
-        charSet:        ring.New(k),
+        // charSet:        ring.New(k),
         lock:           &sync.RWMutex{},
         Writer:         colorable.NewColorableStderr(),
         colorLevel:     Color256,
@@ -75,11 +75,12 @@ func New(options ...Option) (*Spinner, error) {
         HideCursor:     true,
         regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
-    // Initialize charSet
-    for i := 0; i < k; i++ {
-        s.charSet.Value = charSet[i]
-        s.charSet = s.charSet.Next()
-    }
+    // // Initialize charSet
+    // for i := 0; i < k; i++ {
+    //     s.charSet.Value = charSet[i]
+    //     s.charSet = s.charSet.Next()
+    // }
+    s.charSet = applyCharSet(CharSets[Line])
     s.charColorsSet = applyColorSet(ColorSet{Set256: ColorSets[C256Rainbow]})
     s.updateOutputFormat()
 
@@ -94,11 +95,20 @@ func New(options ...Option) (*Spinner, error) {
 }
 
 func applyColorSet(cs ColorSet) (r *ring.Ring) {
-    // Initialize charColorsSet
     u := len(cs.Set256)
     r = ring.New(u)
     for i := 0; i < u; i++ {
         r.Value = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", cs.Set256[i], "%s")
+        r = r.Next()
+    }
+    return
+}
+
+func applyCharSet(charSet []string) (r *ring.Ring) {
+    u := len(charSet)
+    r = ring.New(u)
+    for i := 0; i < u; i++ {
+        r.Value = charSet[i]
         r = r.Next()
     }
     return
