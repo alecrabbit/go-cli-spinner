@@ -24,6 +24,9 @@ func init() {
 // ColorLevel represents color support level
 type ColorLevel int
 
+// Option ...
+type Option func(*Spinner) error
+
 const (
     // NoColor no color support
     NoColor ColorLevel = iota
@@ -40,8 +43,6 @@ const (
 // 	Spacer   string
 // 	charColorsSet *ring.Ring // charColorsSet holds chosen colorize set
 // }
-
-type Option func(*Spinner) error
 
 // Spinner struct representing spinner instance
 type Spinner struct {
@@ -61,7 +62,7 @@ type Spinner struct {
     currentFrame       string         // writeCurrentFrame string to write to output
     currentFrameWidth  int
     previousFrameWidth int
-    Interval           time.Duration // interval between spinner refreshes
+    interval           time.Duration // interval between spinner refreshes
     FinalMessage       string        // spinner final message, displayed after Stop()
     Reversed           bool          // flag, spin in the opposite direction
     Writer             io.Writer     // to make testing better, exported so users have access
@@ -73,12 +74,12 @@ type Spinner struct {
 }
 
 // New provides a pointer to an instance of Spinner
-func New(t int, d time.Duration) *Spinner {
+func New(t int, d time.Duration, options ...Option) (*Spinner, error) {
     charSet := CharSets[t]
     k := len(charSet)
     // u := len(colors)
     s := Spinner{
-        Interval: d,
+        interval: d,
         charSet:  ring.New(k),
         // charColorsSet:       ring.New(u),
         lock:           &sync.RWMutex{},
@@ -101,7 +102,22 @@ func New(t int, d time.Duration) *Spinner {
     s.charColorsSet = applyColorSet(ColorSet{Set256: ColorSets[C256Rainbow]})
     s.updateOutputFormat()
 
-    return &s
+    // Process option
+    for _, op := range options {
+        err := op(&s)
+        if err != nil {
+            return nil, err
+        }
+    }
+    return &s, nil
+}
+
+// SetColorLevel sets color level support for spinner - NoColor, Color16, Color256, TrueColor
+func SetColorLevel(cl ColorLevel) Option {
+    return func(s *Spinner) error {
+        s.colorLevel = cl
+        return nil
+    }
 }
 
 func applyColorSet(cs ColorSet) (r *ring.Ring) {
@@ -180,7 +196,7 @@ func (s *Spinner) Start() {
 
     s.active = true
     s.lock.Unlock()
-    ticker := time.NewTicker(s.Interval)
+    ticker := time.NewTicker(s.interval)
     go func() {
         for {
             select {
