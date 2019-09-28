@@ -21,17 +21,14 @@ func init() {
     // Initialize here
 }
 
-// ColorLevel represents color support level
-type ColorLevel int
-
-// Option ...
-type Option func(*Spinner) error
+// ColorSupportLevel represents color support level
+type ColorSupportLevel int
 
 const (
     // NoColor no color support
-    NoColor ColorLevel = iota
+    NoColor ColorSupportLevel = iota
     // Color16 represents 16 color level support
-    Color16 ColorLevel = 1 << (4 * iota)
+    Color16 ColorSupportLevel = 1 << (4 * iota)
     // Color256 represents 256 color level support
     Color256
     // TrueColor represents true color level support
@@ -46,20 +43,20 @@ const (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    lock               *sync.RWMutex  // lock
-    charSet            *ring.Ring     // charSet holds chosen character set
-    charColorsSet      *ring.Ring     // charColorsSet holds chosen colorize set
-    messageColorsSet   *ring.Ring     // messageColorsSet holds chosen colorize set
-    progressColorsSet  *ring.Ring     // progressColorsSet holds chosen colorize set
-    active             bool           // active holds the state of the spinner
-    currentChar        string         // current spinner symbol
-    currentMessage     string         // current message
-    currentProgress    string         // current progress string
-    colorLevel         ColorLevel     // writeCurrentFrame color level
-    stop               chan bool      // stop, channel to stop the spinner
-    regExp             *regexp.Regexp // regExp instance
-    outputFormat       string         // output format string e.g"%s %s %s"
-    currentFrame       string         // writeCurrentFrame string to write to output
+    lock               *sync.RWMutex     // lock
+    charSet            *ring.Ring        // charSet holds chosen character set
+    charColorsSet      *ring.Ring        // charColorsSet holds chosen colorize set
+    messageColorsSet   *ring.Ring        // messageColorsSet holds chosen colorize set
+    progressColorsSet  *ring.Ring        // progressColorsSet holds chosen colorize set
+    active             bool              // active holds the state of the spinner
+    currentChar        string            // current spinner symbol
+    currentMessage     string            // current message
+    currentProgress    string            // current progress string
+    colorLevel         ColorSupportLevel // writeCurrentFrame color level
+    stop               chan bool         // stop, channel to stop the spinner
+    regExp             *regexp.Regexp    // regExp instance
+    outputFormat       string            // output format string e.g"%s %s %s"
+    currentFrame       string            // writeCurrentFrame string to write to output
     currentFrameWidth  int
     previousFrameWidth int
     interval           time.Duration // interval between spinner refreshes
@@ -108,24 +105,6 @@ func New(options ...Option) (*Spinner, error) {
         }
     }
     return &s, nil
-}
-
-// SetColorLevel sets color level support for spinner - NoColor, Color16, Color256, TrueColor
-func SetColorLevel(cl ColorLevel) Option {
-    return func(s *Spinner) error {
-        // TODO: check for correct value
-        s.colorLevel = cl
-        return nil
-    }
-}
-
-// SetInterval sets interval between spinner refreshes
-func SetInterval(d time.Duration) Option {
-    return func(s *Spinner) error {
-        // TODO: check for correct value
-        s.interval = d * time.Millisecond
-        return nil
-    }
 }
 
 func applyColorSet(cs ColorSet) (r *ring.Ring) {
