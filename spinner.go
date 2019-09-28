@@ -24,16 +24,16 @@ func init() {
 // type juggler struct {
 // 	Format   string
 // 	Spacer   string
-// 	charColorsSet *ring.Ring // charColorsSet holds chosen colorize set
+// 	charColorSet *ring.Ring // charColorSet holds chosen colorize set
 // }
 
 // Spinner struct representing spinner instance
 type Spinner struct {
     lock               *sync.RWMutex     // lock
     charSet            *ring.Ring        // charSet holds chosen character set
-    charColorsSet      *ring.Ring        // charColorsSet holds chosen colorize set
-    messageColorsSet   *ring.Ring        // messageColorsSet holds chosen colorize set
-    progressColorsSet  *ring.Ring        // progressColorsSet holds chosen colorize set
+    charColorSet       *ring.Ring        // charColorSet holds chosen colorize set
+    messageColorSet    *ring.Ring        // messageColorSet holds chosen colorize set
+    progressColorSet   *ring.Ring        // progressColorSet holds chosen colorize set
     active             bool              // active holds the state of the spinner
     currentChar        string            // current spinner symbol
     currentMessage     string            // current message
@@ -73,10 +73,10 @@ func New(options ...Option) (*Spinner, error) {
         regExp:         regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
     }
     s.charSet = applyCharSet(CharSets[Line])
-    s.charColorsSet = applyColorSet(ColorSet{Set256: ColorSets[C256Rainbow]})
+    s.charColorSet = applyColorSet(ColorSet{Set256: ColorSets[C256Rainbow]})
     s.updateOutputFormat()
 
-    // Process option
+    // Process options
     for _, option := range options {
         err := option(&s)
         if err != nil {
@@ -121,13 +121,13 @@ func (s *Spinner) Colors(cs ...ColorSet) {
         switch i {
         case 0:
             // fmt.Println("Spinner ", c)
-            s.charColorsSet = applyColorSet(c)
+            s.charColorSet = applyColorSet(c)
         case 1:
             fmt.Println("Message ", c)
-            s.messageColorsSet = applyColorSet(c)
+            s.messageColorSet = applyColorSet(c)
         case 2:
             fmt.Println("Progress", c)
-            s.progressColorsSet = applyColorSet(c)
+            s.progressColorSet = applyColorSet(c)
         }
     }
 }
@@ -150,9 +150,9 @@ func (s *Spinner) colorize(in string) string {
     // Note: external lock
     if s.colorLevel >= Color16 {
         // Rotate Ring
-        s.charColorsSet = s.charColorsSet.Next()
-        // apply charColorsSet format
-        return fmt.Sprintf(s.charColorsSet.Value.(string), in)
+        s.charColorSet = s.charColorSet.Next()
+        // apply charColorSet format
+        return fmt.Sprintf(s.charColorSet.Value.(string), in)
     }
     return in
 }
