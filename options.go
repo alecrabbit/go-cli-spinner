@@ -2,13 +2,15 @@ package spinner
 
 import (
     "time"
+
+    "github.com/alecrabbit/go-cli-spinner/color"
 )
 
 // Option ...
 type Option func(*Spinner) error
 
-// ColorLevel sets color level support for spinner - NoColor, Color16, Color256, TrueColor
-func ColorLevel(cl ColorSupportLevel) Option {
+// ColorLevel sets color level support for spinner - TNoColor, TColor16, TColor256, TTrueColor
+func ColorLevel(cl color.SupportLevel) Option {
     return func(s *Spinner) error {
         // TODO: check for correct value
         s.colorLevel = cl

@@ -15,6 +15,7 @@ import (
     "github.com/mattn/go-runewidth"
 
     "github.com/alecrabbit/go-cli-spinner/aux"
+    "github.com/alecrabbit/go-cli-spinner/color"
 )
 
 func init() {
@@ -29,20 +30,20 @@ func init() {
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    lock               *sync.RWMutex     // lock
-    charSet            *ring.Ring        // charSet holds chosen character set
-    charColorSet       *ring.Ring        // charColorSet holds chosen colorize set
-    messageColorSet    *ring.Ring        // messageColorSet holds chosen colorize set
-    progressColorSet   *ring.Ring        // progressColorSet holds chosen colorize set
-    active             bool              // active holds the state of the spinner
-    currentChar        string            // current spinner symbol
-    currentMessage     string            // current message
-    currentProgress    string            // current progress string
-    colorLevel         ColorSupportLevel // writeCurrentFrame color level
-    stop               chan bool         // stop, channel to stop the spinner
-    regExp             *regexp.Regexp    // regExp instance
-    outputFormat       string            // output format string e.g"%s %s %s"
-    currentFrame       string            // writeCurrentFrame string to write to output
+    lock               *sync.RWMutex           // lock
+    charSet            *ring.Ring              // charSet holds chosen character set
+    charColorSet       *ring.Ring              // charColorSet holds chosen colorize set
+    messageColorSet    *ring.Ring              // messageColorSet holds chosen colorize set
+    progressColorSet   *ring.Ring              // progressColorSet holds chosen colorize set
+    active             bool                    // active holds the state of the spinner
+    currentChar        string                  // current spinner symbol
+    currentMessage     string                  // current message
+    currentProgress    string                  // current progress string
+    colorLevel         color.SupportLevel // writeCurrentFrame color level
+    stop               chan bool               // stop, channel to stop the spinner
+    regExp             *regexp.Regexp          // regExp instance
+    outputFormat       string                  // output format string e.g"%s %s %s"
+    currentFrame       string                  // writeCurrentFrame string to write to output
     currentFrameWidth  int
     previousFrameWidth int
     interval           time.Duration // interval between spinner refreshes
@@ -62,7 +63,7 @@ func New(options ...Option) (*Spinner, error) {
         interval:       120 * time.Millisecond,
         lock:           &sync.RWMutex{},
         Writer:         colorable.NewColorableStderr(),
-        colorLevel:     Color256,
+        colorLevel:     color.TColor256,
         FinalMessage:   "",
         FormatMessage:  "%s ",
         FormatFrames:   "%s ",
@@ -148,7 +149,7 @@ func (s *Spinner) getCurrentChar() string {
 // Colorize in string
 func (s *Spinner) colorize(in string) string {
     // Note: external lock
-    if s.colorLevel >= Color16 {
+    if s.colorLevel >= color.TColor16 {
         // Rotate Ring
         s.charColorSet = s.charColorSet.Next()
         // apply charColorSet format

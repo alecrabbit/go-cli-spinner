@@ -6,20 +6,6 @@ const (
     C256YellowWhite
 )
 
-// ColorSupportLevel represents color support level
-type ColorSupportLevel int
-
-const (
-    // NoColor no color support
-    NoColor ColorSupportLevel = iota
-    // Color16 represents 16 color level support
-    Color16 ColorSupportLevel = 1 << (4 * iota)
-    // Color256 represents 256 color level support
-    Color256
-    // TrueColor represents true color level support
-    TrueColor
-)
-
 // ColorSets contains colorizing sets
 var ColorSets = map[int][]int{
     C256Rainbow: {
