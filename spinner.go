@@ -170,7 +170,6 @@ func (s *Spinner) Start() {
 	s.active = true
 	s.l.Unlock()
 	ticker := time.NewTicker(s.interval)
-	fmt.Println(s.formatFrames, s.formatMessage, s.formatProgress)
 	go func() {
 		for {
 			select {
