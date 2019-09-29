@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"runtime"
 	"testing"
-	"time"
 
 	"github.com/alecrabbit/go-cli-spinner/aux"
 )
@@ -12,7 +11,7 @@ import (
 // TestNew verifies that the returned instance is of the proper type
 func TestNew(t *testing.T) {
 	for i := 0; i < len(CharSets); i++ {
-		s := New(i, 100*time.Millisecond)
+		s, _ := New()
 		tp := reflect.TypeOf(s).String()
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
@@ -32,7 +31,7 @@ var result interface{}
 func BenchmarkNew(b *testing.B) {
 	var s *Spinner
 	for n := 0; n < b.N; n++ {
-		s = New(BouncingBlock, 1*time.Second)
+		s, _ = New()
 	}
 	result = s
 }
