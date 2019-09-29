@@ -74,10 +74,12 @@ func New(options ...Option) (*Spinner, error) {
 		HideCursor:      true,
 		regExp:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
 	}
-	s.charSet = applyCharSet(CharSets[Line])
+	// Initialize default characters colorizing set
 	s.charColorSet = applyColorSet(color.Set{Set256: color.Sets[color.C256Rainbow]})
+	// Initialize default characters set
+	s.charSet = applyCharSet(CharSets[Line])
 
-	// Process options
+	// Process provided options
 	for _, option := range options {
 		err := option(&s)
 		if err != nil {
@@ -217,13 +219,13 @@ func (s *Spinner) moveBackSequence(w int) string {
 func (s *Spinner) updateOutputFormat() {
 	// Note: external lock
 	s.outputFormat = fmt.Sprintf("%s%s%s",
-		s.prepFmt(s.currentChar, s.formatFrames),
-		s.prepFmt(s.currentMessage, s.formatMessage),
-		s.prepFmt(s.currentProgress, s.formatProgress),
+		s.refineFormat(s.currentChar, s.formatFrames),
+		s.refineFormat(s.currentMessage, s.formatMessage),
+		s.refineFormat(s.currentProgress, s.formatProgress),
 	)
 }
 
-func (s *Spinner) prepFmt(f string, format string) string {
+func (s *Spinner) refineFormat(f string, format string) string {
 	if f == "" {
 		return "%s"
 	}
