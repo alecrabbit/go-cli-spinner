@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
 		}
-		if s.IsActive() != false {
+		if s.Active() != false {
 			t.Errorf("Expected new instance to be inactive (%d)", i)
 		}
 	}
