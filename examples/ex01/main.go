@@ -38,7 +38,7 @@ func main() {
 		spinner.ProgressFormat("[%4s]"), // [  7%]
 		spinner.MessageFormat("(%s)"),   // (message)
 	)
-	// s.Colors(spinner.ColorSet{Set256: spinner.ColorSets[spinner.C256Rainbow]})
+	// s.Colors(spinner.Set{Set256: spinner.ColorSets[spinner.C256Rainbow]})
 	s.FinalMessage = "Done!\n"
 	// s.HideCursor = false
 	s.Reversed = true

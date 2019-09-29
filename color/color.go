@@ -13,3 +13,8 @@ const (
 	// TTrueColor represents terminal true color level support
 	TTrueColor
 )
+
+// Set ...
+type Set struct { // TODO: rename this
+	Set256 []int
+}

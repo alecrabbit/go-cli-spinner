@@ -7,7 +7,7 @@ const (
 )
 
 // Sets contains colorizing sets
-var Sets = map[int][]int{
+var Sets = map[int][]int{ // TODO: rename this
 	C256Rainbow: {
 		196, 196, 202, 202, 208, 208,
 		214, 214, 220, 220, 226, 226,
