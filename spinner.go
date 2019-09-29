@@ -22,12 +22,6 @@ func init() {
 	// Initialize here
 }
 
-// type juggler struct {
-// 	Format   string
-// 	Spacer   string
-// 	charColorSet *ring.Ring // charColorSet holds chosen colorize set
-// }
-
 // Spinner struct representing spinner instance
 type Spinner struct {
 	formatMessage      string
@@ -60,19 +54,19 @@ type Spinner struct {
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
 	s := Spinner{
+		regExp:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
 		interval:        120 * time.Millisecond,
 		l:               &sync.RWMutex{},
-		Writer:          colorable.NewColorableStderr(),
 		colorLevel:      color.TColor256,
-		FinalMessage:    "",
 		formatMessage:   "%s ",
 		formatFrames:    "%s ",
 		formatProgress:  "%s ",
 		currentMessage:  "",
 		currentProgress: "",
 		stop:            make(chan bool),
+		FinalMessage:    "",
 		HideCursor:      true,
-		regExp:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+		Writer:          colorable.NewColorableStderr(),
 	}
 	// Initialize default characters colorizing set
 	s.charColorSet = applyColorSet(color.Set{Set256: color.Sets[color.C256Rainbow]})
@@ -206,7 +200,7 @@ func (s *Spinner) assembleCurrentFrame() {
 	s.currentFrame = preFrame + s.eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + s.moveBackSequence(s.currentFrameWidth)
 }
 
-// Write writeCurrentFrame to output
+// Write writeCurrentFrame to spinner writer
 func (s *Spinner) writeCurrentFrame() {
 	// Note: external lock
 	_, _ = fmt.Fprint(s.Writer, s.currentFrame)
@@ -275,12 +269,12 @@ func (s *Spinner) erase() {
 	}
 }
 
-// frameWidth gets frame f width
+// frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
 	return runewidth.StringWidth(s.strip(f))
 }
 
-// Current prints out writeCurrentFrame frame
+// Current writes spinner current frame to output represented by spinner writer
 func (s *Spinner) Current() {
 	s.l.Lock()
 	s.writeCurrentFrame()

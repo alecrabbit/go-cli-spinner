@@ -6,7 +6,14 @@ import (
 	"github.com/alecrabbit/go-cli-spinner/color"
 )
 
-// Option ...
+// Deprecated
+// type juggler struct {
+// 	Format   string
+// 	Spacer   string
+// 	charColorSet *ring.Ring // charColorSet holds chosen colorize set
+// }
+
+// Option type for functional options
 type Option func(*Spinner) error
 
 // ColorLevel sets color level support for spinner - TNoColor, TColor16, TColor256, TTrueColor
