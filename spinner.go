@@ -16,10 +16,6 @@ import (
     "github.com/alecrabbit/go-cli-spinner/color"
 )
 
-func init() {
-    // Initialize here
-}
-
 // Spinner struct representing spinner instance
 type Spinner struct {
     formatMessage      string             // message format
