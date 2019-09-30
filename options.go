@@ -10,7 +10,7 @@ import (
 // type juggler struct {
 // 	Format   string
 // 	Spacer   string
-// 	charColorSet *ring.Ring // charColorSet holds chosen colorize set
+// 	charColorSet *ring.Ring // charColorSet holds chosen colorizeChar set
 // }
 
 // Option type for functional options

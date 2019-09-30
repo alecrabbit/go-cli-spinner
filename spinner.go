@@ -27,9 +27,9 @@ type Spinner struct {
     formatProgress     string             // progress format
     l                  *sync.RWMutex      // lock
     charSet            *ring.Ring         // charSet holds chosen character set
-    charColorSet       *ring.Ring         // charColorSet holds chosen colorize set
-    messageColorSet    *ring.Ring         // messageColorSet holds chosen colorize set
-    progressColorSet   *ring.Ring         // progressColorSet holds chosen colorize set
+    charColorSet       *ring.Ring         // charColorSet holds chosen colorizeChar set
+    messageColorSet    *ring.Ring         // messageColorSet holds chosen colorizeChar set
+    progressColorSet   *ring.Ring         // progressColorSet holds chosen colorizeChar set
     active             bool               // active holds the state of the spinner
     currentChar        string             // current spinner symbol
     currentMessage     string             // current message
@@ -91,23 +91,6 @@ func (s *Spinner) Active() bool {
     return s.active
 }
 
-// // Colors ...
-// func (s *Spinner) Colors(cs ...color.Set) {
-// 	for i, c := range cs {
-// 		switch i {
-// 		case 0:
-// 			// fmt.Println("Spinner ", c)
-// 			s.charColorSet = applyColorSet(c)
-// 		case 1:
-// 			fmt.Println("Message ", c)
-// 			s.messageColorSet = applyColorSet(c)
-// 		case 2:
-// 			fmt.Println("Progress", c)
-// 			s.progressColorSet = applyColorSet(c)
-// 		}
-// 	}
-// }
-
 // Get writeCurrentFrame spinner frame
 func (s *Spinner) getCurrentChar() string {
     // Note: external lock
@@ -119,18 +102,6 @@ func (s *Spinner) getCurrentChar() string {
     }
     // writeCurrentFrame frame
     return s.charSet.Value.(string)
-}
-
-// Colorize in string
-func (s *Spinner) colorize(in string) string {
-    // Note: external lock
-    if s.colorLevel >= color.TColor16 {
-        // Rotate Ring
-        s.charColorSet = s.charColorSet.Next()
-        // apply charColorSet format
-        return fmt.Sprintf(s.charColorSet.Value.(string), in)
-    }
-    return in
 }
 
 // Start will start the spinner
@@ -166,15 +137,15 @@ func (s *Spinner) Start() {
 
 func (s *Spinner) updateCurrentFrame() {
     // Note: external lock
-    s.currentChar = s.colorize(s.getCurrentChar())
+    s.currentChar = s.colorizeChar( s.getCurrentChar())
 }
 
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    preFrame := s.Prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
-    s.currentFrameWidth = s.frameWidth(preFrame)
-    s.currentFrame = preFrame + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
+    f := s.Prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
+    s.currentFrameWidth = s.frameWidth(f)
+    s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
 // Write writeCurrentFrame to spinner writer
@@ -193,7 +164,7 @@ func (s *Spinner) updateOutputFormat() {
 }
 
 func (s *Spinner) refineFormat(f string, format string) string {
-    if f == "" {
+    if s.strip(f) == "" {
         return "%s"
     }
     return format
@@ -248,25 +219,56 @@ func (s *Spinner) Current() {
 func (s *Spinner) Message(m string) {
     s.l.Lock()
     defer s.l.Unlock()
-    s.currentMessage = m
+    // s.currentMessage = m
+    s.currentMessage = s.colorizeMessage(m)
     s.updateOutputFormat()
 }
 
 // Progress sets spinner progress value 0..1 → 0%..100%
 func (s *Spinner) Progress(p float32) {
     p = aux.Bounds(p)
-    s.l.Lock()
-    defer s.l.Unlock()
+    var r string
     switch {
     case p > 0:
-        s.currentProgress = fmt.Sprintf("%.0f%%", p*float32(100))
+        r = fmt.Sprintf("%.0f%%", p*float32(100))
     default:
-        s.currentProgress = ""
+        r = ""
     }
+    s.l.Lock()
+    s.currentProgress = s.colorizeProgress(r)
     s.updateOutputFormat()
+    s.l.Unlock()
 }
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
     return runewidth.StringWidth(s.strip(f))
+}
+
+// Colorize in string
+func (s *Spinner) colorizeChar(c string) string {
+    // Note: external lock
+    if s.colorLevel > color.TNoColor {
+        // Rotate Ring
+        s.charColorSet = s.charColorSet.Next()
+        // apply charColorSet format
+        return fmt.Sprintf(s.charColorSet.Value.(string), c)
+    }
+    return c
+}
+
+func (s *Spinner) colorizeMessage(m string) string {
+    if s.colorLevel > color.TNoColor {
+        // TODO: implement
+        return fmt.Sprintf("\x1b[2m%s\x1b[0m", m)
+    }
+    return m
+}
+
+func (s *Spinner) colorizeProgress(p string) string {
+    if s.colorLevel > color.TNoColor {
+        // TODO: implement
+        return fmt.Sprintf("\x1b[2m%s\x1b[0m", p)
+    }
+    return p
 }

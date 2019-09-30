@@ -17,4 +17,5 @@ const (
 // Set ...
 type Set struct { // TODO: rename this
 	Set256 []int
+	Set16 []int
 }
