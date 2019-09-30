@@ -22,6 +22,7 @@
 - [x]  supports pipe `|` and redirect `>` output
 
 It's a proof of concept and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
+
 For now you can **try it as is** and shape it's development if you wish
 
 > I'm developing it on Xterm terminal(package uses ANSI codes) so I hope it'll be fully functional in these environments. For other env's some help is required. Thank You.
