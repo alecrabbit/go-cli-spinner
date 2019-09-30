@@ -241,7 +241,7 @@ func (s *Spinner) frameWidth(f string) int {
 	return runewidth.StringWidth(s.strip(f))
 }
 
-// Colorize in string
+// Colorize char
 func (s *Spinner) colorizeChar(c string) string {
 	// Note: external lock
 	if s.colorLevel > color.TNoColor {
@@ -253,18 +253,20 @@ func (s *Spinner) colorizeChar(c string) string {
 	return c
 }
 
+// Colorize message
 func (s *Spinner) colorizeMessage(m string) string {
 	if s.colorLevel > color.TNoColor {
 		// TODO: implement
-		return fmt.Sprintf("\x1b[2m%s\x1b[0m", m)
+		return fmt.Sprintf("\x1b[2m%s\x1b[0m", m) // Dark
 	}
 	return m
 }
 
+// Colorize progress
 func (s *Spinner) colorizeProgress(p string) string {
 	if s.colorLevel > color.TNoColor {
 		// TODO: implement
-		return fmt.Sprintf("\x1b[2m%s\x1b[0m", p)
+		return fmt.Sprintf("\x1b[2m%s\x1b[0m", p) // Dark
 	}
 	return p
 }
