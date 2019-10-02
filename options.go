@@ -56,7 +56,7 @@ func ProgressFormat(f string) Option {
 func Format(f string) Option {
 	return func(s *Spinner) error {
 		// TODO: check for correct value
-		s.formatFrames = f
+		s.formatChars = f
 		return nil
 	}
 }
