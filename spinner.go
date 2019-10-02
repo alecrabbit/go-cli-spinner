@@ -18,54 +18,58 @@ import (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    formatMessage      string             // message format
-    formatFrames       string             // frames format
-    formatProgress     string             // progress format
-    l                  *sync.RWMutex      // lock
-    charSet            *ring.Ring         // charSet holds chosen character set
-    charColorSet       *ring.Ring         // charColorSet holds chosen colorizeChar set
-    messageColorSet    *ring.Ring         // messageColorSet holds chosen colorizeChar set
-    progressColorSet   *ring.Ring         // progressColorSet holds chosen colorizeChar set
-    colorPrototype     int                //
-    active             bool               // active holds the state of the spinner
-    currentChar        string             // current spinner symbol
-    currentMessage     string             // current message
-    currentProgress    string             // current progress string
-    colorLevel         color.SupportLevel // writeCurrentFrame color level
-    stop               chan bool          // stop, channel to stop the spinner
-    regExp             *regexp.Regexp     // regExp instance
-    outputFormat       string             // output format string e.g"%s %s %s"
-    currentFrame       string             // current frame string to write to output
-    currentFrameWidth  int                // width of currentFrame string
-    previousFrameWidth int                // previous width of currentFrame string
-    interval           time.Duration      // interval between spinner refreshes
-    FinalMessage       string             // spinner final message, displayed after Stop()
-    Reversed           bool               // flag, spin in the opposite direction
-    Writer             io.Writer          // to make testing better, exported so users have access
-    HideCursor         bool               // flag, hide cursor
-    Prefix             string             // spinner prefix
+    formatMessage          string             // message format
+    formatFrames           string             // frames format
+    formatProgress         string             // progress format
+    l                      *sync.RWMutex      // lock
+    charSet                *ring.Ring         // charSet holds chosen character set
+    charColorSet           *ring.Ring         // charColorSet holds chosen colorizeChar set
+    messageColorSet        *ring.Ring         // messageColorSet holds chosen colorizeChar set
+    progressColorSet       *ring.Ring         // progressColorSet holds chosen colorizeChar set
+    charColorPrototype     int                //
+    messageColorPrototype  int                //
+    progressColorPrototype int                //
+    active                 bool               // active holds the state of the spinner
+    currentChar            string             // current spinner symbol
+    currentMessage         string             // current message
+    currentProgress        string             // current progress string
+    colorLevel             color.SupportLevel // writeCurrentFrame color level
+    stop                   chan bool          // stop, channel to stop the spinner
+    regExp                 *regexp.Regexp     // regExp instance
+    outputFormat           string             // output format string e.g"%s %s %s"
+    currentFrame           string             // current frame string to write to output
+    currentFrameWidth      int                // width of currentFrame string
+    previousFrameWidth     int                // previous width of currentFrame string
+    interval               time.Duration      // interval between spinner refreshes
+    FinalMessage           string             // spinner final message, displayed after Stop()
+    Reversed               bool               // flag, spin in the opposite direction
+    Writer                 io.Writer          // to make testing better, exported so users have access
+    HideCursor             bool               // flag, hide cursor
+    Prefix                 string             // spinner prefix
 }
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
     s := Spinner{
-        regExp:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
-        interval:        120 * time.Millisecond,
-        l:               &sync.RWMutex{},
-        colorLevel:      color.TColor256,
-        colorPrototype:  color.CNoColor,
-        formatMessage:   "%s ",
-        formatFrames:    "%s ",
-        formatProgress:  "%s ",
-        currentMessage:  "",
-        currentProgress: "",
-        stop:            make(chan bool),
-        FinalMessage:    "",
-        HideCursor:      true,
-        Writer:          colorable.NewColorableStderr(),
+        regExp:                 regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+        interval:               120 * time.Millisecond,
+        l:                      &sync.RWMutex{},
+        colorLevel:             color.TColor256,
+        charColorPrototype:     color.CRedBoldItalic,
+        messageColorPrototype:  color.CDark,
+        progressColorPrototype: color.CDark,
+        formatMessage:          "%s ",
+        formatFrames:           "%s ",
+        formatProgress:         "%s ",
+        currentMessage:         "",
+        currentProgress:        "",
+        stop:                   make(chan bool),
+        FinalMessage:           "",
+        HideCursor:             true,
+        Writer:                 colorable.NewColorableStderr(),
     }
     // Initialize default characters colorizing set
-    s.charColorSet = applyColorSet(color.Prototypes[s.colorPrototype])
+    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype])
     // s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])

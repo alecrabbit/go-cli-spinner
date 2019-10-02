@@ -1,16 +1,24 @@
 package color
 
 import (
-	"fmt"
+    "fmt"
 )
 
 // Names for colorizing sets
 const (
     CNoColor = iota
+    CDefault
+    CDark
+    CBlink
+    CRedBoldItalic
     C256Rainbow
     C256YellowWhite
     C256RSingle
 )
+
+func init() {
+    Prototypes[CDefault] = Prototypes[CNoColor]
+}
 
 // Prototypes contains colorizing sets
 var Prototypes = map[int]StylePrototype{
@@ -19,6 +27,27 @@ var Prototypes = map[int]StylePrototype{
         [][]int{},
         func(a [][]int) []string {
             return []string{"%s"}
+        },
+    },
+    CDark: {
+        TColor16,
+        [][]int{},
+        func(a [][]int) []string {
+            return []string{"\x1b[2m%s\x1b[0m"}
+        },
+    },
+    CBlink: {
+        TColor16,
+        [][]int{},
+        func(a [][]int) []string {
+            return []string{"\x1b[5m%s\x1b[0m"}
+        },
+    },
+    CRedBoldItalic: {
+        TColor16,
+        [][]int{},
+        func(a [][]int) []string {
+            return []string{"\x1b[31;1;3m%s\x1b[0m"}
         },
     },
     C256Rainbow: {
@@ -56,7 +85,7 @@ var Prototypes = map[int]StylePrototype{
             {197},
         },
         func(a [][]int) []string {
-            a = multiply(a, 10)
+            a = multiply(a, 3)
             r := make([]string, len(a))
             for i, v := range a {
                 r[i] = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", v[0], "%s")
@@ -141,7 +170,7 @@ var Prototypes = map[int]StylePrototype{
 }
 
 func multiply(c [][]int, factor int) [][]int {
-    r := make([][]int, len(c) * factor)
+    r := make([][]int, len(c)*factor)
     for i, _ := range r {
         r[i] = c[i/factor]
     }
