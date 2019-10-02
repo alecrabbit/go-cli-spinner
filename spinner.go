@@ -66,7 +66,7 @@ func New(options ...Option) (*Spinner, error) {
         interval:               120 * time.Millisecond,
         l:                      &sync.RWMutex{},
         colorLevel:             color.TColor256,
-        charColorPrototype:     color.CRedBoldItalic,
+        charColorPrototype:     color.CDark,
         messageColorPrototype:  color.CDark,
         progressColorPrototype: color.CDark,
         formatMessage:          "%s ",
@@ -74,13 +74,14 @@ func New(options ...Option) (*Spinner, error) {
         formatProgress:         "%s ",
         currentMessage:         "",
         currentProgress:        "",
+        outputFormat:           "%s%s%s",
         stop:                   make(chan bool),
         FinalMessage:           "",
         HideCursor:             true,
         Writer:                 colorable.NewColorableStderr(),
     }
     // Initialize default characters colorizing set
-    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype])
+    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype], s.formatFrames)
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
 
@@ -94,7 +95,7 @@ func New(options ...Option) (*Spinner, error) {
     // Get first frame to correctly initialize output format
     s.updateCurrentFrame()
     // Initialize output format
-    s.updateOutputFormat()
+    // s.updateOutputFormat()
 
     return &s, nil
 }
@@ -169,14 +170,14 @@ func (s *Spinner) writeCurrentFrame() {
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
 }
 
-func (s *Spinner) updateOutputFormat() {
-    // Note: external lock
-    s.outputFormat = fmt.Sprintf("%s%s%s",
-        s.refineFormat(s.currentChar, s.formatFrames),
-        s.refineFormat(s.currentMessage, s.formatMessage),
-        s.refineFormat(s.currentProgress, s.formatProgress),
-    )
-}
+// func (s *Spinner) updateOutputFormat() {
+//     // Note: external lock
+//     s.outputFormat = fmt.Sprintf("%s%s%s",
+//         s.refineFormat(s.currentChar, s.formatFrames),
+//         s.refineFormat(s.currentMessage, s.formatMessage),
+//         s.refineFormat(s.currentProgress, s.formatProgress),
+//     )
+// }
 
 func (s *Spinner) refineFormat(f string, format string) string {
     if s.strip(f) == "" {
@@ -234,9 +235,11 @@ func (s *Spinner) Current() {
 func (s *Spinner) Message(m string) {
     s.l.Lock()
     defer s.l.Unlock()
-    // s.currentMessage = m
-    s.currentMessage = s.colorizeMessage(m)
-    s.updateOutputFormat()
+    if m != "" {
+        s.currentMessage = s.colorizeMessage(fmt.Sprintf(s.formatMessage, m))
+    } else {
+        s.currentMessage = ""
+    }
 }
 
 // Progress sets spinner progress value 0..1 → 0%..100%
@@ -250,9 +253,12 @@ func (s *Spinner) Progress(p float32) {
         r = ""
     }
     s.l.Lock()
-    s.currentProgress = s.colorizeProgress(r)
-    s.updateOutputFormat()
-    s.l.Unlock()
+    defer s.l.Unlock()
+    if r != "" {
+        s.currentProgress = s.colorizeProgress(fmt.Sprintf(s.formatProgress, r))
+    } else {
+        s.currentProgress = ""
+    }
 }
 
 // frameWidth gets frame width
