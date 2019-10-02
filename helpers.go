@@ -36,7 +36,7 @@ func replaceEscapes(in string) string {
 // 	return
 // }
 
-func applyColorSet(p color.StylePrototype, format string) (r *ring.Ring) {
+func createColorSet(p color.StylePrototype, format string) (r *ring.Ring) {
 	xs := p.Handler(p.ANSIStyles)
 	u := len(xs)
 	r = ring.New(u)

@@ -29,13 +29,26 @@ type element struct {
 
 }
 
-func newElement() (*element, error) {
-    e := element{}
+func newElement(c int, s, f string, cs ...interface{}) (*element, error) {
+    e := element{
+        format:         f, //
+        spacer:         s, //
+        colorPrototype: c, //
+    }
+    e.colorSet = createColorSet(color.Prototypes[e.colorPrototype], e.format)
+    if cs != nil {
+        if v, ok := cs[0].([]string); ok {
+            e.charSet = applyCharSet(v)
+        }
+    }
     return &e, nil
 }
 
 // Spinner struct representing spinner instance
 type Spinner struct {
+    char                   *element           //
+    message                *element           //
+    progress               *element           //
     formatMessage          string             // message format
     formatChars            string             // frames format
     formatProgress         string             // progress format
@@ -68,6 +81,7 @@ type Spinner struct {
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
+    var err error
     s := Spinner{
         regExp:                 regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
         interval:               120 * time.Millisecond,
@@ -87,10 +101,22 @@ func New(options ...Option) (*Spinner, error) {
         HideCursor:             true,
         Writer:                 colorable.NewColorableStderr(),
     }
+    s.char, err = newElement(color.CDark, "%s", "", CharSets[Snake2])
+    if err != nil {
+        return nil, err
+    }
+    s.message, err = newElement(color.CDark, "%s", "")
+    if err != nil {
+        return nil, err
+    }
+    s.progress, err = newElement(color.CDark, "%s", "")
+    if err != nil {
+        return nil, err
+    }
     // Initialize default characters colorizing set
-    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
-    s.messageColorSet = applyColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
-    s.progressColorSet = applyColorSet(color.Prototypes[s.progressColorPrototype], s.formatProgress)
+    s.charColorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
+    s.messageColorSet = createColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
+    s.progressColorSet = createColorSet(color.Prototypes[s.progressColorPrototype], s.formatProgress)
 
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
