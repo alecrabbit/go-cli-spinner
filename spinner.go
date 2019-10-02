@@ -16,6 +16,17 @@ import (
     "github.com/alecrabbit/go-cli-spinner/color"
 )
 
+// element ...
+type element struct {
+    format         string     //
+    spacer         string     //
+    colorPrototype int        //
+    current        string     //
+    currentWidth   int        //
+    previousWidth  int        //
+    charSet        *ring.Ring //
+}
+
 // Spinner struct representing spinner instance
 type Spinner struct {
     formatMessage          string             // message format
@@ -70,7 +81,6 @@ func New(options ...Option) (*Spinner, error) {
     }
     // Initialize default characters colorizing set
     s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype])
-    // s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
 

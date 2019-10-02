@@ -22,8 +22,8 @@ type StylePrototype struct {
     Handler    PrototypeHandler
 }
 
-// Set ...
-type Set struct { // TODO: rename this
-    Set256 []int
-    Set16  []int
-}
+// // Set ...
+// type Set struct { // TODO: rename this
+//     Set256 []int
+//     Set16  []int
+// }
