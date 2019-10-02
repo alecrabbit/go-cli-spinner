@@ -29,14 +29,14 @@ type element struct {
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    formatMessage          string             // message format
-    formatFrames           string             // frames format
-    formatProgress         string             // progress format
-    l                      *sync.RWMutex      // lock
-    charSet                *ring.Ring         // charSet holds chosen character set
-    charColorSet           *ring.Ring         // charColorSet holds chosen colorizeChar set
-    messageColorSet        *ring.Ring         // messageColorSet holds chosen colorizeChar set
-    progressColorSet       *ring.Ring         // progressColorSet holds chosen colorizeChar set
+    formatMessage    string                   // message format
+    formatChars      string                   // frames format
+    formatProgress   string                   // progress format
+    l                *sync.RWMutex            // lock
+    charSet          *ring.Ring               // charSet holds chosen character set
+    charColorSet     *ring.Ring               // charColorSet holds chosen colorizeChar set
+    messageColorSet  *ring.Ring               // messageColorSet holds chosen colorizeChar set
+    progressColorSet *ring.Ring               // progressColorSet holds chosen colorizeChar set
     charColorPrototype     int                //
     messageColorPrototype  int                //
     progressColorPrototype int                //
@@ -67,10 +67,10 @@ func New(options ...Option) (*Spinner, error) {
         l:                      &sync.RWMutex{},
         colorLevel:             color.TColor256,
         charColorPrototype:     color.CDark,
-        messageColorPrototype:  color.CDark,
+        messageColorPrototype:  color.C256Rainbow,
         progressColorPrototype: color.CDark,
         formatMessage:          "%s ",
-        formatFrames:           "%s ",
+        formatChars:            "%s ",
         formatProgress:         "%s ",
         currentMessage:         "",
         currentProgress:        "",
@@ -81,7 +81,10 @@ func New(options ...Option) (*Spinner, error) {
         Writer:                 colorable.NewColorableStderr(),
     }
     // Initialize default characters colorizing set
-    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype], s.formatFrames)
+    s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
+    s.messageColorSet = applyColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
+    s.progressColorSet = applyColorSet(color.Prototypes[s.progressColorPrototype], s.formatProgress)
+    
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
 
@@ -173,7 +176,7 @@ func (s *Spinner) writeCurrentFrame() {
 // func (s *Spinner) updateOutputFormat() {
 //     // Note: external lock
 //     s.outputFormat = fmt.Sprintf("%s%s%s",
-//         s.refineFormat(s.currentChar, s.formatFrames),
+//         s.refineFormat(s.currentChar, s.formatChars),
 //         s.refineFormat(s.currentMessage, s.formatMessage),
 //         s.refineFormat(s.currentProgress, s.formatProgress),
 //     )
@@ -280,18 +283,22 @@ func (s *Spinner) colorizeChar(c string) string {
 
 // Colorize message
 func (s *Spinner) colorizeMessage(m string) string {
-    if s.colorLevel > color.TNoColor {
-        // TODO: implement
-        return fmt.Sprintf("\x1b[2m%s\x1b[0m", m) // Dark
+    if s.colorLevel > color.TNoColor && s.messageColorSet != nil {
+        s.messageColorSet = s.messageColorSet.Next()
+        // apply charColorSet format
+        return fmt.Sprintf(s.messageColorSet.Value.(string), m)
+        // return fmt.Sprintf("\x1b[2m%s\x1b[0m", m) // Dark
     }
     return m
 }
 
 // Colorize progress
 func (s *Spinner) colorizeProgress(p string) string {
-    if s.colorLevel > color.TNoColor {
-        // TODO: implement
-        return fmt.Sprintf("\x1b[2m%s\x1b[0m", p) // Dark
+    if s.colorLevel > color.TNoColor  && s.progressColorSet != nil {
+        s.progressColorSet = s.progressColorSet.Next()
+        // apply charColorSet format
+        return fmt.Sprintf(s.progressColorSet.Value.(string), p)
+        // return fmt.Sprintf("\x1b[2m%s\x1b[0m", p) // Dark
     }
     return p
 }
