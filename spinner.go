@@ -25,18 +25,25 @@ type element struct {
     currentWidth   int        //
     previousWidth  int        //
     charSet        *ring.Ring //
+    colorSet       *ring.Ring //
+
+}
+
+func newElement() (*element, error) {
+    e := element{}
+    return &e, nil
 }
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    formatMessage    string                   // message format
-    formatChars      string                   // frames format
-    formatProgress   string                   // progress format
-    l                *sync.RWMutex            // lock
-    charSet          *ring.Ring               // charSet holds chosen character set
-    charColorSet     *ring.Ring               // charColorSet holds chosen colorizeChar set
-    messageColorSet  *ring.Ring               // messageColorSet holds chosen colorizeChar set
-    progressColorSet *ring.Ring               // progressColorSet holds chosen colorizeChar set
+    formatMessage          string             // message format
+    formatChars            string             // frames format
+    formatProgress         string             // progress format
+    l                      *sync.RWMutex      // lock
+    charSet                *ring.Ring         // charSet holds chosen character set
+    charColorSet           *ring.Ring         // charColorSet holds chosen colorizeChar set
+    messageColorSet        *ring.Ring         // messageColorSet holds chosen colorizeChar set
+    progressColorSet       *ring.Ring         // progressColorSet holds chosen colorizeChar set
     charColorPrototype     int                //
     messageColorPrototype  int                //
     progressColorPrototype int                //
@@ -84,7 +91,7 @@ func New(options ...Option) (*Spinner, error) {
     s.charColorSet = applyColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
     s.messageColorSet = applyColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
     s.progressColorSet = applyColorSet(color.Prototypes[s.progressColorPrototype], s.formatProgress)
-    
+
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
 
@@ -294,7 +301,7 @@ func (s *Spinner) colorizeMessage(m string) string {
 
 // Colorize progress
 func (s *Spinner) colorizeProgress(p string) string {
-    if s.colorLevel > color.TNoColor  && s.progressColorSet != nil {
+    if s.colorLevel > color.TNoColor && s.progressColorSet != nil {
         s.progressColorSet = s.progressColorSet.Next()
         // apply charColorSet format
         return fmt.Sprintf(s.progressColorSet.Value.(string), p)
