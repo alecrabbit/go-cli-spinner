@@ -6,7 +6,7 @@ import (
 
 // Names for colorizing sets
 const (
-    CDefault = iota
+    CNoColor = iota
     C256Rainbow
     C256YellowWhite
     C256RSingle
@@ -14,7 +14,7 @@ const (
 
 // Prototypes contains colorizing sets
 var Prototypes = map[int]StylePrototype{
-    CDefault: {
+    CNoColor: {
         TNoColor,
         [][]int{},
         func(a [][]int) []string {
