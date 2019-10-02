@@ -63,11 +63,11 @@ func New(options ...Option) (*Spinner, error) {
 		Writer:          colorable.NewColorableStderr(),
 	}
 	// Initialize default characters colorizing set
-	v := color.Prototypes[color.C256RSingle]
+	v := color.Prototypes[color.C256Rainbow]
 	s.charColorSet = applyColorSet(v.Handler(v.ANSIStyles))
 	// s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
 	// Initialize default characters set
-	s.charSet = applyCharSet(CharSets[Line])
+	s.charSet = applyCharSet(CharSets[Snake2])
 
 	// Process provided options
 	for _, option := range options {

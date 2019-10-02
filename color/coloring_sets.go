@@ -6,34 +6,97 @@ import (
 
 // Names for colorizing sets
 const (
-    C256Rainbow = iota
+    CDefault = iota
+    C256Rainbow
     C256YellowWhite
     C256RSingle
 )
 
-// Sets contains colorizing sets
-var Sets = map[int][]int{ // TODO: rename this
-    C256Rainbow: {
-        196, 196, 202, 202, 208, 208,
-        214, 214, 220, 220, 226, 226,
-        190, 190, 154, 154, 118, 118,
-        82, 82, 46, 46, 47, 47,
-        48, 48, 49, 49, 50, 50,
-        51, 51, 45, 45, 39, 39,
-        33, 33, 27, 27, 56, 56,
-        57, 57, 93, 93, 129, 129,
-        165, 165, 201, 201, 200, 200,
-        199, 199, 198, 198, 197, 197},
-    C256YellowWhite: {
-        226, 227, 228, 229, 229, 230,
-        230, 230, 231, 231, 231, 231,
-        230, 230, 230, 229, 229, 228,
-        227, 226},
-}
-
 // Prototypes contains colorizing sets
-var Prototypes = map[int]StylePrototype{ // TODO: rename this
-    C256RSingle: StylePrototype{
+var Prototypes = map[int]StylePrototype{
+    CDefault: {
+        TNoColor,
+        [][]int{},
+        func(a [][]int) []string {
+            return []string{"%s"}
+        },
+    },
+    C256Rainbow: {
+        TColor256,
+        [][]int{
+            {196},
+            {202},
+            {208},
+            {214},
+            {220},
+            {226},
+            {190},
+            {154},
+            {118},
+            {82},
+            {46},
+            {47},
+            {48},
+            {49},
+            {50},
+            {51},
+            {45},
+            {39},
+            {33},
+            {27},
+            {56},
+            {57},
+            {93},
+            {129},
+            {165},
+            {201},
+            {200},
+            {199},
+            {198},
+            {197},
+        },
+        func(a [][]int) []string {
+            a = multiply(a, 10)
+            r := make([]string, len(a))
+            for i, v := range a {
+                r[i] = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", v[0], "%s")
+            }
+            return r
+        },
+    },
+    C256YellowWhite: {
+        TColor256,
+        [][]int{
+            {226},
+            {227},
+            {228},
+            {229},
+            {229},
+            {230},
+            {230},
+            {230},
+            {231},
+            {231},
+            {231},
+            {231},
+            {230},
+            {230},
+            {230},
+            {229},
+            {229},
+            {228},
+            {227},
+            {226},
+        },
+        func(a [][]int) []string {
+            r := make([]string, len(a))
+            for i, v := range a {
+                r[i] = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", v[0], "%s")
+            }
+            return r
+        },
+    },
+    C256RSingle: {
         TColor256,
         [][]int{
             {196, 232, 3},
@@ -75,4 +138,12 @@ var Prototypes = map[int]StylePrototype{ // TODO: rename this
             return r
         },
     },
+}
+
+func multiply(c [][]int, factor int) [][]int {
+    r := make([][]int, len(c) * factor)
+    for i, _ := range r {
+        r[i] = c[i/factor]
+    }
+    return r
 }
