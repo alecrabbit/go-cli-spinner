@@ -63,7 +63,9 @@ func New(options ...Option) (*Spinner, error) {
 		Writer:          colorable.NewColorableStderr(),
 	}
 	// Initialize default characters colorizing set
-	s.charColorSet = applyColorSet(color.Set{Set256: color.Sets[color.C256Rainbow]})
+	v := color.Prototypes[color.C256RSingle]
+	s.charColorSet = applyColorSet(v.Handler(v.ANSIStyles))
+	// s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
 	// Initialize default characters set
 	s.charSet = applyCharSet(CharSets[Line])
 
