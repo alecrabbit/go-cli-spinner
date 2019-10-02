@@ -36,8 +36,12 @@ func applyColorSetOld(cs color.Set) (r *ring.Ring) {
 	return
 }
 
+<<<<<<< develop
 func applyColorSet(p color.StylePrototype) (r *ring.Ring) {
 	xs := p.Handler(p.ANSIStyles)
+=======
+func applyColorSet(xs []string) (r *ring.Ring) {
+>>>>>>> change colorng model
 	u := len(xs)
 	r = ring.New(u)
 	for i := 0; i < u; i++ {

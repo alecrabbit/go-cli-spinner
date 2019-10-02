@@ -50,6 +50,7 @@ type Spinner struct {
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
+<<<<<<< develop
     s := Spinner{
         regExp:                 regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
         interval:               120 * time.Millisecond,
@@ -73,6 +74,29 @@ func New(options ...Option) (*Spinner, error) {
     // s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
     // Initialize default characters set
     s.charSet = applyCharSet(CharSets[Snake2])
+=======
+	s := Spinner{
+		regExp:          regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+		interval:        120 * time.Millisecond,
+		l:               &sync.RWMutex{},
+		colorLevel:      color.TColor256,
+		formatMessage:   "%s ",
+		formatFrames:    "%s ",
+		formatProgress:  "%s ",
+		currentMessage:  "",
+		currentProgress: "",
+		stop:            make(chan bool),
+		FinalMessage:    "",
+		HideCursor:      true,
+		Writer:          colorable.NewColorableStderr(),
+	}
+	// Initialize default characters colorizing set
+	v := color.Prototypes[color.C256RSingle]
+	s.charColorSet = applyColorSet(v.Handler(v.ANSIStyles))
+	// s.charColorSet = applyColorSetOld(color.Set{Set256: color.Sets[color.C256Rainbow]})
+	// Initialize default characters set
+	s.charSet = applyCharSet(CharSets[Line])
+>>>>>>> change colorng model
 
     // Process provided options
     for _, option := range options {

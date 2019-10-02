@@ -1,21 +1,30 @@
 package color
 
 import (
+<<<<<<< develop
     "fmt"
+=======
+	"fmt"
+>>>>>>> change colorng model
 )
 
 // Names for colorizing sets
 const (
+<<<<<<< develop
     CNoColor = iota
     CDefault
     CDark
     CBlink
     CRedBoldItalic
     C256Rainbow
+=======
+    C256Rainbow = iota
+>>>>>>> change colorng model
     C256YellowWhite
     C256RSingle
 )
 
+<<<<<<< develop
 func init() {
     Prototypes[CDefault] = Prototypes[CNoColor]
 }
@@ -126,6 +135,31 @@ var Prototypes = map[int]StylePrototype{
         },
     },
     C256RSingle: {
+=======
+// Sets contains colorizing sets
+var Sets = map[int][]int{ // TODO: rename this
+    C256Rainbow: {
+        196, 196, 202, 202, 208, 208,
+        214, 214, 220, 220, 226, 226,
+        190, 190, 154, 154, 118, 118,
+        82, 82, 46, 46, 47, 47,
+        48, 48, 49, 49, 50, 50,
+        51, 51, 45, 45, 39, 39,
+        33, 33, 27, 27, 56, 56,
+        57, 57, 93, 93, 129, 129,
+        165, 165, 201, 201, 200, 200,
+        199, 199, 198, 198, 197, 197},
+    C256YellowWhite: {
+        226, 227, 228, 229, 229, 230,
+        230, 230, 231, 231, 231, 231,
+        230, 230, 230, 229, 229, 228,
+        227, 226},
+}
+
+// Prototypes contains colorizing sets
+var Prototypes = map[int]StylePrototype{ // TODO: rename this
+    C256RSingle: StylePrototype{
+>>>>>>> change colorng model
         TColor256,
         [][]int{
             {196, 232, 3},
@@ -167,6 +201,7 @@ var Prototypes = map[int]StylePrototype{
             return r
         },
     },
+<<<<<<< develop
 }
 
 func multiply(c [][]int, factor int) [][]int {
@@ -175,4 +210,6 @@ func multiply(c [][]int, factor int) [][]int {
         r[i] = c[i/factor]
     }
     return r
+=======
+>>>>>>> change colorng model
 }
