@@ -3,6 +3,7 @@ package spinner
 
 import (
     "container/ring"
+    "errors"
     "fmt"
     "io"
     "regexp"
@@ -29,19 +30,21 @@ type element struct {
 
 }
 
-func newElement(c int, s, f string, cs ...interface{}) (*element, error) {
-    e := element{
+func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
+    el := element{
         format:         f, //
         spacer:         s, //
         colorPrototype: c, //
     }
-    e.colorSet = createColorSet(color.Prototypes[e.colorPrototype], e.format)
+    el.colorSet = createColorSet(color.Prototypes[el.colorPrototype], el.format)
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
-            e.charSet = applyCharSet(v)
+            el.charSet = applyCharSet(v)
+        } else {
+            return nil,  errors.New("spinner: third param expected to be type of []string")
         }
     }
-    return &e, nil
+    return &el, nil
 }
 
 // Spinner struct representing spinner instance
@@ -93,23 +96,23 @@ func New(options ...Option) (*Spinner, error) {
         formatMessage:          "%s ",
         formatChars:            "%s ",
         formatProgress:         "%s ",
-        currentMessage:         "",
-        currentProgress:        "",
+        currentMessage:         "----",
+        currentProgress:        "0%",
         outputFormat:           "%s%s%s",
         stop:                   make(chan bool),
         FinalMessage:           "",
         HideCursor:             true,
         Writer:                 colorable.NewColorableStderr(),
     }
-    s.char, err = newElement(color.CDark, "%s", "", CharSets[Snake2])
+    s.char, err = newElement(color.CDark, "%s", " ", CharSets[Snake2])
     if err != nil {
         return nil, err
     }
-    s.message, err = newElement(color.CDark, "%s", "")
+    s.message, err = newElement(color.CDark, "%s", " ")
     if err != nil {
         return nil, err
     }
-    s.progress, err = newElement(color.CDark, "%s", "")
+    s.progress, err = newElement(color.CDark, "%s", " ")
     if err != nil {
         return nil, err
     }
