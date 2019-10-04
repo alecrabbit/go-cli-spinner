@@ -14,16 +14,12 @@ const (
     TTrueColor
 )
 
+// PrototypeHandler represents a function to process ANSIStyles from StylePrototype
 type PrototypeHandler func([][]int) []string
 
+// StylePrototype represents a struct to contain ansi styling
 type StylePrototype struct {
     Level      SupportLevel
     ANSIStyles [][]int
     Handler    PrototypeHandler
 }
-
-// // Set ...
-// type Set struct { // TODO: rename this
-//     Set256 []int
-//     Set16  []int
-// }

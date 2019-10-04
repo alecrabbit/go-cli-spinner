@@ -42,7 +42,7 @@ func main() {
 	s.FinalMessage = "Done!\n"
 	// s.HideCursor = false
 	s.Reversed = true
-	// s.Prefix = " " // spinner prefix
+	// s.prefix = " " // spinner prefix
 
 	// Start spinner
 	s.Start()

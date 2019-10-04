@@ -63,3 +63,12 @@ func Format(f string) Option {
 		return nil
 	}
 }
+
+// prefix sets spinner prefix
+func Prefix(p string) Option {
+	return func(s *Spinner) error {
+		// TODO: check for correct value
+		s.prefix = p
+		return nil
+	}
+}

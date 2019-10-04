@@ -27,7 +27,19 @@ type element struct {
     previousWidth  int        //
     charSet        *ring.Ring //
     colorSet       *ring.Ring //
+    reversed       bool       //
+}
 
+func (el *element) getCurrent() string {
+    if el.charSet != nil {
+        if el.reversed {
+            el.charSet = el.charSet.Prev()
+        } else {
+            el.charSet = el.charSet.Next()
+        }
+        el.current = el.charSet.Value.(string)
+    }
+    return el.current
 }
 
 func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
@@ -40,11 +52,17 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
+            el.currentWidth = charSetWidth(el.charSet)
+            el.previousWidth = el.currentWidth
         } else {
-            return nil,  errors.New("spinner: third param expected to be type of []string")
+            return nil, errors.New("spinner: third param expected to be type of []string")
         }
     }
     return &el, nil
+}
+
+func charSetWidth(charSet *ring.Ring) int {
+    return runewidth.StringWidth(charSet.Value.(string))
 }
 
 // Spinner struct representing spinner instance
@@ -79,7 +97,7 @@ type Spinner struct {
     Reversed               bool               // flag, spin in the opposite direction
     Writer                 io.Writer          // to make testing better, exported so users have access
     HideCursor             bool               // flag, hide cursor
-    Prefix                 string             // spinner prefix
+    prefix                 string             // spinner prefix
 }
 
 // New provides a pointer to an instance of Spinner
@@ -96,8 +114,8 @@ func New(options ...Option) (*Spinner, error) {
         formatMessage:          "%s ",
         formatChars:            "%s ",
         formatProgress:         "%s ",
-        currentMessage:         "----",
-        currentProgress:        "0%",
+        currentMessage:         "",
+        currentProgress:        "",
         outputFormat:           "%s%s%s",
         stop:                   make(chan bool),
         FinalMessage:           "",
@@ -198,7 +216,7 @@ func (s *Spinner) updateCurrentFrame() {
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    f := s.Prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
+    f := s.prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
     s.currentFrameWidth = s.frameWidth(f)
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
@@ -208,15 +226,6 @@ func (s *Spinner) writeCurrentFrame() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
 }
-
-// func (s *Spinner) updateOutputFormat() {
-//     // Note: external lock
-//     s.outputFormat = fmt.Sprintf("%s%s%s",
-//         s.refineFormat(s.currentChar, s.formatChars),
-//         s.refineFormat(s.currentMessage, s.formatMessage),
-//         s.refineFormat(s.currentProgress, s.formatProgress),
-//     )
-// }
 
 func (s *Spinner) refineFormat(f string, format string) string {
     if s.strip(f) == "" {
