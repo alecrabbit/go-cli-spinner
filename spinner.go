@@ -191,11 +191,11 @@ func (s *Spinner) Start() {
 
     s.active = true
     s.l.Unlock()
-    ticker := time.NewTicker(s.interval)
-    go s.spin(ticker)
+    go s.spin()
 }
 
-func (s *Spinner) spin(ticker *time.Ticker) {
+func (s *Spinner) spin() {
+    ticker := time.NewTicker(s.interval)
     for {
         select {
         case <-s.stop:
