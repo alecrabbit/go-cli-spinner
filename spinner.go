@@ -89,17 +89,17 @@ type Spinner struct {
     currentProgress        string             // current progress string
     colorLevel             color.SupportLevel // writeCurrentFrame color level
     stop                   chan bool          // stop, channel to stop the spinner
-    regExp             *regexp.Regexp         // regExp instance
-    outputFormat       string                 // output format string e.g"%s %s %s"
-    currentFrame       string                 // current frame string to write to output
-    currentFrameWidth  int                    // width of currentFrame string
-    previousFrameWidth int                    // previous width of currentFrame string
-    interval           time.Duration          // interval between spinner refreshes
-    finalMessage       string                 // spinner final message, displayed after Stop()
-    reversed           bool                   // flag, spin in the opposite direction
-    Writer             io.Writer              // to make testing better, exported so users have access
-    hideCursor         bool                   // flag, hide cursor
-    prefix             string                 // spinner prefix
+    regExp                 *regexp.Regexp     // regExp instance
+    outputFormat           string             // output format string e.g"%s %s %s"
+    currentFrame           string             // current frame string to write to output
+    currentFrameWidth      int                // width of currentFrame string
+    previousFrameWidth     int                // previous width of currentFrame string
+    interval               time.Duration      // interval between spinner refreshes
+    finalMessage           string             // spinner final message, displayed after Stop()
+    reversed               bool               // flag, spin in the opposite direction
+    Writer                 io.Writer          // to make testing better, exported so users have access
+    hideCursor             bool               // flag, hide cursor
+    prefix                 string             // spinner prefix
 }
 
 // New provides a pointer to an instance of Spinner
