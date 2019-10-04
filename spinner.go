@@ -243,14 +243,14 @@ func (s *Spinner) Stop() {
     if s.active {
         s.erase()
         s.active = false
+        s.stop <- true
+        if s.finalMessage != "" {
+            _, _ = fmt.Fprint(s.Writer, s.finalMessage)
+        }
         if s.hideCursor {
             // show the cursor
             _, _ = fmt.Fprint(s.Writer, "\033[?25h")
         }
-        if s.finalMessage != "" {
-            _, _ = fmt.Fprint(s.Writer, s.finalMessage)
-        }
-        s.stop <- true
     }
 }
 
