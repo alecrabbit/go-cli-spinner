@@ -39,8 +39,8 @@ func main() {
 		spinner.MessageFormat("(%s)"),   // (message)
 	)
 	// s.Colors(spinner.Set{Set256: spinner.ColorSets[spinner.C256Rainbow]})
-	s.FinalMessage = "Done!\n"
-	// s.HideCursor = false
+	s.finalMessage = "Done!\n"
+	// s.hideCursor = false
 	s.reversed = true
 	// s.prefix = " " // spinner prefix
 

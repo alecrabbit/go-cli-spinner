@@ -52,10 +52,12 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
-            el.currentWidth = charSetWidth(el.charSet)
-            el.previousWidth = el.currentWidth
+            if el.charSet != nil {
+                el.currentWidth = charSetWidth(el.charSet)
+                el.previousWidth = el.currentWidth
+            }
         } else {
-            return nil, errors.New("spinner: third param expected to be type of []string")
+            return nil, errors.New("spinner.newElement: fourth param expected to be type of []string")
         }
     }
     return &el, nil
@@ -87,16 +89,16 @@ type Spinner struct {
     currentProgress        string             // current progress string
     colorLevel             color.SupportLevel // writeCurrentFrame color level
     stop                   chan bool          // stop, channel to stop the spinner
-    regExp                 *regexp.Regexp     // regExp instance
+    regExp             *regexp.Regexp         // regExp instance
     outputFormat       string                 // output format string e.g"%s %s %s"
     currentFrame       string                 // current frame string to write to output
     currentFrameWidth  int                    // width of currentFrame string
     previousFrameWidth int                    // previous width of currentFrame string
     interval           time.Duration          // interval between spinner refreshes
-    FinalMessage       string                 // spinner final message, displayed after Stop()
+    finalMessage       string                 // spinner final message, displayed after Stop()
     reversed           bool                   // flag, spin in the opposite direction
     Writer             io.Writer              // to make testing better, exported so users have access
-    HideCursor         bool                   // flag, hide cursor
+    hideCursor         bool                   // flag, hide cursor
     prefix             string                 // spinner prefix
 }
 
@@ -118,8 +120,8 @@ func New(options ...Option) (*Spinner, error) {
         currentProgress:        "",
         outputFormat:           "%s%s%s",
         stop:                   make(chan bool),
-        FinalMessage:           "",
-        HideCursor:             true,
+        finalMessage:           "",
+        hideCursor:             true,
         Writer:                 colorable.NewColorableStderr(),
     }
     s.char, err = newElement(color.CDark, "%s", " ", CharSets[Snake2])
@@ -182,7 +184,7 @@ func (s *Spinner) Start() {
         s.l.Unlock()
         return
     }
-    if s.HideCursor {
+    if s.hideCursor {
         // hide the cursor
         _, _ = fmt.Fprint(s.Writer, "\033[?25l")
     }
@@ -241,12 +243,12 @@ func (s *Spinner) Stop() {
     if s.active {
         s.erase()
         s.active = false
-        if s.HideCursor {
+        if s.hideCursor {
             // show the cursor
             _, _ = fmt.Fprint(s.Writer, "\033[?25h")
         }
-        if s.FinalMessage != "" {
-            _, _ = fmt.Fprint(s.Writer, s.FinalMessage)
+        if s.finalMessage != "" {
+            _, _ = fmt.Fprint(s.Writer, s.finalMessage)
         }
         s.stop <- true
     }
