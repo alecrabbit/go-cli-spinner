@@ -64,11 +64,19 @@ func Format(f string) Option {
 	}
 }
 
-// prefix sets spinner prefix
+// Prefix sets spinner prefix
 func Prefix(p string) Option {
 	return func(s *Spinner) error {
 		// TODO: check for correct value
 		s.prefix = p
+		return nil
+	}
+}
+
+// Reverse sets spinner to rotate in reverse
+func Reverse() Option {
+	return func(s *Spinner) error {
+		s.reversed = true
 		return nil
 	}
 }

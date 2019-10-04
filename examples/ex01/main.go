@@ -41,7 +41,7 @@ func main() {
 	// s.Colors(spinner.Set{Set256: spinner.ColorSets[spinner.C256Rainbow]})
 	s.FinalMessage = "Done!\n"
 	// s.HideCursor = false
-	s.Reversed = true
+	s.reversed = true
 	// s.prefix = " " // spinner prefix
 
 	// Start spinner

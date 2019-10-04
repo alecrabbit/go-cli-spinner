@@ -88,16 +88,16 @@ type Spinner struct {
     colorLevel             color.SupportLevel // writeCurrentFrame color level
     stop                   chan bool          // stop, channel to stop the spinner
     regExp                 *regexp.Regexp     // regExp instance
-    outputFormat           string             // output format string e.g"%s %s %s"
-    currentFrame           string             // current frame string to write to output
-    currentFrameWidth      int                // width of currentFrame string
-    previousFrameWidth     int                // previous width of currentFrame string
-    interval               time.Duration      // interval between spinner refreshes
-    FinalMessage           string             // spinner final message, displayed after Stop()
-    Reversed               bool               // flag, spin in the opposite direction
-    Writer                 io.Writer          // to make testing better, exported so users have access
-    HideCursor             bool               // flag, hide cursor
-    prefix                 string             // spinner prefix
+    outputFormat       string                 // output format string e.g"%s %s %s"
+    currentFrame       string                 // current frame string to write to output
+    currentFrameWidth  int                    // width of currentFrame string
+    previousFrameWidth int                    // previous width of currentFrame string
+    interval           time.Duration          // interval between spinner refreshes
+    FinalMessage       string                 // spinner final message, displayed after Stop()
+    reversed           bool                   // flag, spin in the opposite direction
+    Writer             io.Writer              // to make testing better, exported so users have access
+    HideCursor         bool                   // flag, hide cursor
+    prefix             string                 // spinner prefix
 }
 
 // New provides a pointer to an instance of Spinner
@@ -166,7 +166,7 @@ func (s *Spinner) Active() bool {
 func (s *Spinner) getCurrentChar() string {
     // Note: external lock
     // Rotate Ring
-    if s.Reversed {
+    if s.reversed {
         s.charSet = s.charSet.Prev() // Backward
     } else {
         s.charSet = s.charSet.Next() // Forward
