@@ -34,14 +34,14 @@ func Interval(ms time.Duration) Option {
     }
 }
 
-// // MessageFormat sets spinner message format
-// func MessageFormat(f string) Option {
-//     return func(s *Spinner) error {
-//         // TODO: check for correct value
-//         s.message = f
-//         return nil
-//     }
-// }
+// MessageFormat sets spinner message format
+func MessageFormat(f string) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.messageSettings.format = f
+        return nil
+    }
+}
 
 // // ProgressFormat sets spinner progress indicator format
 // func ProgressFormat(f string) Option {
@@ -52,17 +52,14 @@ func Interval(ms time.Duration) Option {
 //     }
 // }
 //
-// // Format sets spinner format
-// func Format(f string) Option {
-//     return func(s *Spinner) error {
-//         // TODO: check for correct value
-//         s.formatChars = f
-//         s.charColorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
-//         s.char.format = f
-//         s.char.cFormat = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
-//         return nil
-//     }
-// }
+// Format sets spinner format
+func Format(f string) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.charSettings.format = f
+        return nil
+    }
+}
 
 // Prefix sets spinner prefix
 func Prefix(p string) Option {

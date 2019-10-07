@@ -37,6 +37,15 @@ type Spinner struct {
     prefix             string             // spinner prefix
     Writer             io.Writer          // to make testing better, exported so users have access
     prefixWidth        int
+    charSettings       *elementSettings
+    messageSettings    *elementSettings
+}
+
+type elementSettings struct {
+    colorizingSet int
+    format        string
+    spacer        string
+    charSet       []string
 }
 
 // New provides a pointer to an instance of Spinner
@@ -53,14 +62,17 @@ func New(options ...Option) (*Spinner, error) {
         hideCursor:   true,
         Writer:       colorable.NewColorableStderr(),
     }
-    s.char, err = newElement(color.C256Rainbow, "%s", " ", CharSets[Snake2])
-    if err != nil {
-        return nil, err
+    s.charSettings = &elementSettings{
+        colorizingSet: color.C256Rainbow,
+        format:        "%s",
+        spacer:        " ",
+        charSet:       CharSets[Snake2],
     }
-
-    s.message, err = newElement(color.C256YellowWhite, "%s", " ")
-    if err != nil {
-        return nil, err
+    s.messageSettings = &elementSettings{
+        colorizingSet: color.C256YellowWhite,
+        format:        "%s",
+        spacer:        " ",
+        charSet:       nil,
     }
     // s.message.currentWidth = 8
     // s.progress, err = newElement(color.CDark, "%s", " ")
@@ -83,6 +95,26 @@ func New(options ...Option) (*Spinner, error) {
             return nil, err
         }
     }
+    s.char, err = newElement(
+        s.charSettings.colorizingSet,
+        s.charSettings.format,
+        s.charSettings.spacer,
+        s.charSettings.charSet,
+    )
+    if err != nil {
+        return nil, err
+    }
+
+    s.message, err = newElement(
+        s.messageSettings.colorizingSet,
+        s.messageSettings.format,
+        s.messageSettings.spacer,
+        s.messageSettings.charSet,
+    )
+    if err != nil {
+        return nil, err
+    }
+
     // // Get first frame to correctly initialize output format
     // s.updateCurrentFrame()
 
@@ -227,11 +259,6 @@ func (s *Spinner) Message(m string) {
     defer s.l.Unlock()
     s.message.setCurrent(m)
 
-    // if m != "" {
-    //     s.currentMessage = s.colorizeMessage(fmt.Sprintf(s.formatMessage, m))
-    // } else {
-    //     s.currentMessage = ""
-    // }
 }
 
 // // Progress sets spinner progress value 0..1 → 0%..100%

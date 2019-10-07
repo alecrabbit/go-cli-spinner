@@ -21,6 +21,7 @@ type element struct {
     charSet        *ring.Ring //
     cFormat        *ring.Ring //
     reversed       bool       //
+    emptyFormat    string     //
 }
 
 func (el *element) getCurrent() string {
@@ -37,9 +38,11 @@ func (el *element) getCurrent() string {
 
 func (el *element) setCurrent(s string) {
     el.current = s
+    if s == "" {
+        el.emptyFormat = ""
+    }
     el.currentWidth = runewidth.StringWidth(el.current) +
-        runewidth.StringWidth(fmt.Sprintf(el.format + el.spacer, ""))
-
+        runewidth.StringWidth(fmt.Sprintf(el.format+el.spacer, ""))
 }
 
 func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
@@ -48,7 +51,7 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
         spacer:         s, //
         colorPrototype: c, //
     }
-    el.cFormat = createColorSet(color.Prototypes[el.colorPrototype], el.format + el.spacer)
+    el.cFormat = createColorSet(color.Prototypes[el.colorPrototype], el.format+el.spacer)
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
