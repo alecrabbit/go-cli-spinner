@@ -63,8 +63,6 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
             return nil, errors.New("spinner.newElement: fourth param expected to be type of []string")
         }
     }
-    fmt.Println(el.currentWidth)
-
     return &el, nil
 }
 

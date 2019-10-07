@@ -38,11 +38,11 @@ func Interval(ms time.Duration) Option {
 // func MessageFormat(f string) Option {
 //     return func(s *Spinner) error {
 //         // TODO: check for correct value
-//         s.formatMessage = f
+//         s.message = f
 //         return nil
 //     }
 // }
-//
+
 // // ProgressFormat sets spinner progress indicator format
 // func ProgressFormat(f string) Option {
 //     return func(s *Spinner) error {
