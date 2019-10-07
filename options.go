@@ -59,7 +59,7 @@ func Interval(ms time.Duration) Option {
 //         s.formatChars = f
 //         s.charColorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
 //         s.char.format = f
-//         s.char.colorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
+//         s.char.cFormat = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
 //         return nil
 //     }
 // }

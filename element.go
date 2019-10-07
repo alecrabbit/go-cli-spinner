@@ -19,7 +19,7 @@ type element struct {
     currentWidth   int        //
     previousWidth  int        //
     charSet        *ring.Ring //
-    colorSet       *ring.Ring //
+    cFormat        *ring.Ring //
     reversed       bool       //
 }
 
@@ -35,13 +35,20 @@ func (el *element) getCurrent() string {
     return el.current
 }
 
+func (el *element) setCurrent(s string) {
+    el.current = s
+    el.currentWidth = runewidth.StringWidth(el.spacer) +
+        runewidth.StringWidth(fmt.Sprintf(el.format, ""))
+
+}
+
 func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
     el := element{
         format:         f, //
         spacer:         s, //
         colorPrototype: c, //
     }
-    el.colorSet = createColorSet(color.Prototypes[el.colorPrototype], el.format)
+    el.cFormat = createColorSet(color.Prototypes[el.colorPrototype], el.format)
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
@@ -60,10 +67,13 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
 }
 
 // Colorize char
-func (el *element) colorized(c string) string {
+func (el *element) colorized(s string) string {
     // Note: external lock
-    // rotate
-    el.colorSet = el.colorSet.Next()
-    // apply
-    return fmt.Sprintf(el.colorSet.Value.(string), c)
+    if el.cFormat != nil {
+        // rotate
+        el.cFormat = el.cFormat.Next()
+        // apply
+        return fmt.Sprintf(el.cFormat.Value.(string), s)
+    }
+    return s
 }

@@ -16,9 +16,9 @@ import (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    // message            *element           //
     // progress           *element           //
     elements           map[int]*element   //
+    message            *element           //
     char               *element           //
     l                  *sync.RWMutex      // lock
     active             bool               // active holds the state of the spinner
@@ -51,15 +51,16 @@ func New(options ...Option) (*Spinner, error) {
         hideCursor:   true,
         Writer:       colorable.NewColorableStderr(),
     }
-    s.char, err = newElement(color.CDark, "%s", " ", CharSets[Snake2])
+    s.char, err = newElement(color.C256Rainbow, "%s", " ", CharSets[Snake2])
     if err != nil {
         return nil, err
     }
 
-    // s.message, err = newElement(color.CDark, "%s", " ")
-    // if err != nil {
-    //     return nil, err
-    // }
+    s.message, err = newElement(color.CDark, "%s", " ")
+    if err != nil {
+        return nil, err
+    }
+    s.message.setCurrent( "message")
     // s.progress, err = newElement(color.CDark, "%s", " ")
     // if err != nil {
     //     return nil, err
@@ -145,11 +146,19 @@ func (s *Spinner) updateCurrentFrame() {
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, "", "")
-    // f := s.prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
-    s.currentFrameWidth = s.frameWidth(f)
+    f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, s.message.colorized(s.message.current), "")
+    s.currentFrameWidth = s.char.currentWidth + s.message.currentWidth
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
+
+// func (s *Spinner) assembleCurrentFrame() {
+//     // Note: external lock
+//     s.previousFrameWidth = s.currentFrameWidth
+//     f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, "", "")
+//     // f := s.prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
+//     s.currentFrameWidth = s.frameWidth(f)
+//     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
+// }
 
 // Write writeCurrentFrame to spinner writer
 func (s *Spinner) writeCurrentFrame() {
@@ -157,13 +166,13 @@ func (s *Spinner) writeCurrentFrame() {
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
 }
 
-func (s *Spinner) refineFormat(f string, format string) string {
-    if s.strip(f) == "" {
-        return "%s"
-    }
-    return format
-}
-
+// func (s *Spinner) refineFormat(f string, format string) string {
+//     if s.strip(f) == "" {
+//         return "%s"
+//     }
+//     return format
+// }
+//
 // Stop stops the spinner
 func (s *Spinner) Stop() {
     s.l.Lock()
