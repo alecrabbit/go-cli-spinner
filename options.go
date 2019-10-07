@@ -43,15 +43,15 @@ func MessageFormat(f string) Option {
     }
 }
 
-// // ProgressFormat sets spinner progress indicator format
-// func ProgressFormat(f string) Option {
-//     return func(s *Spinner) error {
-//         // TODO: check for correct value
-//         s.formatProgress = f
-//         return nil
-//     }
-// }
-//
+// ProgressFormat sets spinner progress indicator format
+func ProgressFormat(f string) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.progressSettings.format = f
+        return nil
+    }
+}
+
 // Format sets spinner format
 func Format(f string) Option {
     return func(s *Spinner) error {

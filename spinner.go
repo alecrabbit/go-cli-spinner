@@ -11,16 +11,17 @@ import (
     "github.com/mattn/go-colorable"
     "github.com/mattn/go-runewidth"
 
+    "github.com/alecrabbit/go-cli-spinner/aux"
     "github.com/alecrabbit/go-cli-spinner/color"
 )
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    // progress           *element           //
     // jugglers           map[int]*juggler
     elements           map[int]*element   //
-    message            *element           //
     char               *element           //
+    message            *element           //
+    progress           *element           //
     l                  *sync.RWMutex      // lock
     active             bool               // active holds the state of the spinner
     colorLevel         color.SupportLevel // writeCurrentFrame color level
@@ -39,6 +40,7 @@ type Spinner struct {
     prefixWidth        int
     charSettings       *elementSettings
     messageSettings    *elementSettings
+    progressSettings   *elementSettings
 }
 
 type elementSettings struct {
@@ -72,14 +74,12 @@ func New(options ...Option) (*Spinner, error) {
         colorizingSet: color.C256YellowWhite,
         format:        "%s",
         spacer:        " ",
-        charSet:       nil,
     }
-    // s.message.currentWidth = 8
-    // s.progress, err = newElement(color.CDark, "%s", " ")
-    // if err != nil {
-    //     return nil, err
-    // }
-
+    s.progressSettings = &elementSettings{
+        colorizingSet: color.C256YellowWhite,
+        format:        "%s",
+        spacer:        " ",
+    }
     // // Initialize default characters colorizing set
     // s.charColorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
     // s.messageColorSet = createColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
@@ -115,8 +115,15 @@ func New(options ...Option) (*Spinner, error) {
         return nil, err
     }
 
-    // // Get first frame to correctly initialize output format
-    // s.updateCurrentFrame()
+    s.progress, err = newElement(
+        s.progressSettings.colorizingSet,
+        s.progressSettings.format,
+        s.progressSettings.spacer,
+        s.progressSettings.charSet,
+    )
+    if err != nil {
+        return nil, err
+    }
 
     return &s, nil
 }
@@ -180,8 +187,13 @@ func (s *Spinner) updateCurrentFrame() {
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, s.message.colorized(s.message.current), "")
-    s.currentFrameWidth = s.prefixWidth + s.char.currentWidth + s.message.currentWidth
+    f := s.prefix + fmt.Sprintf(
+        s.outputFormat,
+        s.char.current,
+        s.message.colorized(s.message.current),
+        s.progress.colorized(s.progress.current),
+    )
+    s.currentFrameWidth = s.prefixWidth + s.char.currentWidth + s.message.currentWidth + s.progress.currentWidth
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
@@ -261,24 +273,25 @@ func (s *Spinner) Message(m string) {
 
 }
 
-// // Progress sets spinner progress value 0..1 → 0%..100%
-// func (s *Spinner) Progress(p float32) {
-//     p = aux.Bounds(p)
-//     var r string
-//     switch {
-//     case p > 0:
-//         r = fmt.Sprintf("%.0f%%", p*float32(100))
-//     default:
-//         r = ""
-//     }
-//     s.l.Lock()
-//     defer s.l.Unlock()
-//     if r != "" {
-//         s.currentProgress = s.colorizeProgress(fmt.Sprintf(s.formatProgress, r))
-//     } else {
-//         s.currentProgress = ""
-//     }
-// }
+// Progress sets spinner progress value 0..1 → 0%..100%
+func (s *Spinner) Progress(p float32) {
+    p = aux.Bounds(p)
+    var r string
+    switch {
+    case p > 0:
+        r = fmt.Sprintf("%.0f%%", p*float32(100))
+    default:
+        r = ""
+    }
+    s.l.Lock()
+    defer s.l.Unlock()
+    s.progress.setCurrent(r)
+    // if r != "" {
+    //     s.progress = s.colorizeProgress(fmt.Sprintf(s.formatProgress, r))
+    // } else {
+    //     s.currentProgress = ""
+    // }
+}
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {

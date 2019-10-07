@@ -41,8 +41,7 @@ func (el *element) setCurrent(s string) {
     if s == "" {
         el.emptyFormat = ""
     }
-    el.currentWidth = runewidth.StringWidth(el.current) +
-        runewidth.StringWidth(fmt.Sprintf(el.format+el.spacer, ""))
+    el.currentWidth = runewidth.StringWidth(fmt.Sprintf(el.format+el.spacer, el.current))
 }
 
 func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
