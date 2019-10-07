@@ -1,11 +1,8 @@
-# 🏵️  Go Console Spinner
+# 🏵️  Go Console Spinner ```*** COMING SOON ***```
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/alecrabbit/go-cli-spinner)](https://goreportcard.com/report/github.com/alecrabbit/go-cli-spinner)
 
-# ```*** COMING SOON ***```
- 
 > API may be a subject to change
-
 
 ### Features todo list
 - [x] highly configurable
