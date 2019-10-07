@@ -17,6 +17,7 @@ import (
 // Spinner struct representing spinner instance
 type Spinner struct {
     // progress           *element           //
+    // jugglers           map[int]*juggler
     elements           map[int]*element   //
     message            *element           //
     char               *element           //
@@ -35,6 +36,7 @@ type Spinner struct {
     hideCursor         bool               // flag, hide cursor
     prefix             string             // spinner prefix
     Writer             io.Writer          // to make testing better, exported so users have access
+    prefixWidth        int
 }
 
 // New provides a pointer to an instance of Spinner
@@ -56,11 +58,11 @@ func New(options ...Option) (*Spinner, error) {
         return nil, err
     }
 
-    s.message, err = newElement(color.CDark, "%s", " ")
+    s.message, err = newElement(color.C256YellowWhite, "%s", " ")
     if err != nil {
         return nil, err
     }
-    s.message.setCurrent( "message")
+    // s.message.currentWidth = 8
     // s.progress, err = newElement(color.CDark, "%s", " ")
     // if err != nil {
     //     return nil, err
@@ -147,7 +149,7 @@ func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
     f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, s.message.colorized(s.message.current), "")
-    s.currentFrameWidth = s.char.currentWidth + s.message.currentWidth
+    s.currentFrameWidth = s.prefixWidth + s.char.currentWidth + s.message.currentWidth
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
@@ -164,6 +166,7 @@ func (s *Spinner) assembleCurrentFrame() {
 func (s *Spinner) writeCurrentFrame() {
     // Note: external lock
     _, _ = fmt.Fprint(s.Writer, s.currentFrame)
+    // _, _ = fmt.Fprint(s.Writer, replaceEscapes(s.currentFrame) + "\n")
 }
 
 // func (s *Spinner) refineFormat(f string, format string) string {
@@ -218,16 +221,18 @@ func (s *Spinner) Current() {
     s.l.Unlock()
 }
 
-// // Message sets spinner message
-// func (s *Spinner) Message(m string) {
-//     s.l.Lock()
-//     defer s.l.Unlock()
-//     if m != "" {
-//         s.currentMessage = s.colorizeMessage(fmt.Sprintf(s.formatMessage, m))
-//     } else {
-//         s.currentMessage = ""
-//     }
-// }
+// Message sets spinner message
+func (s *Spinner) Message(m string) {
+    s.l.Lock()
+    defer s.l.Unlock()
+    s.message.setCurrent(m)
+
+    // if m != "" {
+    //     s.currentMessage = s.colorizeMessage(fmt.Sprintf(s.formatMessage, m))
+    // } else {
+    //     s.currentMessage = ""
+    // }
+}
 
 // // Progress sets spinner progress value 0..1 → 0%..100%
 // func (s *Spinner) Progress(p float32) {

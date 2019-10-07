@@ -69,6 +69,7 @@ func Prefix(p string) Option {
     return func(s *Spinner) error {
         // TODO: check for correct value
         s.prefix = p
+        s.prefixWidth = s.frameWidth(p)
         return nil
     }
 }
