@@ -181,7 +181,8 @@ func (s *Spinner) spin() {
 
 func (s *Spinner) updateCurrentFrame() {
     // Note: external lock
-    s.char.current = s.char.colorized(s.char.getCurrent())
+    s.char.update()
+    // s.char.current = s.char.colorized(s.char.update())
 }
 
 func (s *Spinner) assembleCurrentFrame() {
@@ -189,7 +190,8 @@ func (s *Spinner) assembleCurrentFrame() {
     s.previousFrameWidth = s.currentFrameWidth
     f := s.prefix + fmt.Sprintf(
         s.outputFormat,
-        s.char.current,
+        s.char.colorized(s.char.current),
+        // s.char.current,
         s.message.colorized(s.message.current),
         s.progress.colorized(s.progress.current),
     )

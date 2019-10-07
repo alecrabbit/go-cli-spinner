@@ -14,17 +14,16 @@ import (
 type element struct {
     format         string     //
     spacer         string     //
-    colorPrototype int        //
     current        string     //
     currentWidth   int        //
-    previousWidth  int        //
+    // previousWidth  int        //
     charSet        *ring.Ring //
     cFormat        *ring.Ring //
     reversed       bool       //
     emptyFormat    string     //
 }
 
-func (el *element) getCurrent() string {
+func (el *element) update() {
     if el.charSet != nil {
         if el.reversed {
             el.charSet = el.charSet.Prev()
@@ -33,7 +32,6 @@ func (el *element) getCurrent() string {
         }
         el.current = el.charSet.Value.(string)
     }
-    return el.current
 }
 
 func (el *element) setCurrent(s string) {
@@ -48,9 +46,8 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
     el := element{
         format:         f, //
         spacer:         s, //
-        colorPrototype: c, //
     }
-    el.cFormat = createColorSet(color.Prototypes[el.colorPrototype], el.format+el.spacer)
+    el.cFormat = createColorSet(color.Prototypes[c], el.format+el.spacer)
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
@@ -59,7 +56,7 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
                     runewidth.StringWidth(el.charSet.Value.(string)) +
                         runewidth.StringWidth(el.spacer) +
                         runewidth.StringWidth(fmt.Sprintf(el.format, ""))
-                el.previousWidth = el.currentWidth
+                // el.previousWidth = el.currentWidth
             }
         } else {
             return nil, errors.New("spinner.newElement: fourth param expected to be type of []string")
