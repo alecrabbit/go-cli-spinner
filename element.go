@@ -16,7 +16,6 @@ type element struct {
     spacer         string     //
     current        string     //
     currentWidth   int        //
-    // previousWidth  int        //
     charSet        *ring.Ring //
     cFormat        *ring.Ring //
     reversed       bool       //
@@ -29,7 +28,6 @@ type elementSettings struct {
     spacer        string
     charSet       []string
 }
-
 
 func (el *element) update() {
     if el.charSet != nil {
@@ -62,9 +60,7 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
             if el.charSet != nil {
                 el.currentWidth =
                     runewidth.StringWidth(el.charSet.Value.(string)) +
-                        runewidth.StringWidth(el.spacer) +
-                        runewidth.StringWidth(fmt.Sprintf(el.format, ""))
-                // el.previousWidth = el.currentWidth
+                        runewidth.StringWidth(fmt.Sprintf(el.format, el.spacer))
             }
         } else {
             return nil, errors.New("spinner.newElement: fourth param expected to be type of []string")
