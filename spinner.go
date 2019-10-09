@@ -118,19 +118,6 @@ func (s *Spinner) Active() bool {
     return s.active
 }
 
-// // Get writeCurrentFrame spinner frame
-// func (s *Spinner) getCurrentChar() string {
-//     // Note: external lock
-//     // Rotate Ring
-//     if s.reversed {
-//         s.char.charSet = s.char.charSet.Prev() // Backward
-//     } else {
-//         s.char.charSet = s.char.charSet.Next() // Forward
-//     }
-//     // writeCurrentFrame frame
-//     return s.char.charSet.Value.(string)
-// }
-
 // Start will start the spinner
 func (s *Spinner) Start() {
     s.l.Lock()
@@ -167,7 +154,6 @@ func (s *Spinner) spin() {
 func (s *Spinner) updateCurrentFrame() {
     // Note: external lock
     s.char.update()
-    // s.char.current = s.char.colorized(s.char.update())
 }
 
 func (s *Spinner) assembleCurrentFrame() {
@@ -184,15 +170,6 @@ func (s *Spinner) assembleCurrentFrame() {
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
-// func (s *Spinner) assembleCurrentFrame() {
-//     // Note: external lock
-//     s.previousFrameWidth = s.currentFrameWidth
-//     f := s.prefix + fmt.Sprintf(s.outputFormat, s.char.current, "", "")
-//     // f := s.prefix + fmt.Sprintf(s.outputFormat, s.currentChar, s.currentMessage, s.currentProgress)
-//     s.currentFrameWidth = s.frameWidth(f)
-//     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
-// }
-
 // Write writeCurrentFrame to spinner writer
 func (s *Spinner) writeCurrentFrame() {
     // Note: external lock
@@ -200,13 +177,6 @@ func (s *Spinner) writeCurrentFrame() {
     // _, _ = fmt.Fprint(s.Writer, replaceEscapes(s.currentFrame) + "\n")
 }
 
-// func (s *Spinner) refineFormat(f string, format string) string {
-//     if s.strip(f) == "" {
-//         return "%s"
-//     }
-//     return format
-// }
-//
 // Stop stops the spinner
 func (s *Spinner) Stop() {
     s.l.Lock()
@@ -273,48 +243,9 @@ func (s *Spinner) Progress(p float32) {
     s.l.Lock()
     defer s.l.Unlock()
     s.progress.setCurrent(r)
-    // if r != "" {
-    //     s.progress = s.colorizeProgress(fmt.Sprintf(s.formatProgress, r))
-    // } else {
-    //     s.currentProgress = ""
-    // }
 }
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
     return runewidth.StringWidth(s.strip(f))
 }
-
-// // Colorize char
-// func (s *Spinner) colorizeChar(c string) string {
-//     // Note: external lock
-//     if s.colorLevel > color.TNoColor {
-//         // Rotate Ring
-//         s.charColorSet = s.charColorSet.Next()
-//         // apply charColorSet format
-//         return fmt.Sprintf(s.charColorSet.Value.(string), c)
-//     }
-//     return c
-// }
-//
-// // Colorize message
-// func (s *Spinner) colorizeMessage(m string) string {
-//     if s.colorLevel > color.TNoColor && s.messageColorSet != nil {
-//         s.messageColorSet = s.messageColorSet.Next()
-//         // apply charColorSet format
-//         return fmt.Sprintf(s.messageColorSet.Value.(string), m)
-//         // return fmt.Sprintf("\x1b[2m%s\x1b[0m", m) // Dark
-//     }
-//     return m
-// }
-//
-// // Colorize progress
-// func (s *Spinner) colorizeProgress(p string) string {
-//     if s.colorLevel > color.TNoColor && s.progressColorSet != nil {
-//         s.progressColorSet = s.progressColorSet.Next()
-//         // apply charColorSet format
-//         return fmt.Sprintf(s.progressColorSet.Value.(string), p)
-//         // return fmt.Sprintf("\x1b[2m%s\x1b[0m", p) // Dark
-//     }
-//     return p
-// }
