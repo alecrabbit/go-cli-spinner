@@ -23,6 +23,14 @@ type element struct {
     emptyFormat    string     //
 }
 
+type elementSettings struct {
+    colorizingSet int
+    format        string
+    spacer        string
+    charSet       []string
+}
+
+
 func (el *element) update() {
     if el.charSet != nil {
         if el.reversed {

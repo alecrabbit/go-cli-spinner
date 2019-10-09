@@ -43,13 +43,6 @@ type Spinner struct {
     progressSettings   *elementSettings
 }
 
-type elementSettings struct {
-    colorizingSet int
-    format        string
-    spacer        string
-    charSet       []string
-}
-
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
     var err error
@@ -80,14 +73,6 @@ func New(options ...Option) (*Spinner, error) {
         format:        "%s",
         spacer:        " ",
     }
-    // // Initialize default characters colorizing set
-    // s.charColorSet = createColorSet(color.Prototypes[s.charColorPrototype], s.formatChars)
-    // s.messageColorSet = createColorSet(color.Prototypes[s.messageColorPrototype], s.formatMessage)
-    // s.progressColorSet = createColorSet(color.Prototypes[s.progressColorPrototype], s.formatProgress)
-
-    // // Initialize default characters set
-    // s.charSet = applyCharSet(CharSets[Snake2])
-
     // Process provided options
     for _, option := range options {
         err := option(&s)
