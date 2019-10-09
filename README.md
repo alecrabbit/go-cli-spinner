@@ -68,13 +68,13 @@ func main() {
     }
 
     s, err := spinner.New(
-        // Override default refresh interval, each CharSet has it's own recommended  refresh interval
+        // Override default refresh interval, each CharSet has it's own recommended refresh interval
         spinner.Interval(120),
         // Override default color level support, default: TColor256
         spinner.ColorLevel(color.TColor256),
         spinner.ProgressFormat("[%4s]"),     // [  7%]
         spinner.MessageFormat("(%s)"),       // (message)
-        spinner.Format("-%s -"),       // (message)
+        spinner.Format("-%s -"),       // -⠏ -
         spinner.Prefix("\x1b[38;5;161mprefix\x1b[0m"),
         spinner.FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
         spinner.Reverse(),
