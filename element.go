@@ -44,6 +44,8 @@ func (el *element) setCurrent(s string) {
     el.current = s
     if s == "" {
         el.emptyFormat = ""
+        el.currentWidth = 0
+        return
     }
     el.currentWidth = runewidth.StringWidth(fmt.Sprintf(el.format+el.spacer, el.current))
 }
@@ -70,13 +72,16 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
 }
 
 // Colorize char
-func (el *element) colorized(s string) string {
+func (el *element) colorized() string {
     // Note: external lock
+    if el.current == "" {
+        return ""
+    }
     if el.colorFormat != nil {
         // rotate
         el.colorFormat = el.colorFormat.Next()
         // apply
-        return fmt.Sprintf(el.colorFormat.Value.(string), s)
+        return fmt.Sprintf(el.colorFormat.Value.(string), el.current)
     }
-    return s
+    return el.current
 }
