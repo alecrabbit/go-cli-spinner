@@ -11,7 +11,7 @@
 - [x] highly configurable
 - [x] progress indication during spin `spinner.Progress(0.5)` ➙ `50%`
 - [x] messages during spin `spinner.Message("message")`
-- [ ] configurable elements order - chars, messages and progress
+- [x] configurable elements order - chars, messages and progress
 - [x] separated format settings for chars, messages and progress
 - [ ] separated color settings for chars, messages and progress
 - [ ] has `Disable()` and `Enable()` methods (questionable)
