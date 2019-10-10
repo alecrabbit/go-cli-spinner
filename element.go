@@ -12,14 +12,14 @@ import (
 
 // element ...
 type element struct {
-    format         string     //
-    spacer         string     //
-    current        string     //
-    currentWidth   int        //
-    charSet        *ring.Ring //
-    cFormat        *ring.Ring //
-    reversed       bool       //
-    emptyFormat    string     //
+    format       string     //
+    spacer       string     //
+    current      string     //
+    currentWidth int        //
+    charSet      *ring.Ring //
+    colorFormat  *ring.Ring //
+    reversed     bool       //
+    emptyFormat  string     //
 }
 
 type elementSettings struct {
@@ -53,7 +53,7 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
         format:         f, //
         spacer:         s, //
     }
-    el.cFormat = createColorSet(color.Prototypes[c], el.format+el.spacer)
+    el.colorFormat = createColorSet(color.Prototypes[c], el.format+el.spacer)
     if cs != nil {
         if v, ok := cs[0].([]string); ok {
             el.charSet = applyCharSet(v)
@@ -72,11 +72,11 @@ func newElement(c int, f, s string, cs ...interface{}) (*element, error) {
 // Colorize char
 func (el *element) colorized(s string) string {
     // Note: external lock
-    if el.cFormat != nil {
+    if el.colorFormat != nil {
         // rotate
-        el.cFormat = el.cFormat.Next()
+        el.colorFormat = el.colorFormat.Next()
         // apply
-        return fmt.Sprintf(el.cFormat.Value.(string), s)
+        return fmt.Sprintf(el.colorFormat.Value.(string), s)
     }
     return s
 }
