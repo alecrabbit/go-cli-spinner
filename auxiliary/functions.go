@@ -1,4 +1,4 @@
-package aux
+package auxiliary
 
 // Bounds restricts f value into bounds of 0..1
 func Bounds(f float32) float32 {
