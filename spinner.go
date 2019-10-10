@@ -11,14 +11,14 @@ import (
     "github.com/mattn/go-colorable"
     "github.com/mattn/go-runewidth"
 
-    "github.com/alecrabbit/go-cli-spinner/aux"
+    "github.com/alecrabbit/go-cli-spinner/auxiliary"
     "github.com/alecrabbit/go-cli-spinner/color"
 )
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    // jugglers           map[int]*juggler
     elements           map[int]*element   //
+    elementsOrder      []int              //
     char               *element           //
     message            *element           //
     progress           *element           //
@@ -47,15 +47,16 @@ type Spinner struct {
 func New(options ...Option) (*Spinner, error) {
     var err error
     s := Spinner{
-        regExp:       regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
-        interval:     120 * time.Millisecond,
-        l:            &sync.RWMutex{},
-        colorLevel:   color.TColor256,
-        outputFormat: "%s%s%s",
-        stop:         make(chan bool),
-        finalMessage: "",
-        hideCursor:   true,
-        Writer:       colorable.NewColorableStderr(),
+        regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+        interval:      120 * time.Millisecond,
+        l:             &sync.RWMutex{},
+        colorLevel:    color.TColor256,
+        outputFormat:  "%s%s%s%s",
+        stop:          make(chan bool),
+        finalMessage:  "",
+        hideCursor:    true,
+        Writer:        colorable.NewColorableStderr(),
+        elementsOrder: []int{Char, Message, Progress},
     }
     s.charSettings = &elementSettings{
         colorizingSet: color.C256Rainbow,
@@ -109,7 +110,12 @@ func New(options ...Option) (*Spinner, error) {
     if err != nil {
         return nil, err
     }
-
+    s.elements = map[int]*element{
+        Char: s.char,
+        Message: s.message,
+        Progress: s.progress,
+    }
+    fmt.Printf("Order %v\n", s.elementsOrder)
     return &s, nil
 }
 
@@ -159,12 +165,18 @@ func (s *Spinner) updateCurrentFrame() {
 func (s *Spinner) assembleCurrentFrame() {
     // Note: external lock
     s.previousFrameWidth = s.currentFrameWidth
-    f := s.prefix + fmt.Sprintf(
+    first := s.elements[s.elementsOrder[0]]
+    second := s.elements[s.elementsOrder[1]]
+    third := s.elements[s.elementsOrder[2]]
+    f := fmt.Sprintf(
         s.outputFormat,
-        s.char.colorized(s.char.current),
-        // s.char.current,
-        s.message.colorized(s.message.current),
-        s.progress.colorized(s.progress.current),
+        s.prefix,
+        first.colorized(first.current),
+        second.colorized(second.current),
+        third.colorized(third.current),
+        // s.char.colorized(s.char.current),
+        // s.message.colorized(s.message.current),
+        // s.progress.colorized(s.progress.current),
     )
     s.currentFrameWidth = s.prefixWidth + s.char.currentWidth + s.message.currentWidth + s.progress.currentWidth
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
@@ -232,7 +244,7 @@ func (s *Spinner) Message(m string) {
 
 // Progress sets spinner progress value 0..1 → 0%..100%
 func (s *Spinner) Progress(p float32) {
-    p = aux.Bounds(p)
+    p = auxiliary.Bounds(p)
     var r string
     switch {
     case p > 0:
