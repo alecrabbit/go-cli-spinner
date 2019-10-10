@@ -15,8 +15,11 @@ import (
 // }
 
 const (
+	// Char represents char element
 	Char = 1 + iota
+	// Message represents message element
 	Message
+	// Progress represents progress element
 	Progress
 )
 
