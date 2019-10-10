@@ -16,15 +16,15 @@
 - [ ] separated color settings for chars, messages and progress
 - [ ] has `Disable()` and `Enable()` methods (questionable)
 - [x] hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
-- [x] cursor hide can be disabled `spinner.HideCursor = false` 
+- [x] cursor hide can be disabled `spinner.HideCursor(false)` 
 - [x] has `Erase()` method
-- [x] has `Current()` method for smooth animation
+- [x] has `Current()` method to write current frame again for smooth animation
 - [x] final message
 - [x] supports pipe `|` and redirect `>` output
 
 It's a proof of concept and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
 
-## For now you can try it **as is** and shape it's development if you wish
+For now you can try it **as is** and shape it's development if you wish
 
 > Xterm terminal(package uses ANSI codes) 
 
