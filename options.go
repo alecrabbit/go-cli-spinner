@@ -1,6 +1,7 @@
 package spinner
 
 import (
+    "errors"
     "time"
 
     "github.com/alecrabbit/go-cli-spinner/color"
@@ -13,6 +14,12 @@ import (
 // 	charColorSet *ring.Ring // charColorSet holds chosen colorizeChar set
 // }
 
+const (
+    Char = 1 + iota
+    Message
+    Progress
+)
+
 // Option type for functional options
 type Option func(*Spinner) error
 
@@ -21,6 +28,18 @@ func ColorLevel(cl color.SupportLevel) Option {
     return func(s *Spinner) error {
         // TODO: check for correct value
         s.colorLevel = cl
+        return nil
+    }
+}
+
+// Order ...
+func Order(o ...int) Option {
+    return func(s *Spinner) error {
+        if len(o) < 3 {
+            return errors.New("order option should contain three values")
+        }
+        // TODO: check for correct value
+        s.elementsOrder = o
         return nil
     }
 }
