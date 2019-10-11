@@ -115,7 +115,7 @@ func New(options ...Option) (*Spinner, error) {
 		Message:  s.message,
 		Progress: s.progress,
 	}
-	fmt.Printf("Order %v\n", s.elementsOrder)
+	// fmt.Printf("Order %v\n", s.elementsOrder)
 	return &s, nil
 }
 

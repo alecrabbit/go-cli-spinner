@@ -28,4 +28,26 @@ For now you can try it **as is** and shape it's development if you wish
 
 > Works on Windows too! Thanks to [mattn/go-colorable](https://github.com/mattn/go-colorable)
 
-## [Examples](https://github.com/alecrabbit/go-cli-spinner/tree/master/examples/)
+### [Examples](https://github.com/alecrabbit/go-cli-spinner/tree/master/examples/)
+
+### Quickstart
+
+```go
+package main
+
+import (
+	"time"
+
+	"github.com/alecrabbit/go-cli-spinner"
+)
+
+func main() {
+	s, _ := spinner.New()
+	// Start spinner
+	s.Start()
+	// Doing some work
+	time.Sleep(10 * time.Second)
+	// Stop spinner
+	s.Stop()
+}
+```
