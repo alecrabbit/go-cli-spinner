@@ -1,7 +1,6 @@
 package spinner
 
 import (
-    "errors"
     "fmt"
     "sort"
     "time"
@@ -43,20 +42,18 @@ func Order(o ...int) Option {
     return func(s *Spinner) error {
         u := auxiliary.Unique(o)
         if len(u) < 3 {
-            return errors.New(
-            	fmt.Sprintf("spinner: order option should contain three unique values, given: %v", o))
+            return fmt.Errorf("spinner: order option should contain three unique values, given: %v", o)
         }
-	    c := make([]int, len(u))
-	    copy(c, u)
+        c := make([]int, len(u))
+        copy(c, u)
         sort.Ints(c)
-	    if !auxiliary.Equal(c, []int{1, 2, 3}) {
-            return errors.New(
-                fmt.Sprintf("spinner: order option should contain all elements identifiers %v, given: %v",
-	                []int{Char, Message, Progress},
-                    o))
-
+        if !auxiliary.Equal(c, []int{1, 2, 3}) {
+            return fmt.Errorf(
+                "spinner: order option should contain all elements identifiers %v, given: %v",
+                []int{Char, Message, Progress},
+                o)
         }
-	    s.elementsOrder = u
+        s.elementsOrder = u
         return nil
     }
 }
