@@ -42,12 +42,39 @@ import (
 )
 
 func main() {
-	s, _ := spinner.New()
-	// Start spinner
-	s.Start()
-	// Doing some work
-	time.Sleep(10 * time.Second)
-	// Stop spinner
-	s.Stop()
+    s, _ := spinner.New()
+    // Start spinner
+    s.Start()
+    // Doing some work
+    time.Sleep(3 * time.Second)
+    // Set current message
+    s.Message("Current message")
+    // Set current progress
+    s.Progress(0.511)
+    // Doing some work
+    time.Sleep(3 * time.Second)
+    // Stop spinner
+    s.Stop()
 }
 ```
+
+### Usage
+
+#### Method `spinner.Message`
+
+```go
+    // Set current message
+    spinner.Message("Current message")
+    // Hide message element
+    spinner.Message("")
+```
+
+#### Method `spinner.Progress`
+
+```go
+    // Set current progress value 0..1
+    spinner.Progress(0.511) // 51.1% 
+    // Hide progress element
+    spinner.Progress(0)
+```
+> Note: shown progress value depends on `ProgressIndicatorFormat`, default is "%0.f%%" and shows `70%`, for value `0.705`
