@@ -5,20 +5,21 @@
 
 > API may be a subject to change
 
-### Features todo list
-- [x] highly configurable
-- [x] progress indication during spin `spinner.Progress(0.5)` ➙ `50%`
-- [x] messages during spin `spinner.Message("message")`
-- [x] configurable elements order - chars, messages and progress
-- [x] separated format settings for chars, messages and progress
+### Features
+- highly configurable ([options](docs/options.md))
+- progress indication during spin `spinner.Progress(0.5)` ➙ `50%`
+- messages during spin `spinner.Message("message")`
+- configurable elements order - chars, messages and progress
+- separated format settings for chars, messages and progress
+- hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
+- cursor hide can be disabled `spinner.HideCursor(false)` 
+- has `Erase()` method
+- has `Current()` method to write current frame again for smooth animation
+- final message
+- supports pipe `|` and redirect `>` output
+
 - [ ] separated color settings for chars, messages and progress
 - [ ] has `Disable()` and `Enable()` methods (questionable)
-- [x] hides cursor on `spinner.Start()`, shows on `spinner.Stop()`
-- [x] cursor hide can be disabled `spinner.HideCursor(false)` 
-- [x] has `Erase()` method
-- [x] has `Current()` method to write current frame again for smooth animation
-- [x] final message
-- [x] supports pipe `|` and redirect `>` output
 
 It's a proof of concept and kinda port of [alecrabbit/php-console-spinner](https://github.com/alecrabbit/php-console-spinner)
 
@@ -58,23 +59,4 @@ func main() {
 }
 ```
 
-### Usage
-
-#### Method `spinner.Message`
-
-```go
-    // Set current message
-    spinner.Message("Current message")
-    // Hide message element
-    spinner.Message("")
-```
-
-#### Method `spinner.Progress`
-
-```go
-    // Set current progress value 0..1
-    spinner.Progress(0.511) // 51.1% 
-    // Hide progress element
-    spinner.Progress(0)
-```
-> Note: shown progress value depends on `ProgressIndicatorFormat`, default is "%0.f%%" and shows `70%`, for value `0.705`
+### [Usage](docs/usage.md)

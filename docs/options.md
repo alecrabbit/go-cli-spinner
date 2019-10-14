@@ -1,0 +1,32 @@
+## Options
+
+// TODO
+
+> Note: some options shown below are not fully implemented yet
+
+```go
+    s, _ := spinner.New(
+        // Override default refresh interval, each CharSet has it's own recommended refresh interval
+        spinner.Interval(120),
+        // Override default color level support, default: TColor256
+        spinner.ColorLevel(color.TColor256),
+        // Override default elements order
+        spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
+        // Override default progress element format
+        spinner.ProgressFormat("%5s"),             // default: "%4s"
+         // Override default progress indicator format
+        spinner.ProgressIndicatorFormat("%.1f%%"), // 0.501 -> 50.1%, default: "%.0f%%" 0.501 -> 50%
+        // Override default message format
+        spinner.MessageFormat("(%s)"),   // (message)
+        // Override default spinner element format
+        spinner.Format("-%s -"),            // -⠏// -
+        // Set prefix, default: ""
+        spinner.Prefix("\x1b[38;5;161m>>\x1b[0m"),
+        // Set final message, printed on s.Stop()
+        spinner.FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
+        // Spin in the opposite direction
+        spinner.Reverse(),
+        // Disable hide cursor 
+        spinner.HideCursor(false),
+    )
+-```
