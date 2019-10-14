@@ -10,6 +10,8 @@
         spinner.Variant(spinner.Clock), // default spinner.Snake2
         // Override default refresh interval, each CharSet has it's own recommended refresh interval
         spinner.Interval(120),
+        // Set your own character set
+        spinner.CharSet([]string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}),
         // Override default color level support, default: TColor256
         spinner.ColorLevel(color.TColor256),
         // Override default elements order

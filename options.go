@@ -66,7 +66,10 @@ func Variant(v int) Option {
 // Variant sets spinner variant
 func CharSet(c []string) Option {
     return func(s *Spinner) error {
-        // TODO: check for correct value
+        err := checkCharSet(c)
+        if err != nil {
+            return err
+        }
         s.charSettings.charSet = c
         return nil
     }

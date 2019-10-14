@@ -12,6 +12,9 @@ const (
     clockOneThirty = '\U0001F55C'
 )
 
+const MaxCharSetSize = 60
+
+
 // Declared spinner types
 const (
     BlockVertical int = iota
@@ -210,20 +213,26 @@ func checkCharSets() {
     // }
     // Check NewCharSets for width conformity
     for n := range NewCharSets {
-        checkCharSet(n)
+        err := checkCharSet(NewCharSets[n].chars)
+        if err != nil {
+            panic(err)
+        }
     }
 }
 
-func checkCharSet(n int) {
+func checkCharSet(c []string) error {
+    if len(c) > MaxCharSetSize {
+        return fmt.Errorf("given charset is too big: %v, max: %v", len(c), MaxCharSetSize)
+    }
     var widths []int
-    for _, c := range NewCharSets[n].chars {
+    for _, c := range c {
         width := runewidth.StringWidth(c)
         widths = append(widths, width)
     }
     for _, w := range widths {
         if w != widths[0] {
-            panic(fmt.Sprintf(
-                "\nAmbiguous widths for char set [%v]\n %v\n %v\n", n, NewCharSets[n].chars, widths))
+            return fmt.Errorf("\nAmbiguous widths for char set:\n %v\n %v\n", c, widths)
         }
     }
+    return nil
 }
