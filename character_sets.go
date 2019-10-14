@@ -210,16 +210,20 @@ func checkCharSets() {
     // }
     // Check NewCharSets for width conformity
     for n := range NewCharSets {
-        var widths []int
-        for _, c := range NewCharSets[n].chars {
-            width := runewidth.StringWidth(c)
-            widths = append(widths, width)
-        }
-        for _, w := range widths {
-            if w != widths[0] {
-                panic(fmt.Sprintf(
-                    "\nAmbiguous widths for char set [%v]\n %v\n %v\n", n, NewCharSets[n].chars, widths))
-            }
+        checkCharSet(n)
+    }
+}
+
+func checkCharSet(n int) {
+    var widths []int
+    for _, c := range NewCharSets[n].chars {
+        width := runewidth.StringWidth(c)
+        widths = append(widths, width)
+    }
+    for _, w := range widths {
+        if w != widths[0] {
+            panic(fmt.Sprintf(
+                "\nAmbiguous widths for char set [%v]\n %v\n %v\n", n, NewCharSets[n].chars, widths))
         }
     }
 }

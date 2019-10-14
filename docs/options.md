@@ -6,10 +6,10 @@
 
 ```go
     s, _ := spinner.New(
-        // Override default refresh interval, each CharSet has it's own recommended refresh interval
-        spinner.Interval(120),
         // Set spinner variant
         spinner.Variant(spinner.Clock), // default spinner.Snake2
+        // Override default refresh interval, each CharSet has it's own recommended refresh interval
+        spinner.Interval(120),
         // Override default color level support, default: TColor256
         spinner.ColorLevel(color.TColor256),
         // Override default elements order
@@ -32,3 +32,8 @@
         spinner.HideCursor(false),
     )
 ```
+
+## Options order
+
+- option `spinner.Interval(int)` should be after `spinner.Variant(int)`
+- option `spinner.CharSet([]string)` should be after `spinner.Variant(int)`

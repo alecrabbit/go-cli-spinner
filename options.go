@@ -51,15 +51,6 @@ func Order(o ...int) Option {
     }
 }
 
-// Interval sets interval between spinner refreshes
-func Interval(ms time.Duration) Option {
-    return func(s *Spinner) error {
-        // TODO: check for correct value
-        s.interval = ms * time.Millisecond
-        return nil
-    }
-}
-
 // Variant sets spinner variant
 func Variant(v int) Option {
     return func(s *Spinner) error {
@@ -68,6 +59,24 @@ func Variant(v int) Option {
         }
         s.interval = NewCharSets[v].interval * time.Millisecond
         s.charSettings.charSet = NewCharSets[v].chars
+        return nil
+    }
+}
+
+// Variant sets spinner variant
+func CharSet(c []string) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.charSettings.charSet = c
+        return nil
+    }
+}
+
+// Interval sets interval between spinner refreshes
+func Interval(ms time.Duration) Option {
+    return func(s *Spinner) error {
+        // TODO: check for correct value
+        s.interval = ms * time.Millisecond
         return nil
     }
 }
