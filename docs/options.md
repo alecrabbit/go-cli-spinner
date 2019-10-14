@@ -8,6 +8,8 @@
     s, _ := spinner.New(
         // Override default refresh interval, each CharSet has it's own recommended refresh interval
         spinner.Interval(120),
+        // Set spinner variant
+        spinner.Variant(spinner.Clock), // default spinner.Snake2
         // Override default color level support, default: TColor256
         spinner.ColorLevel(color.TColor256),
         // Override default elements order
@@ -29,4 +31,4 @@
         // Disable hide cursor 
         spinner.HideCursor(false),
     )
--```
+```
