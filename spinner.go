@@ -31,16 +31,17 @@ type Spinner struct {
 	currentFrame       string             // current frame string to write to output
 	currentFrameWidth  int                // width of currentFrame string
 	previousFrameWidth int                // previous width of currentFrame string
-	interval           time.Duration      // interval between spinner refreshes
-	finalMessage       string             // spinner final message, displayed after Stop()
-	reversed           bool               // flag, spin in the opposite direction
-	hideCursor         bool               // flag, hide cursor
-	prefix             string             // spinner prefix
-	Writer             io.Writer          // to make testing better, exported so users have access
-	prefixWidth        int
-	charSettings       *elementSettings
-	messageSettings    *elementSettings
-	progressSettings   *elementSettings
+	// variant            int                // spinner variant
+	interval         time.Duration // interval between spinner refreshes
+	finalMessage     string        // spinner final message, displayed after Stop()
+	reversed         bool          // flag, spin in the opposite direction
+	hideCursor       bool          // flag, hide cursor
+	prefix           string        // spinner prefix
+	Writer           io.Writer     // to make testing better, exported so users have access
+	prefixWidth      int
+	charSettings     *elementSettings
+	messageSettings  *elementSettings
+	progressSettings *elementSettings
 }
 
 // New provides a pointer to an instance of Spinner
@@ -48,7 +49,7 @@ func New(options ...Option) (*Spinner, error) {
 	var err error
 	s := Spinner{
 		regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
-		interval:      120 * time.Millisecond,
+		interval:      NewCharSets[Snake2].interval * time.Millisecond,
 		l:             &sync.RWMutex{},
 		colorLevel:    color.TColor256,
 		outputFormat:  "%s%s%s%s",
@@ -56,13 +57,13 @@ func New(options ...Option) (*Spinner, error) {
 		finalMessage:  "",
 		hideCursor:    true,
 		Writer:        colorable.NewColorableStderr(),
-		elementsOrder: []int{Char, Message, Progress},
+		elementsOrder: []int{Char, Progress, Message},
 	}
 	s.charSettings = &elementSettings{
 		colorizingSet: color.C256Rainbow,
 		format:        "%s",
 		spacer:        " ",
-		charSet:       CharSets[Snake2],
+		charSet:       NewCharSets[Snake2].chars,
 	}
 	s.messageSettings = &elementSettings{
 		colorizingSet: color.CDark,
