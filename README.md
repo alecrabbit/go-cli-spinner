@@ -37,9 +37,9 @@ For now you can try it **as is** and shape it's development if you wish
 package main
 
 import (
-	"time"
+    "time"
 
-	"github.com/alecrabbit/go-cli-spinner"
+    "github.com/alecrabbit/go-cli-spinner"
 )
 
 func main() {
