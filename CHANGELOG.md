@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Added
+- option `spinner.CharSet([]string)`
 - option `spinner.Variant(int)`
 
 
