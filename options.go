@@ -9,13 +9,6 @@ import (
     "github.com/alecrabbit/go-cli-spinner/color"
 )
 
-// Deprecated
-// type juggler struct {
-// 	Format   string
-// 	Spacer   string
-// 	charColorSet *ring.Ring // charColorSet holds chosen colorizeChar set
-// }
-
 const (
     // Char represents char element
     Char = 1 + iota
