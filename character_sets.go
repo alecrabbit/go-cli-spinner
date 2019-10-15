@@ -24,6 +24,7 @@ const (
     RotatingCircle
     Clock
     HalfClock
+    HalfClock2
     Snake
     Snake2
     Snake3
@@ -185,32 +186,26 @@ var NewCharSets = map[int]Settings{
 func init() {
     var clockChars []string
     var halfClockChars []string
+    var halfClockChars2 []string
     // Fill clocks char sets
     for i := rune(0); i < 12; i++ {
         clockChars = append(clockChars, string([]rune{clockOneOClock + i}))
         halfClockChars = append(halfClockChars, string([]rune{clockOneOClock + i}), string([]rune{clockOneThirty + i}))
     }
+    halfClockChars2 = make([]string, len(clockChars))
+    copy(halfClockChars2, clockChars)
+    for i := rune(0); i < 12; i++ {
+        halfClockChars2 = append(halfClockChars2, string([]rune{clockOneThirty + i}))
+    }
     // Create clock sets
-    NewCharSets[Clock] = Settings{120, clockChars}
-    NewCharSets[HalfClock] = Settings{120, halfClockChars}
-
+    NewCharSets[Clock] = Settings{150, clockChars}
+    NewCharSets[HalfClock] = Settings{300, halfClockChars}
+    NewCharSets[HalfClock2] = Settings{150, halfClockChars2}
+    // Check CharSets for width conformity
     checkCharSets()
 }
 
 func checkCharSets() {
-    // // Check CharSets for width conformity
-    // for n := range CharSets {
-    //     var widths []int
-    //     for _, c := range CharSets[n] {
-    //         width := runewidth.StringWidth(c)
-    //         widths = append(widths, width)
-    //     }
-    //     for _, w := range widths {
-    //         if w != widths[0] {
-    //             panic(fmt.Sprintf("\nAmbiguous widths for char set [%v]\n %v\n %v\n", n, CharSets[n], widths))
-    //         }
-    //     }
-    // }
     // Check NewCharSets for width conformity
     for n := range NewCharSets {
         err := checkCharSet(NewCharSets[n].chars)
