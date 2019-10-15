@@ -1,6 +1,7 @@
 # ```*** COMING SOON ***```
 # 🏵️  Go Console Spinner
 
+![GitHub](https://img.shields.io/github/license/alecrabbit/go-cli-spinner)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alecrabbit/go-cli-spinner)](https://goreportcard.com/report/github.com/alecrabbit/go-cli-spinner)
 
 > API may be a subject to change
