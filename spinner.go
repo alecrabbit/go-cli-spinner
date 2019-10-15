@@ -37,10 +37,10 @@ type Spinner struct {
     hideCursor         bool             // flag, hide cursor
     prefix             string           // spinner prefix
     Writer             io.Writer        // to make testing better, exported so users have access
-    prefixWidth        int
-    charSettings       *elementSettings
-    messageSettings    *elementSettings
-    progressSettings   *elementSettings
+    prefixWidth        int              //
+    charSettings       *elementSettings //
+    messageSettings    *elementSettings //
+    progressSettings   *elementSettings //
 }
 
 // New provides a pointer to an instance of Spinner
@@ -137,7 +137,7 @@ func (s *Spinner) spin() {
             s.l.Lock()
             s.updateCurrentFrame()
             s.assembleCurrentFrame()
-            s.writeCurrentFrame()
+            s.write(s.currentFrame)
             s.l.Unlock()
         }
     }
@@ -160,23 +160,20 @@ func (s *Spinner) assembleCurrentFrame() {
         first.colorized(),
         second.colorized(),
         third.colorized(),
-        // first.colorized(first.current),
-        // second.colorized(second.current),
-        // third.colorized(third.current),
-        // s.char.colorized(s.char.current),
-        // s.message.colorized(s.message.current),
-        // s.progress.colorized(s.progress.current),
     )
     s.currentFrameWidth = s.prefixWidth + s.char.currentWidth + s.message.currentWidth + s.progress.currentWidth
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
-// Write writeCurrentFrame to spinner writer
-func (s *Spinner) writeCurrentFrame() {
-    // Note: external lock
-    _, _ = fmt.Fprint(s.Writer, s.currentFrame)
-    // _, _ = fmt.Fprint(s.Writer, replaceEscapes(s.currentFrame) + "\n")
-}
+// // Write writeCurrentFrame to spinner writer
+// func (s *Spinner) writeCurrentFrame() {
+//     // Note: external lock
+//     s.write(s.currentFrame)
+//
+//     // _, _ = fmt.Fprint(s.Writer, s.currentFrame)
+//
+//     // _, _ = fmt.Fprint(s.Writer, replaceEscapes(s.currentFrame) + "\n")
+// }
 
 // Stop stops the spinner
 func (s *Spinner) Stop() {
@@ -191,7 +188,8 @@ func (s *Spinner) Stop() {
         }
         if s.hideCursor {
             // show the cursor
-            _, _ = fmt.Fprint(s.Writer, "\033[?25h")
+            // _, _ = fmt.Fprint(s.Writer, "\033[?25h")
+            s.write("\033[?25h")
         }
     }
 }
@@ -219,7 +217,7 @@ func (s *Spinner) erase() {
 // Current writes spinner current frame to output represented by spinner writer
 func (s *Spinner) Current() {
     s.l.Lock()
-    s.writeCurrentFrame()
+    s.write(s.currentFrame)
     s.l.Unlock()
 }
 
@@ -249,4 +247,9 @@ func (s *Spinner) Progress(p float32) {
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
     return runewidth.StringWidth(s.strip(f))
+}
+
+// write string by Writer
+func (s *Spinner) write(v string) {
+    _, _ = fmt.Fprint(s.Writer, v)
 }
