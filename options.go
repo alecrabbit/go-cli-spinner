@@ -60,16 +60,16 @@ func Order(o ...int) Option {
 // Variant sets spinner variant
 func Variant(v int) Option {
 	return func(s *Spinner) error {
-		if _, ok := NewCharSets[v]; !ok {
+		if _, ok := CharSets[v]; !ok {
 			return fmt.Errorf("spinner: unknown variant, %v", v)
 		}
-		s.interval = NewCharSets[v].interval * time.Millisecond
-		s.charSettings.charSet = NewCharSets[v].chars
+		s.interval = CharSets[v].interval * time.Millisecond
+		s.charSettings.charSet = CharSets[v].chars
 		return nil
 	}
 }
 
-// Variant sets spinner variant
+// CharSet sets spinner char set
 func CharSet(c []string) Option {
 	return func(s *Spinner) error {
 		err := checkCharSet(c)

@@ -48,7 +48,7 @@ func New(options ...Option) (*Spinner, error) {
 	var err error
 	s := Spinner{
 		regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`), // TODO move to auxiliary
-		interval:      NewCharSets[Snake2].interval * time.Millisecond,
+		interval:      CharSets[Snake2].interval * time.Millisecond,
 		l:             &sync.RWMutex{},
 		colorLevel:    color.TColor256,
 		outputFormat:  "%s%s%s%s",
@@ -63,7 +63,7 @@ func New(options ...Option) (*Spinner, error) {
 		colorizingSet: color.C256Rainbow,
 		format:        "%s",
 		spacer:        " ",
-		charSet:       NewCharSets[Snake2].chars,
+		charSet:       CharSets[Snake2].chars,
 	}
 	s.messageSettings = &elementSettings{
 		colorizingSet: color.CDark,
@@ -192,11 +192,6 @@ func (s *Spinner) Stop() {
 	}
 }
 
-// // remove all ansi codes from string
-// func (s *Spinner) strip(in string) string { // TODO move to auxiliary
-//     return s.regExp.ReplaceAllString(in, "")
-// }
-//
 // Erase erases spinner output
 func (s *Spinner) Erase() {
 	s.l.Lock()

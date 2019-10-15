@@ -59,8 +59,8 @@ type settings struct {
 	chars    []string      //
 }
 
-// NewCharSets contains the available character sets
-var NewCharSets = map[int]settings{
+// CharSets contains the available character sets
+var CharSets = map[int]settings{
 	// Arrows: {
 	//     120,
 	//     []string{"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width, issue in runewidth
@@ -210,6 +210,18 @@ var NewCharSets = map[int]settings{
 }
 
 func init() {
+	fillCharSets()
+
+	// Check CharSets for width conformity
+	for n := range CharSets {
+		err := checkCharSet(CharSets[n].chars)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func fillCharSets() {
 	var clockChars []string
 	var halfClockChars []string
 	var halfClockChars2 []string
@@ -224,21 +236,9 @@ func init() {
 		halfClockChars2 = append(halfClockChars2, string([]rune{clockOneThirty + i}))
 	}
 	// Create clock sets
-	NewCharSets[Clock] = settings{150, clockChars}
-	NewCharSets[HalfClock] = settings{300, halfClockChars}
-	NewCharSets[HalfClock2] = settings{150, halfClockChars2}
-	// Check CharSets for width conformity
-	checkCharSets()
-}
-
-func checkCharSets() {
-	// Check NewCharSets for width conformity
-	for n := range NewCharSets {
-		err := checkCharSet(NewCharSets[n].chars)
-		if err != nil {
-			panic(err)
-		}
-	}
+	CharSets[Clock] = settings{150, clockChars}
+	CharSets[HalfClock] = settings{300, halfClockChars}
+	CharSets[HalfClock2] = settings{150, halfClockChars2}
 }
 
 func checkCharSet(c []string) error {
@@ -252,7 +252,7 @@ func checkCharSet(c []string) error {
 	}
 	for _, w := range widths {
 		if w != widths[0] {
-			return fmt.Errorf("spinner: ambiguous widths for char set:\n %v\n %v\n", c, widths)
+			return fmt.Errorf("spinner: ambiguous widths for char set:\n %v\n %v", c, widths)
 		}
 	}
 	return nil
