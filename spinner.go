@@ -119,7 +119,7 @@ func (s *Spinner) Start() {
     }
     if s.hideCursor {
         // hide the cursor
-        _, _ = fmt.Fprint(s.Writer, "\033[?25l")
+        s.write("\033[?25l")
     }
 
     s.active = true
@@ -184,7 +184,7 @@ func (s *Spinner) Stop() {
         s.active = false
         s.stop <- true
         if s.finalMessage != "" {
-            _, _ = fmt.Fprint(s.Writer, s.finalMessage)
+            s.write(s.finalMessage)
         }
         if s.hideCursor {
             // show the cursor
@@ -210,7 +210,7 @@ func (s *Spinner) Erase() {
 func (s *Spinner) erase() {
     // Note: external lock
     if s.active {
-        _, _ = fmt.Fprint(s.Writer, eraseSequence(s.currentFrameWidth))
+        s.write(eraseSequence(s.currentFrameWidth))
     }
 }
 
