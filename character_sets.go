@@ -243,7 +243,7 @@ func checkCharSets() {
 
 func checkCharSet(c []string) error {
 	if l := len(c); l > maxCharSetSize {
-		return fmt.Errorf("given charset is too big: %v, max: %v", l, maxCharSetSize)
+		return fmt.Errorf("spinner: given charset is too big: %v, max: %v", l, maxCharSetSize)
 	}
 	var widths []int
 	for _, c := range c {
@@ -252,7 +252,7 @@ func checkCharSet(c []string) error {
 	}
 	for _, w := range widths {
 		if w != widths[0] {
-			return fmt.Errorf("\nambiguous widths for char set:\n %v\n %v\n", c, widths)
+			return fmt.Errorf("spinner: ambiguous widths for char set:\n %v\n %v\n", c, widths)
 		}
 	}
 	return nil
