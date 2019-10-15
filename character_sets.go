@@ -14,12 +14,13 @@ const (
 
 const MaxCharSetSize = 60
 
-// Declared spinner types
+// Declared spinner variants
 const (
     BlockVertical int = iota
     // Arrows
     BouncingBlock
-    BouncingBlock2
+    Blink
+    FlyingLine
     RotatingCircle
     Clock
     HalfClock
@@ -27,10 +28,12 @@ const (
     Snake
     Snake2
     FlyingDots
+    Dots10
     Dots13
     Dots14
     BlockHorizontal
-    // Toggle
+    Toggle
+    ToggleSmall
     Arrows01
     Arrows02
     Arrows03
@@ -98,23 +101,23 @@ var NewCharSets = map[int]Settings{
         250,
         []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
     },
-    BlockVertical: { // Number characters used for dev purposes
+    BlockVertical: {
         120,
         []string{"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
     },
-    BlockHorizontal: { // Number characters used for dev purposes
+    BlockHorizontal: {
         120,
         []string{"▉", "▊", "▋", "▌", "▍", "▎", "▏", "▎", "▍", "▌", "▋", "▊", "▉"},
     },
-    BouncingBlock: { // Number characters used for dev purposes
+    BouncingBlock: {
         120,
         []string{"▖", "▘", "▝", "▗"},
     },
-    RotatingCircle: { // Number characters used for dev purposes
+    RotatingCircle: {
         120,
         []string{"◐", "◓", "◑", "◒"},
     },
-    Snake: { // Number characters used for dev purposes
+    Snake: {
         150,
         []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
     },
@@ -125,26 +128,75 @@ var NewCharSets = map[int]Settings{
     FlyingDots: {
         120,
         []string{
-                "⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉",
-                "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁",
-                "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨",
-                "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀",
-            },
+            "⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉",
+            "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁",
+            "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨",
+            "⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀",
+        },
     },
+    FlyingLine: {
+        120,
+        []string{"|   ", " |  ", "  | ", "   |", "   |", "  | ", " |  ", "|   "},
+    },
+    Dots10: {
+        120,
+        []string{"⢄", "⢂", "⢁", "⡁", "⡈", "⡐", "⡠"},
+    },
+    Dots13: {
+        120,
+        []string{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"},
+    },
+    Dots14: {
+        120,
+        []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
+    },
+    Dots21: {
+        120,
+        []string{
+            "⠁", "⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄", "⠄",
+            "⠤", "⠠", "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈", "⠈",
+        },
+    },
+    Dots22: {
+        120,
+        []string{
+            "⠈", "⠉", "⠋", "⠓", "⠒", "⠐", "⠐", "⠒", "⠖", "⠦", "⠤", "⠠",
+            "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈",
+        },
+    },
+    Dots26: {
+        120,
+        []string{"⢹", "⢺", "⢼", "⣸", "⣇", "⡧", "⡗", "⡏"},
+    },
+    Blink: {
+        200,
+        []string{"▓", "▒", "░"},
+    },
+    Toggle: {
+        250,
+        []string{"■", "□"},
+    },
+    Dots23: {
+        120,
+        []string{
+            "⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄",
+            "⠄", "⠤", "⠴", "⠲", "⠒", "⠂", "⠂", "⠒", "⠚", "⠙", "⠉", "⠁",
+        },
+    },
+    Dots24: {
+        120,
+        []string{".  ", ".. ", "...", " ..", "  .", "   "},
+    },
+    Dots25: {
+        120,
+        []string{"⠋", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋"},
+    },
+    // ToggleSmall: { // Incorrect width 2 instead of 1 (runewidth issue)
+    //     250,
+    //     []string{"▪", "▫"},
+    // },
 
-    // : ,
-    // BouncingBlock2: {
-    //     "|   ", " |  ", "  | ", "   |", "   |", "  | ", " |  ", "|   "},
-    // Dots13: {"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"},
-    // Dots14: {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
-    //
-    // Dots21: {"⠁", "⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄", "⠄", "⠤", "⠠", "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈", "⠈"},
-    // Dots22: {"⠈", "⠉", "⠋", "⠓", "⠒", "⠐", "⠐", "⠒", "⠖", "⠦", "⠤", "⠠", "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈"},
-    // Dots23: {"⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄", "⠄", "⠤", "⠴", "⠲", "⠒", "⠂", "⠂", "⠒", "⠚", "⠙", "⠉", "⠁"},
-    // Dots24: {"⠋", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋"},
-    // Dots25: {".  ", ".. ", "...", " ..", "  .", "   "},
-    // Dots26: {"⢹", "⢺", "⢼", "⣸", "⣇", "⡧", "⡗", "⡏"},
-    //
+    // ********
     // // Toggle:          {"■", "□", "▪", "▫"}, // Ambiguous width
     // // ■ 1
     // // □ 1
@@ -189,8 +241,8 @@ func checkCharSets() {
 }
 
 func checkCharSet(c []string) error {
-    if len(c) > MaxCharSetSize {
-        return fmt.Errorf("given charset is too big: %v, max: %v", len(c), MaxCharSetSize)
+    if l := len(c); l > MaxCharSetSize {
+        return fmt.Errorf("given charset is too big: %v, max: %v", l, MaxCharSetSize)
     }
     var widths []int
     for _, c := range c {
@@ -199,7 +251,7 @@ func checkCharSet(c []string) error {
     }
     for _, w := range widths {
         if w != widths[0] {
-            return fmt.Errorf("\nAmbiguous widths for char set:\n %v\n %v\n", c, widths)
+            return fmt.Errorf("\nambiguous widths for char set:\n %v\n %v\n", c, widths)
         }
     }
     return nil
