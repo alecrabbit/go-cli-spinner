@@ -58,6 +58,7 @@ func New(options ...Option) (*Spinner, error) {
         Writer:        colorable.NewColorableStderr(),
         elementsOrder: []int{Char, Progress, Message},
     }
+    // Default settings for spinner elements
     s.charSettings = &elementSettings{
         colorizingSet: color.C256Rainbow,
         format:        "%s",
@@ -82,27 +83,55 @@ func New(options ...Option) (*Spinner, error) {
             return nil, err
         }
     }
+    // Create spinner elements
+    err = s.createElements()
+    if err != nil {
+        return nil, err
+    }
+    // s.char, err = newElement(s.charSettings)
+    // if err != nil {
+    //     return nil, err
+    // }
+    //
+    // s.message, err = newElement(s.messageSettings)
+    // if err != nil {
+    //     return nil, err
+    // }
+    //
+    // s.progress, err = newElement(s.progressSettings)
+    // if err != nil {
+    //     return nil, err
+    // }
+    // s.elements = map[int]*element{
+    //     Char:     s.char,
+    //     Message:  s.message,
+    //     Progress: s.progress,
+    // }
+    // fmt.Printf("Order %v\n", s.elementsOrder)
+    return &s, nil
+}
+
+func (s *Spinner) createElements() error {
+    var err error
+
     s.char, err = newElement(s.charSettings)
     if err != nil {
-        return nil, err
+        return err
     }
-
     s.message, err = newElement(s.messageSettings)
     if err != nil {
-        return nil, err
+        return err
     }
-
     s.progress, err = newElement(s.progressSettings)
     if err != nil {
-        return nil, err
+        return err
     }
     s.elements = map[int]*element{
         Char:     s.char,
         Message:  s.message,
         Progress: s.progress,
     }
-    // fmt.Printf("Order %v\n", s.elementsOrder)
-    return &s, nil
+    return nil
 }
 
 // Active returns true if spinner is currently active
