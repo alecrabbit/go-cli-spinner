@@ -192,11 +192,11 @@ func (s *Spinner) Stop() {
     }
 }
 
-// remove all ansi codes from string
-func (s *Spinner) strip(in string) string { // TODO move to auxiliary
-    return s.regExp.ReplaceAllString(in, "")
-}
-
+// // remove all ansi codes from string
+// func (s *Spinner) strip(in string) string { // TODO move to auxiliary
+//     return s.regExp.ReplaceAllString(in, "")
+// }
+//
 // Erase erases spinner output
 func (s *Spinner) Erase() {
     s.l.Lock()
@@ -244,7 +244,7 @@ func (s *Spinner) Progress(p float32) {
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
-    return runewidth.StringWidth(s.strip(f)) // TODO move to auxiliary
+    return runewidth.StringWidth(auxiliary.Strip(f))
 }
 
 // write string by Writer

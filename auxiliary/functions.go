@@ -1,5 +1,20 @@
 package auxiliary
 
+import (
+    "regexp"
+)
+
+var regExp *regexp.Regexp // regExp instance
+
+func init() {
+    regExp = regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`)
+}
+
+// remove all ansi codes from string
+func Strip(in string) string {
+    return regExp.ReplaceAllString(in, "")
+}
+
 // Bounds restricts f value into bounds of 0..1
 func Bounds(f float32) float32 {
     if f < 0 {
