@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Added
+- new char set `HalfClock2`
 - option `spinner.CharSet([]string)`
 - option `spinner.Variant(int)`
 
