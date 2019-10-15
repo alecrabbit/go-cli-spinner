@@ -24,6 +24,7 @@ type StylePrototype struct {
 	Handler    PrototypeHandler
 }
 
+// SupportedLevels contains data about color Level support
 var SupportedLevels = map[Level]bool{
 	TNoColor:   true,
 	TColor16:   true,
