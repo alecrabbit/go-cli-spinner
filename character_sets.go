@@ -12,7 +12,8 @@ const (
 	clockOneThirty = '\U0001F55C'
 )
 
-const MaxCharSetSize = 60
+// maxCharSetSize maximum character set elements count
+const maxCharSetSize = 60
 
 // Declared spinner variants
 const (
@@ -53,13 +54,13 @@ const (
 // Line is alias for Simple
 const Line = Simple
 
-type Settings struct {
+type settings struct {
 	interval time.Duration // interval between spinner refreshes
 	chars    []string      //
 }
 
-// CharSets contains the available character sets
-var NewCharSets = map[int]Settings{
+// NewCharSets contains the available character sets
+var NewCharSets = map[int]settings{
 	// Arrows: {
 	//     120,
 	//     []string{"←", "↖", "↑", "↗", "→", "↘", "↓", "↙"}, // Ambiguous width, issue in runewidth
@@ -223,9 +224,9 @@ func init() {
 		halfClockChars2 = append(halfClockChars2, string([]rune{clockOneThirty + i}))
 	}
 	// Create clock sets
-	NewCharSets[Clock] = Settings{150, clockChars}
-	NewCharSets[HalfClock] = Settings{300, halfClockChars}
-	NewCharSets[HalfClock2] = Settings{150, halfClockChars2}
+	NewCharSets[Clock] = settings{150, clockChars}
+	NewCharSets[HalfClock] = settings{300, halfClockChars}
+	NewCharSets[HalfClock2] = settings{150, halfClockChars2}
 	// Check CharSets for width conformity
 	checkCharSets()
 }
@@ -241,8 +242,8 @@ func checkCharSets() {
 }
 
 func checkCharSet(c []string) error {
-	if l := len(c); l > MaxCharSetSize {
-		return fmt.Errorf("given charset is too big: %v, max: %v", l, MaxCharSetSize)
+	if l := len(c); l > maxCharSetSize {
+		return fmt.Errorf("given charset is too big: %v, max: %v", l, maxCharSetSize)
 	}
 	var widths []int
 	for _, c := range c {
