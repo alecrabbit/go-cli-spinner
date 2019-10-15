@@ -10,8 +10,8 @@ func init() {
 	regExp = regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`)
 }
 
-// remove all ansi codes from string
-func Strip(in string) string {
+// StripANSI removes all ansi codes from in string
+func StripANSI(in string) string {
 	return regExp.ReplaceAllString(in, "")
 }
 

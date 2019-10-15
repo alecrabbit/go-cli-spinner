@@ -239,7 +239,7 @@ func (s *Spinner) Progress(p float32) {
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
-	return runewidth.StringWidth(auxiliary.Strip(f))
+	return runewidth.StringWidth(auxiliary.StripANSI(f))
 }
 
 // write string by Writer
