@@ -47,7 +47,7 @@ type Spinner struct {
 func New(options ...Option) (*Spinner, error) {
     var err error
     s := Spinner{
-        regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`),
+        regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`), // TODO move to auxiliary
         interval:      NewCharSets[Snake2].interval * time.Millisecond,
         l:             &sync.RWMutex{},
         colorLevel:    color.TColor256,
@@ -88,26 +88,6 @@ func New(options ...Option) (*Spinner, error) {
     if err != nil {
         return nil, err
     }
-    // s.char, err = newElement(s.charSettings)
-    // if err != nil {
-    //     return nil, err
-    // }
-    //
-    // s.message, err = newElement(s.messageSettings)
-    // if err != nil {
-    //     return nil, err
-    // }
-    //
-    // s.progress, err = newElement(s.progressSettings)
-    // if err != nil {
-    //     return nil, err
-    // }
-    // s.elements = map[int]*element{
-    //     Char:     s.char,
-    //     Message:  s.message,
-    //     Progress: s.progress,
-    // }
-    // fmt.Printf("Order %v\n", s.elementsOrder)
     return &s, nil
 }
 
@@ -194,16 +174,6 @@ func (s *Spinner) assembleCurrentFrame() {
     s.currentFrame = f + eraseSequence(s.previousFrameWidth-s.currentFrameWidth) + moveBackSequence(s.currentFrameWidth)
 }
 
-// // Write writeCurrentFrame to spinner writer
-// func (s *Spinner) writeCurrentFrame() {
-//     // Note: external lock
-//     s.write(s.currentFrame)
-//
-//     // _, _ = fmt.Fprint(s.Writer, s.currentFrame)
-//
-//     // _, _ = fmt.Fprint(s.Writer, replaceEscapes(s.currentFrame) + "\n")
-// }
-
 // Stop stops the spinner
 func (s *Spinner) Stop() {
     s.l.Lock()
@@ -217,14 +187,13 @@ func (s *Spinner) Stop() {
         }
         if s.hideCursor {
             // show the cursor
-            // _, _ = fmt.Fprint(s.Writer, "\033[?25h")
             s.write("\033[?25h")
         }
     }
 }
 
 // remove all ansi codes from string
-func (s *Spinner) strip(in string) string {
+func (s *Spinner) strip(in string) string { // TODO move to auxiliary
     return s.regExp.ReplaceAllString(in, "")
 }
 
@@ -275,10 +244,11 @@ func (s *Spinner) Progress(p float32) {
 
 // frameWidth gets frame width
 func (s *Spinner) frameWidth(f string) int {
-    return runewidth.StringWidth(s.strip(f))
+    return runewidth.StringWidth(s.strip(f)) // TODO move to auxiliary
 }
 
 // write string by Writer
 func (s *Spinner) write(v string) {
+    // Suppressed returns
     _, _ = fmt.Fprint(s.Writer, v)
 }
