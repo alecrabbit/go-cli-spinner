@@ -17,31 +17,30 @@ import (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-    elements           map[int]*element   //
-    elementsOrder      []int              //
-    char               *element           //
-    message            *element           //
-    progress           *element           //
-    l                  *sync.RWMutex      // lock
-    active             bool               // active holds the state of the spinner
-    colorLevel         color.SupportLevel // writeCurrentFrame color level
-    stop               chan bool          // stop, channel to stop the spinner
-    regExp             *regexp.Regexp     // regExp instance
-    outputFormat       string             // output format string e.g"%s %s %s"
-    currentFrame       string             // current frame string to write to output
-    currentFrameWidth  int                // width of currentFrame string
-    previousFrameWidth int                // previous width of currentFrame string
-    // variant            int                // spinner variant
-    interval         time.Duration // interval between spinner refreshes
-    finalMessage     string        // spinner final message, displayed after Stop()
-    reversed         bool          // flag, spin in the opposite direction
-    hideCursor       bool          // flag, hide cursor
-    prefix           string        // spinner prefix
-    Writer           io.Writer     // to make testing better, exported so users have access
-    prefixWidth      int
-    charSettings     *elementSettings
-    messageSettings  *elementSettings
-    progressSettings *elementSettings
+    elements           map[int]*element //
+    elementsOrder      []int            //
+    char               *element         //
+    message            *element         //
+    progress           *element         //
+    l                  *sync.RWMutex    // lock
+    active             bool             // active holds the state of the spinner
+    colorLevel         color.Level      // writeCurrentFrame color level
+    stop               chan bool        // stop, channel to stop the spinner
+    regExp             *regexp.Regexp   // regExp instance
+    outputFormat       string           // output format string e.g"%s %s %s"
+    currentFrame       string           // current frame string to write to output
+    currentFrameWidth  int              // width of currentFrame string
+    previousFrameWidth int              // previous width of currentFrame string
+    interval           time.Duration    // interval between spinner refreshes
+    finalMessage       string           // spinner final message, displayed after Stop()
+    reversed           bool             // flag, spin in the opposite direction
+    hideCursor         bool             // flag, hide cursor
+    prefix             string           // spinner prefix
+    Writer             io.Writer        // to make testing better, exported so users have access
+    prefixWidth        int
+    charSettings       *elementSettings
+    messageSettings    *elementSettings
+    progressSettings   *elementSettings
 }
 
 // New provides a pointer to an instance of Spinner

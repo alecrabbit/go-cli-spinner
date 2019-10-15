@@ -22,9 +22,15 @@ const (
 type Option func(*Spinner) error
 
 // ColorLevel sets color level support for spinner - TNoColor, TColor16, TColor256, TTrueColor
-func ColorLevel(cl color.SupportLevel) Option {
+func ColorLevel(cl color.Level) Option {
     return func(s *Spinner) error {
-        // TODO: check for correct value
+        supported, ok := color.SupportedLevels[cl]
+        if !ok {
+            return fmt.Errorf("spinner: unknown color level: %v", cl)
+        }
+        if !supported {
+            return fmt.Errorf("spinner: color level %v is not supported", cl)
+        }
         s.colorLevel = cl
         return nil
     }
