@@ -34,7 +34,7 @@ func main() {
 
 	s, err := spinner.New(
 		spinner.Variant(spinner.Clock),
-		spinner.CharSet([]string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}),
+		// spinner.CharSet([]string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}),
 		spinner.Interval(120),
 		spinner.ColorLevel(color.TColor256),
 		spinner.ProgressFormat("[%4s]"), // [  7%]
