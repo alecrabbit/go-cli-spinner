@@ -49,9 +49,12 @@ var replaceEscapesData = map[int]testedString{
 	// expected, given
 	0: {"", ""},
 	1: {`\ex1b`, "\x1bx1b"},
+	2: {`\ex1b\e`, "\x1bx1b\x1b"},
+	3: {`\e[1X`, "\x1b[1X"},
+	4: {`\e[2mtext\e[0m`, "\x1b[2mtext\x1b[0m"},
 }
 
-// TestEraseSequence ...
+// TestReplaceEscapes ...
 func TestReplaceEscapes(t *testing.T) {
 	for idx, r := range replaceEscapesData {
 		result := replaceEscapes(r.given)
@@ -60,3 +63,17 @@ func TestReplaceEscapes(t *testing.T) {
 		}
 	}
 }
+//
+// var applyCharSetData = map[int]string{
+//
+// }
+//
+// // TestApplyCharSet ...
+// func TestApplyCharSet(t *testing.T) {
+// 	for idx, r := range replaceEscapesData {
+// 		result := replaceEscapes(r.given)
+// 		if result != r.expected {
+// 			t.Errorf("replaceEscapes() returned incorrect value %v on idx=%v", result, idx)
+// 		}
+// 	}
+// }
