@@ -121,6 +121,8 @@ func (s *Spinner) createElements() error {
 
 // Active returns true if spinner is currently active
 func (s *Spinner) Active() bool {
+	s.l.Lock()
+	defer s.l.Unlock()
 	return s.active
 }
 
