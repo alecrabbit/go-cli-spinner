@@ -1,12 +1,15 @@
 language: go
 go_import_path: github.com/alecrabbit/go-cli-spinner
 
+before_install:
+  - go get github.com/mattn/goveralls
+
 install:
   - echo 'idle'
 
 script:
   - go test -v -cover ./...
-
+  - $GOPATH/bin/goveralls -service=travis-ci
 go:
   - 1.13.x
   - master
@@ -15,5 +18,5 @@ cache:
   directories:
     - $GOPATH/pkg
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)

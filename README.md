@@ -1,6 +1,7 @@
 # ```*** COMING SOON ***```
 # 🏵️  Go Console Spinner
 
+[![Build Status](https://travis-ci.com/alecrabbit/go-cli-spinner.svg?branch=master)](https://travis-ci.com/alecrabbit/go-cli-spinner)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alecrabbit/go-cli-spinner)](https://goreportcard.com/report/github.com/alecrabbit/go-cli-spinner)
 [![Coverage Status](https://coveralls.io/repos/github/alecrabbit/go-cli-spinner/badge.svg?branch=master)](https://coveralls.io/github/alecrabbit/go-cli-spinner?branch=master)
 ![GitHub](https://img.shields.io/github/license/alecrabbit/go-cli-spinner)
