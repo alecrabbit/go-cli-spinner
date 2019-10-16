@@ -25,25 +25,24 @@ type Spinner struct {
 	messageSettings    *elementSettings //
 	progressSettings   *elementSettings //
 	l                  *sync.RWMutex    // lock
-	active             bool             // active holds the state of the spinner
-	colorLevel         color.Level      // writeCurrentFrame color level
-	stop               chan bool        // stop, channel to stop the spinner
-	outputFormat       string           // output format string e.g"%s %s %s"
+	active             bool             // flag, spinner is active
+	colorLevel         color.Level      // holds color level
+	stop               chan bool        // channel to stop the spinner
+	outputFormat       string           // output format string
 	currentFrame       string           // current frame string to write to output
 	currentFrameWidth  int              // width of currentFrame string
 	previousFrameWidth int              // previous width of currentFrame string
 	interval           time.Duration    // interval between spinner refreshes
-	finalMessage       string           // spinner final message, displayed after Stop()
+	finalMessage       string           // spinner final message, displayed by calling Stop()
 	reversed           bool             // flag, spin in the opposite direction
 	hideCursor         bool             // flag, hide cursor
 	prefix             string           // spinner prefix
-	Writer             io.Writer        // to make testing better, exported so users have access
-	prefixWidth        int              //
+	prefixWidth        int              // width of prefix string
+	Writer             io.Writer        //
 }
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
-	var err error
 	s := Spinner{
 		interval:      CharSets[Snake2].interval * time.Millisecond,
 		l:             &sync.RWMutex{},
@@ -75,14 +74,12 @@ func New(options ...Option) (*Spinner, error) {
 	}
 	// Process provided options
 	for _, option := range options {
-		err := option(&s)
-		if err != nil {
+		if err := option(&s); err != nil {
 			return nil, err
 		}
 	}
 	// Create spinner elements
-	err = s.createElements()
-	if err != nil {
+	if err := s.createElements(); err != nil {
 		return nil, err
 	}
 	return &s, nil
