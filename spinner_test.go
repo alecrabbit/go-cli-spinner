@@ -10,8 +10,14 @@ import (
 
 // TestNew verifies that the returned instance is of the proper type
 func TestNew(t *testing.T) {
-	for i := 0; i < len(CharSets); i++ {
-		s, _ := New()
+	for i, cs := range CharSets {
+		s, _ := New(
+			Variant(i),
+			Interval(cs.interval),
+			CharSet(cs.chars),
+			HideCursor(true),
+			Reverse(),
+			)
 		tp := reflect.TypeOf(s).String()
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
@@ -20,6 +26,16 @@ func TestNew(t *testing.T) {
 			t.Errorf("Expected new instance to be inactive (%d)", i)
 		}
 	}
+	// for i := 0; i < len(CharSets); i++ {
+	// 	s, _ := New(Variant(i))
+	// 	tp := reflect.TypeOf(s).String()
+	// 	if tp != "*spinner.Spinner" {
+	// 		t.Errorf("New returned incorrect type kind=%d %v", i, tp)
+	// 	}
+	// 	if s.Active() != false {
+	// 		t.Errorf("Expected new instance to be inactive (%d)", i)
+	// 	}
+	// }
 }
 
 /*
