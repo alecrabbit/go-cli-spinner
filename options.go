@@ -129,14 +129,17 @@ func Format(f string) Option {
 // Prefix sets spinner prefix
 func Prefix(p string) Option {
 	return func(s *Spinner) error {
-		// TODO: check for correct value
+		width := s.frameWidth(p)
+		if width > 10 {
+			return fmt.Errorf("spinner: prefix too long - %v", width)
+		}
 		s.prefix = p
-		s.prefixWidth = s.frameWidth(p)
+		s.prefixWidth = width
 		return nil
 	}
 }
 
-// Reverse sets spinner to rotate in reverse
+// Reverse sets spinner's flag to rotate in reverse
 func Reverse() Option {
 	return func(s *Spinner) error {
 		s.reversed = true
@@ -153,18 +156,10 @@ func FinalMessage(m string) Option {
 	}
 }
 
-// HideCursor sets spinner's final message
+// HideCursor sets spinner's hideCursor flag
 func HideCursor(h bool) Option {
 	return func(s *Spinner) error {
 		s.hideCursor = h
 		return nil
 	}
 }
-
-// // CharSet sets spinner's final message
-// func CharSet(cs []string) Option {
-//     return func(s *Spinner) error {
-//         s.charSet = cs
-//         return nil
-//     }
-// }
