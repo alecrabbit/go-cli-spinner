@@ -10,6 +10,9 @@ import (
 
 // moveBackSequence returns string containing ANSI move cursor back sequence
 func moveBackSequence(w int) string {
+	if w <= 0 {
+		return ""
+	}
 	return fmt.Sprintf("\x1b[%vD", w)
 }
 
