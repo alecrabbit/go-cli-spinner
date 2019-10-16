@@ -4,7 +4,6 @@ package spinner
 import (
 	"fmt"
 	"io"
-	"regexp"
 	"sync"
 	"time"
 
@@ -22,11 +21,13 @@ type Spinner struct {
 	char               *element         //
 	message            *element         //
 	progress           *element         //
+	charSettings       *elementSettings //
+	messageSettings    *elementSettings //
+	progressSettings   *elementSettings //
 	l                  *sync.RWMutex    // lock
 	active             bool             // active holds the state of the spinner
 	colorLevel         color.Level      // writeCurrentFrame color level
 	stop               chan bool        // stop, channel to stop the spinner
-	regExp             *regexp.Regexp   // regExp instance
 	outputFormat       string           // output format string e.g"%s %s %s"
 	currentFrame       string           // current frame string to write to output
 	currentFrameWidth  int              // width of currentFrame string
@@ -38,16 +39,12 @@ type Spinner struct {
 	prefix             string           // spinner prefix
 	Writer             io.Writer        // to make testing better, exported so users have access
 	prefixWidth        int              //
-	charSettings       *elementSettings //
-	messageSettings    *elementSettings //
-	progressSettings   *elementSettings //
 }
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
 	var err error
 	s := Spinner{
-		regExp:        regexp.MustCompile(`\x1b[[][^A-Za-z]*[A-Za-z]`), // TODO move to auxiliary
 		interval:      CharSets[Snake2].interval * time.Millisecond,
 		l:             &sync.RWMutex{},
 		colorLevel:    color.TColor256,
