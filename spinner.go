@@ -238,6 +238,8 @@ func (s *Spinner) frameWidth(f string) int {
 
 // write string by Writer
 func (s *Spinner) write(v string) {
+	// Note: external lock
+
 	// Suppressed returns
 	_, _ = fmt.Fprint(s.Writer, v)
 }
