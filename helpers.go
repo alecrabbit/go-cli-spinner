@@ -15,7 +15,7 @@ func moveBackSequence(w int) string {
 
 // eraseSequence returns string containing ANSI erase sequence
 func eraseSequence(w int) string {
-	if w < 0 {
+	if w < 1 {
 		return ""
 	}
 	return fmt.Sprintf("\x1b[%vX", w)
