@@ -16,29 +16,30 @@ import (
 
 // Spinner struct representing spinner instance
 type Spinner struct {
-	elements           map[int]*element //
-	elementsOrder      []int            //
-	char               *element         //
-	message            *element         //
-	progress           *element         //
-	charSettings       *elementSettings //
-	messageSettings    *elementSettings //
-	progressSettings   *elementSettings //
-	l                  *sync.RWMutex    // lock
-	active             bool             // flag, spinner is active
-	colorLevel         color.Level      // holds color level
-	stop               chan bool        // channel to stop the spinner
-	outputFormat       string           // output format string
-	currentFrame       string           // current frame string to write to output
-	currentFrameWidth  int              // width of currentFrame string
-	previousFrameWidth int              // previous width of currentFrame string
-	interval           time.Duration    // interval between spinner refreshes
-	finalMessage       string           // spinner final message, displayed by calling Stop()
-	reversed           bool             // flag, spin in the opposite direction
-	hideCursor         bool             // flag, hide cursor
-	prefix             string           // spinner prefix
-	prefixWidth        int              // width of prefix string
-	Writer             io.Writer        //
+	elements           map[int]*element         //
+	elementsSettings   map[int]*elementSettings //
+	elementsOrder      []int                    //
+	char               *element                 //
+	message            *element                 //
+	progress           *element                 //
+	charSettings       *elementSettings         //
+	messageSettings    *elementSettings         //
+	progressSettings   *elementSettings         //
+	l                  *sync.RWMutex            // lock
+	active             bool                     // flag, spinner is active
+	colorLevel         color.Level              // holds color level
+	stop               chan bool                // channel to stop the spinner
+	outputFormat       string                   // output format string
+	currentFrame       string                   // current frame string to write to output
+	currentFrameWidth  int                      // width of currentFrame string
+	previousFrameWidth int                      // previous width of currentFrame string
+	interval           time.Duration            // interval between spinner refreshes
+	finalMessage       string                   // spinner final message, displayed by calling Stop()
+	reversed           bool                     // flag, spin in the opposite direction
+	hideCursor         bool                     // flag, hide cursor
+	prefix             string                   // spinner prefix
+	prefixWidth        int                      // width of prefix string
+	Writer             io.Writer                //
 }
 
 // New provides a pointer to an instance of Spinner
@@ -72,10 +73,20 @@ func New(options ...Option) (*Spinner, error) {
 		auxFormat:     "%.0f%%",
 		spacer:        " ",
 	}
+	s.elementsSettings = map[int]*elementSettings{
+		Char:     s.charSettings,
+		Message:  s.messageSettings,
+		Progress: s.progressSettings,
+	}
 	// Process provided options
 	for _, option := range options {
 		if err := option(&s); err != nil {
 			return nil, err
+		}
+	}
+	for _, entry := range s.elementsSettings {
+		if color.Prototypes[entry.colorizingSet].Level > s.colorLevel {
+			entry.colorizingSet = color.CNoColor
 		}
 	}
 	// Create spinner elements
