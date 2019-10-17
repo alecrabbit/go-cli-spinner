@@ -3,6 +3,7 @@ package spinner
 import (
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/alecrabbit/go-cli-spinner/color"
 )
@@ -142,7 +143,12 @@ func TestNew(t *testing.T) {
 		},
 		{
 			"Interval is too small",
-			args{Interval(10)},
+			args{Interval(10 * time.Millisecond)},
+			true,
+		},
+		{
+			"Interval is too big",
+			args{Interval(10 * time.Second)},
 			true,
 		},
 	}

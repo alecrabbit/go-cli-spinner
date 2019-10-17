@@ -75,59 +75,59 @@ var CharSets = map[int]settings{
 	// ↙ 2
 
 	Arrows01: {
-		120,
+		120 * time.Millisecond,
 		[]string{"←", "↑", "→", "↓"},
 	},
 	Arrows02: {
-		120,
+		120 * time.Millisecond,
 		[]string{"↖", "↗", "↘", "↙"},
 	},
 	Arrows03: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⇐", "⇖", "⇑", "⇗", "⇒", "⇘", "⇓", "⇙"},
 	},
 	Arrows04: {
-		120,
+		120 * time.Millisecond,
 		[]string{"▹▹▹▹▹", "▸▹▹▹▹", "▹▸▹▹▹", "▹▹▸▹▹", "▹▹▹▸▹", "▹▹▹▹▸"},
 	},
 	Simple: {
-		120,
+		120 * time.Millisecond,
 		[]string{"|", "\\", "─", "/"},
 	},
 	Dev: { // Singe character used for dev purposes
-		400,
+		400 * time.Millisecond,
 		[]string{"+"},
 	},
 	Dev2: { // Number characters used for dev purposes
-		250,
+		250 * time.Millisecond,
 		[]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
 	},
 	BlockVertical: {
-		120,
+		120 * time.Millisecond,
 		[]string{"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
 	},
 	BlockHorizontal: {
-		120,
+		120 * time.Millisecond,
 		[]string{"▉", "▊", "▋", "▌", "▍", "▎", "▏", "▎", "▍", "▌", "▋", "▊", "▉"},
 	},
 	BouncingBlock: {
-		120,
+		120 * time.Millisecond,
 		[]string{"▖", "▘", "▝", "▗"},
 	},
 	RotatingCircle: {
-		120,
+		120 * time.Millisecond,
 		[]string{"◐", "◓", "◑", "◒"},
 	},
 	Snake: {
-		150,
+		150 * time.Millisecond,
 		[]string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
 	},
 	Snake2: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⠏", "⠛", "⠹", "⢸", "⣰", "⣤", "⣆", "⡇"},
 	},
 	FlyingDots: {
-		120,
+		120 * time.Millisecond,
 		[]string{
 			"⢀⠀", "⡀⠀", "⠄⠀", "⢂⠀", "⡂⠀", "⠅⠀", "⢃⠀", "⡃⠀", "⠍⠀", "⢋⠀", "⡋⠀", "⠍⠁", "⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉",
 			"⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⢈⠩", "⡀⢙", "⠄⡙", "⢂⠩", "⡂⢘", "⠅⡘", "⢃⠨", "⡃⢐", "⠍⡐", "⢋⠠", "⡋⢀", "⠍⡁",
@@ -136,60 +136,60 @@ var CharSets = map[int]settings{
 		},
 	},
 	FlyingLine: {
-		120,
+		120 * time.Millisecond,
 		[]string{"|   ", " |  ", "  | ", "   |", "   |", "  | ", " |  ", "|   "},
 	},
 	Dots10: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⢄", "⢂", "⢁", "⡁", "⡈", "⡐", "⡠"},
 	},
 	Dots13: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"},
 	},
 	Dots14: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
 	},
 	Dots21: {
-		120,
+		120 * time.Millisecond,
 		[]string{
 			"⠁", "⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄", "⠄",
 			"⠤", "⠠", "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈", "⠈",
 		},
 	},
 	Dots22: {
-		120,
+		120 * time.Millisecond,
 		[]string{
 			"⠈", "⠉", "⠋", "⠓", "⠒", "⠐", "⠐", "⠒", "⠖", "⠦", "⠤", "⠠",
 			"⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈",
 		},
 	},
 	Dots26: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⢹", "⢺", "⢼", "⣸", "⣇", "⡧", "⡗", "⡏"},
 	},
 	Blink: {
-		200,
+		200 * time.Millisecond,
 		[]string{"▓", "▒", "░"},
 	},
 	Toggle: {
-		250,
+		250 * time.Millisecond,
 		[]string{"■", "□"},
 	},
 	Dots23: {
-		120,
+		120 * time.Millisecond,
 		[]string{
 			"⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄",
 			"⠄", "⠤", "⠴", "⠲", "⠒", "⠂", "⠂", "⠒", "⠚", "⠙", "⠉", "⠁",
 		},
 	},
 	Dots24: {
-		120,
+		120 * time.Millisecond,
 		[]string{".  ", ".. ", "...", " ..", "  .", "   "},
 	},
 	Dots25: {
-		120,
+		120 * time.Millisecond,
 		[]string{"⠋", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋"},
 	},
 	// ToggleSmall: { // Incorrect width 2 instead of 1 (runewidth issue)
@@ -236,9 +236,9 @@ func fillCharSets() {
 		halfClockChars2 = append(halfClockChars2, string([]rune{clockOneThirty + i}))
 	}
 	// Create clock sets
-	CharSets[Clock] = settings{150, clockChars}
-	CharSets[HalfClock] = settings{300, halfClockChars}
-	CharSets[HalfClock2] = settings{150, halfClockChars2}
+	CharSets[Clock] = settings{150 * time.Millisecond, clockChars}
+	CharSets[HalfClock] = settings{300 * time.Millisecond, halfClockChars}
+	CharSets[HalfClock2] = settings{150 * time.Millisecond, halfClockChars2}
 }
 
 func checkCharSet(c []string) error {

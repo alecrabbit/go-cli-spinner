@@ -72,7 +72,7 @@ func Variant(v int) Option {
 		if _, ok := CharSets[v]; !ok {
 			return fmt.Errorf("spinner: unknown variant, %v", v)
 		}
-		s.interval = CharSets[v].interval * time.Millisecond
+		s.interval = CharSets[v].interval
 		s.charSettings.charSet = CharSets[v].chars
 		return nil
 	}
@@ -93,15 +93,23 @@ func CharSet(c []string) Option {
 // Interval sets interval between spinner refreshes
 func Interval(d time.Duration) Option {
 	return func(s *Spinner) error {
-		if d < minInterval {
-			return fmt.Errorf("spinner: interval is too small - %v, min=%v", d, minInterval)
-		}
-		if d > maxInterval {
-			return fmt.Errorf("spinner: interval is too big - %v, max=%v", d, maxInterval)
+		e := checkInterval(d)
+		if e != nil {
+			return e
 		}
 		s.interval = d
 		return nil
 	}
+}
+
+func checkInterval(d time.Duration) error {
+	if d < minInterval {
+		return fmt.Errorf("spinner: interval is too small - %v, min=%v", d, minInterval)
+	}
+	if d > maxInterval {
+		return fmt.Errorf("spinner: interval is too big - %v, max=%v", d, maxInterval)
+	}
+	return nil
 }
 
 // MessageFormat sets spinner message format

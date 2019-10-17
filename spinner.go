@@ -45,7 +45,7 @@ type Spinner struct {
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
 	s := Spinner{
-		interval:      CharSets[Snake2].interval * time.Millisecond,
+		interval:      CharSets[Snake2].interval,
 		l:             &sync.RWMutex{},
 		colorLevel:    color.TColor256,
 		outputFormat:  "%s%s%s%s",
@@ -93,6 +93,11 @@ func New(options ...Option) (*Spinner, error) {
 	if err := s.createElements(); err != nil {
 		return nil, err
 	}
+	// Check interval
+	if err := checkInterval(s.interval); err != nil {
+		return nil, err
+	}
+
 	return &s, nil
 }
 
