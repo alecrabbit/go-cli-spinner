@@ -67,7 +67,7 @@ func TestDefaultRun(t *testing.T) {
 	}
 	buffer := &syncBuffer{}
 	s.Writer = buffer
-	s.interval = 1 * time.Millisecond
+	s.interval = 10 * time.Millisecond
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
@@ -75,13 +75,14 @@ func TestDefaultRun(t *testing.T) {
 	if s.Active() != true {
 		t.Errorf("Expected spinner to be active")
 	}
+	s.Start()
 	s.Message("Message")
 	s.Progress(0.1)
 	s.Message("")
 	s.Progress(0)
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	s.Stop()
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
