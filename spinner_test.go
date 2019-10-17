@@ -1,12 +1,27 @@
 package spinner
 
 import (
+	"bytes"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/alecrabbit/go-cli-spinner/color"
 )
+
+// syncBuffer ...
+type syncBuffer struct {
+	sync.Mutex
+	bytes.Buffer
+}
+
+// Write ...
+func (b *syncBuffer) Write(data []byte) (int, error) {
+	b.Lock()
+	defer b.Unlock()
+	return b.Buffer.Write(data)
+}
 
 // TestNewOk verifies that the returned instance is of the proper type
 func TestNewOk(t *testing.T) {
@@ -30,6 +45,7 @@ func TestNewOk(t *testing.T) {
 			t.Errorf("Unexpected error (%v) on set #%v", err, i)
 			return
 		}
+		s.Writer = &syncBuffer{}
 		tp := reflect.TypeOf(s).String()
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
@@ -44,13 +60,14 @@ func TestNewOk(t *testing.T) {
 
 // TestNewOk verifies that the returned instance is of the proper type
 func TestDefaultRun(t *testing.T) {
-	s, err := New(
-		Interval(50 * time.Millisecond),
-	)
+	s, err := New()
 	if err != nil {
 		t.Errorf("Unexpected error (%v)", err)
 		return
 	}
+	buffer := &syncBuffer{}
+	s.Writer = buffer
+	s.interval = 1 * time.Millisecond
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
@@ -62,6 +79,7 @@ func TestDefaultRun(t *testing.T) {
 	s.Progress(0.1)
 	time.Sleep(200 * time.Millisecond)
 	s.Stop()
+	time.Sleep(200 * time.Millisecond)
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
@@ -78,41 +96,6 @@ func TestSets(t *testing.T) {
 		}
 	}
 }
-
-/*
-Benchmarks
-*/
-// var result interface{}
-//
-// // BenchmarkNew runs a benchmark for the New() function
-// func BenchmarkNew(b *testing.B) {
-// 	var s *Spinner
-// 	for n := 0; n < b.N; n++ {
-// 		s, _ = New()
-// 	}
-// 	result = s
-// }
-//
-// // BenchmarkIfOne ...
-// func BenchmarkIfOne(b *testing.B) {
-// 	var d int
-// 	for n := 0; n < b.N; n++ {
-// 		d = runewidth.StringWidth(" ") +
-// 			runewidth.StringWidth(fmt.Sprintf(" %s ", " "))
-// 	}
-// 	result = d
-// 	// fmt.Printf("One %s", result)
-// }
-//
-// // BenchmarkIfTwo ...
-// func BenchmarkIfTwo(b *testing.B) {
-// 	var d int
-// 	for n := 0; n < b.N; n++ {
-// 		d = runewidth.StringWidth(" " + fmt.Sprintf(" %s ", " "))
-// 	}
-// 	result = d
-// 	// fmt.Printf("Two %s", result)
-// }
 
 func TestNew(t *testing.T) {
 	type args struct {
@@ -193,3 +176,39 @@ func TestNew(t *testing.T) {
 		})
 	}
 }
+
+/*
+Benchmarks
+*/
+// var result interface{}
+//
+// // BenchmarkNew runs a benchmark for the New() function
+// func BenchmarkNew(b *testing.B) {
+// 	var s *Spinner
+// 	for n := 0; n < b.N; n++ {
+// 		s, _ = New()
+// 	}
+// 	result = s
+// }
+//
+// // BenchmarkIfOne ...
+// func BenchmarkIfOne(b *testing.B) {
+// 	var d int
+// 	for n := 0; n < b.N; n++ {
+// 		d = runewidth.StringWidth(" ") +
+// 			runewidth.StringWidth(fmt.Sprintf(" %s ", " "))
+// 	}
+// 	result = d
+// 	// fmt.Printf("One %s", result)
+// }
+//
+// // BenchmarkIfTwo ...
+// func BenchmarkIfTwo(b *testing.B) {
+// 	var d int
+// 	for n := 0; n < b.N; n++ {
+// 		d = runewidth.StringWidth(" " + fmt.Sprintf(" %s ", " "))
+// 	}
+// 	result = d
+// 	// fmt.Printf("Two %s", result)
+// }
+
