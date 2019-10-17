@@ -77,6 +77,8 @@ func TestDefaultRun(t *testing.T) {
 	}
 	s.Message("Message")
 	s.Progress(0.1)
+	s.Message("")
+	s.Progress(0)
 	time.Sleep(200 * time.Millisecond)
 	s.Stop()
 	time.Sleep(200 * time.Millisecond)
