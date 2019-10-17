@@ -62,7 +62,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	spew.Dump(s)
+	// spew.Dump(s)
 	spew.Dump(nil)
 	fmt.Println()
 
