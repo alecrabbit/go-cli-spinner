@@ -58,6 +58,8 @@ func TestDefaultRun(t *testing.T) {
 	if s.Active() != true {
 		t.Errorf("Expected spinner to be active")
 	}
+	s.Message("Message")
+	s.Progress(0.1)
 	time.Sleep(200 * time.Millisecond)
 	s.Stop()
 	if s.Active() != false {
