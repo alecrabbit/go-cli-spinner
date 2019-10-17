@@ -7,8 +7,8 @@ import (
 	"github.com/alecrabbit/go-cli-spinner/color"
 )
 
-// TestNew verifies that the returned instance is of the proper type
-func TestNew(t *testing.T) {
+// TestNewOk verifies that the returned instance is of the proper type
+func TestNewOk(t *testing.T) {
 	for i, cs := range CharSets {
 		s, _ := New(
 			Variant(i),
@@ -28,6 +28,7 @@ func TestNew(t *testing.T) {
 		tp := reflect.TypeOf(s).String()
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
+			return
 		}
 		if s.Active() != false {
 			t.Errorf("Expected new instance to be inactive (%d)", i)
@@ -81,3 +82,58 @@ Benchmarks
 // 	result = d
 // 	// fmt.Printf("Two %s", result)
 // }
+
+func TestNew(t *testing.T) {
+	type args struct {
+		option Option
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			"Prefix too long",
+			args{Prefix("12345678901")},
+			true,
+		},
+		{
+			"Unknown color level",
+			args{ColorLevel(13)},
+			true,
+		},
+		{
+			"Unsupported color level",
+			args{ColorLevel(color.TTrueColor)},
+			true,
+		},
+		{
+			"Order three not unique",
+			args{Order(Char, Char, Message)},
+			true,
+		},
+		{
+			"Order two not unique",
+			args{Order(Char, Char)},
+			true,
+		},
+		{
+			"Order five not unique",
+			args{Order(Char, Char, Message, Progress, 4)},
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := New(tt.args.option)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			tp := reflect.TypeOf(got).String()
+			if tp != "*spinner.Spinner" {
+				t.Errorf("returns incorrect type kind %v", tp)
+			}
+		})
+	}
+}

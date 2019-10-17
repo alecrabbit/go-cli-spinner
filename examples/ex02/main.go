@@ -49,7 +49,7 @@ func main() {
 		// Override default color level support, default: TColor256
 		spinner.ColorLevel(color.TNoColor),
 		spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
-		// spinner.Order(spinner.Progress, spinner.Message, spinner.Message), // error
+		// spinner.Order(spinner.Progress, spinner.Message, spinner.Message,spinner.Char, 4), // error
 		spinner.ProgressFormat("%6s"),             // default: "%s"
 		spinner.ProgressIndicatorFormat("%.1f%%"), // default: "%.0f%%"
 		// spinner.MessageFormat("(%s)"),   // (message)

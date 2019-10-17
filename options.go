@@ -18,6 +18,9 @@ const (
 	Progress
 )
 
+// MaxPrefixWidth spinner's max prefix width
+const MaxPrefixWidth = 10
+
 // Option type for functional options
 type Option func(*Spinner) error
 
@@ -40,7 +43,7 @@ func ColorLevel(cl color.Level) Option {
 func Order(o ...int) Option {
 	return func(s *Spinner) error {
 		u := auxiliary.Unique(o)
-		if len(u) < 3 {
+		if len(u) != 3 {
 			return fmt.Errorf("spinner: order option should contain three unique values, given: %v", o)
 		}
 		c := make([]int, len(u))
@@ -130,7 +133,7 @@ func Format(f string) Option {
 func Prefix(p string) Option {
 	return func(s *Spinner) error {
 		width := s.frameWidth(p)
-		if width > 10 {
+		if width > MaxPrefixWidth {
 			return fmt.Errorf("spinner: prefix too long - %v", width)
 		}
 		s.prefix = p
