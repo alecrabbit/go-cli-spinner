@@ -91,15 +91,15 @@ func CharSet(c []string) Option {
 }
 
 // Interval sets interval between spinner refreshes
-func Interval(ms time.Duration) Option {
+func Interval(d time.Duration) Option {
 	return func(s *Spinner) error {
-		if ms < minInterval {
-			return fmt.Errorf("spinner: interval is too small - %v, min=%v", ms, minInterval)
+		if d < minInterval {
+			return fmt.Errorf("spinner: interval is too small - %v, min=%v", d, minInterval)
 		}
-		if ms > maxInterval {
-			return fmt.Errorf("spinner: interval is too big - %v, max=%v", ms, maxInterval)
+		if d > maxInterval {
+			return fmt.Errorf("spinner: interval is too big - %v, max=%v", d, maxInterval)
 		}
-		s.interval = ms
+		s.interval = d
 		return nil
 	}
 }
