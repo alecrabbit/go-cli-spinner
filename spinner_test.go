@@ -82,7 +82,11 @@ func TestDefaultRun(t *testing.T) {
 	s.Message("")
 	time.Sleep(10 * time.Millisecond)
 	s.Progress(0)
-	time.Sleep(60 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
+	s.Erase()
+	time.Sleep(10 * time.Millisecond)
+	s.Current()
+	time.Sleep(40 * time.Millisecond)
 	s.Stop()
 	time.Sleep(80 * time.Millisecond)
 	if s.Active() != false {
