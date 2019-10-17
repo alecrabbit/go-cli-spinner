@@ -91,7 +91,7 @@ func main() {
 		} else {
 			f := float32(i)/float32(100) +
 				float32(rand.Intn(10))/float32(1000) // to demonstrate decimal part of percentage
-			s.Progress(f)                            // s.Progress accepts float32 0..1
+			s.Progress(f) // s.Progress accepts float32 0..1
 		}
 		// Doing some work 2
 		time.Sleep(duration())

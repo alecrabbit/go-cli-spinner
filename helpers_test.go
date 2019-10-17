@@ -63,6 +63,7 @@ func TestReplaceEscapes(t *testing.T) {
 		}
 	}
 }
+
 //
 // var applyCharSetData = map[int]string{
 //

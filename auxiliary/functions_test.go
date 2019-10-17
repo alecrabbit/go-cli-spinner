@@ -114,18 +114,18 @@ func TestUnique(t *testing.T) {
 		},
 		{
 			"with value `[1 2 3]`",
-			args{[]int{1, 2, 3,}},
-			[]int{1, 2, 3,},
+			args{[]int{1, 2, 3}},
+			[]int{1, 2, 3},
 		},
 		{
 			"with value `[1 2 2 3]`",
-			args{[]int{1, 2, 2, 3,}},
-			[]int{1, 2, 3,},
+			args{[]int{1, 2, 2, 3}},
+			[]int{1, 2, 3},
 		},
 		{
 			"with value `[2 2]`",
-			args{[]int{2, 2,}},
-			[]int{2,},
+			args{[]int{2, 2}},
+			[]int{2},
 		},
 	}
 	for _, tt := range tests {
@@ -150,42 +150,42 @@ func TestEqual(t *testing.T) {
 	}{
 		{
 			"with values `[], []`",
-			args{[]int{},[]int{}},
+			args{[]int{}, []int{}},
 			true,
 		},
 		{
 			"with values `nil, []`",
-			args{nil,[]int{}},
+			args{nil, []int{}},
 			true,
 		},
 		{
 			"with values `[], nil`",
-			args{[]int{},nil},
+			args{[]int{}, nil},
 			true,
 		},
 		{
 			"with values `[1], nil`",
-			args{[]int{1},nil},
+			args{[]int{1}, nil},
 			false,
 		},
 		{
 			"with values `nil, [1]`",
-			args{nil,[]int{1}},
+			args{nil, []int{1}},
 			false,
 		},
 		{
 			"with values `[1], [1]`",
-			args{[]int{1},[]int{1}},
+			args{[]int{1}, []int{1}},
 			true,
 		},
 		{
 			"with values `[1, 2], [1, 2]`",
-			args{[]int{1, 2},[]int{1, 2}},
+			args{[]int{1, 2}, []int{1, 2}},
 			true,
 		},
 		{
 			"with values `[2, 1], [1, 2]`",
-			args{[]int{2, 1},[]int{1, 2}},
+			args{[]int{2, 1}, []int{1, 2}},
 			false,
 		},
 	}
