@@ -54,7 +54,6 @@ func TestNewOk(t *testing.T) {
 		if s.Active() != false {
 			t.Errorf("Expected new instance to be inactive (%d)", i)
 		}
-
 	}
 }
 
@@ -67,7 +66,7 @@ func TestDefaultRun(t *testing.T) {
 	}
 	buffer := &syncBuffer{}
 	s.Writer = buffer
-	s.interval = 10 * time.Millisecond
+	s.interval = 1 * time.Millisecond
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
@@ -77,12 +76,16 @@ func TestDefaultRun(t *testing.T) {
 	}
 	s.Start()
 	s.Message("Message")
+	time.Sleep(10 * time.Millisecond)
 	s.Progress(0.1)
+	time.Sleep(10 * time.Millisecond)
 	s.Message("")
+	time.Sleep(10 * time.Millisecond)
 	s.Progress(0)
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
+	time.Sleep(50 * time.Millisecond)
 	s.Stop()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(80 * time.Millisecond)
 	if s.Active() != false {
 		t.Errorf("Expected spinner to be inactive")
 	}
