@@ -28,8 +28,12 @@ func Bounds(f float32) float32 {
 
 // Unique returns slice with unique elements only
 func Unique(i []int) []int {
+	if i == nil {
+		return i
+	}
 	k := make(map[int]bool)
-	var l []int
+	//noinspection GoPreferNilSlice
+	l := []int{}
 	for _, value := range i {
 		if _, e := k[value]; !e {
 			k[value] = true

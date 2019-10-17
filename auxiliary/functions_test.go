@@ -1,6 +1,7 @@
 package auxiliary
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -87,6 +88,111 @@ func TestBounds(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Bounds(tt.args.f); got != tt.want {
 				t.Errorf("Bounds() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUnique(t *testing.T) {
+	type args struct {
+		i []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			"with value `[]`",
+			args{[]int{}},
+			[]int{},
+		},
+		{
+			"with value `nil`",
+			args{nil},
+			nil,
+		},
+		{
+			"with value `[1 2 3]`",
+			args{[]int{1, 2, 3,}},
+			[]int{1, 2, 3,},
+		},
+		{
+			"with value `[1 2 2 3]`",
+			args{[]int{1, 2, 2, 3,}},
+			[]int{1, 2, 3,},
+		},
+		{
+			"with value `[2 2]`",
+			args{[]int{2, 2,}},
+			[]int{2,},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// t.Run(fmt.Sprintf(tt.name, tt.args), func(t *testing.T) {
+			if got := Unique(tt.args.i); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Unique() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestEqual(t *testing.T) {
+	type args struct {
+		a []int
+		b []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			"with values `[], []`",
+			args{[]int{},[]int{}},
+			true,
+		},
+		{
+			"with values `nil, []`",
+			args{nil,[]int{}},
+			true,
+		},
+		{
+			"with values `[], nil`",
+			args{[]int{},nil},
+			true,
+		},
+		{
+			"with values `[1], nil`",
+			args{[]int{1},nil},
+			false,
+		},
+		{
+			"with values `nil, [1]`",
+			args{nil,[]int{1}},
+			false,
+		},
+		{
+			"with values `[1], [1]`",
+			args{[]int{1},[]int{1}},
+			true,
+		},
+		{
+			"with values `[1, 2], [1, 2]`",
+			args{[]int{1, 2},[]int{1, 2}},
+			true,
+		},
+		{
+			"with values `[2, 1], [1, 2]`",
+			args{[]int{2, 1},[]int{1, 2}},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Equal(tt.args.a, tt.args.b); got != tt.want {
+				t.Errorf("Equal() = %v, want %v", got, tt.want)
 			}
 		})
 	}
