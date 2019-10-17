@@ -122,6 +122,29 @@ func TestNew(t *testing.T) {
 			args{Order(Char, Char, Message, Progress, 4)},
 			true,
 		},
+		{
+			"Order three wrong",
+			args{Order(Message, Progress, 4)},
+			true,
+		},
+		{
+			"Unknown variant",
+			args{Variant(12323)},
+			true,
+		},
+		//			"char set is too big",
+		//			args{returnBigCharSet(maxCharSetSize)},
+		//			true,
+		{
+			"CharSet is too big",
+			args{CharSet(returnBigCharSet(maxCharSetSize))},
+			true,
+		},
+		{
+			"Interval is too small",
+			args{Interval(10)},
+			true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

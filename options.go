@@ -18,8 +18,14 @@ const (
 	Progress
 )
 
-// MaxPrefixWidth spinner's max prefix width
-const MaxPrefixWidth = 10
+const (
+	// maxPrefixWidth spinner's max prefix width
+	maxPrefixWidth = 10
+	// minInterval
+	minInterval = 50 * time.Millisecond
+	// maxInterval
+	maxInterval = 5 * time.Second
+)
 
 // Option type for functional options
 type Option func(*Spinner) error
@@ -87,8 +93,14 @@ func CharSet(c []string) Option {
 // Interval sets interval between spinner refreshes
 func Interval(ms time.Duration) Option {
 	return func(s *Spinner) error {
-		// TODO: check for correct value
-		s.interval = ms * time.Millisecond
+		interval := ms * time.Millisecond
+		if interval < minInterval {
+			return fmt.Errorf("spinner: interval is too small - %v, min=%v", interval, minInterval)
+		}
+		if interval > maxInterval {
+			return fmt.Errorf("spinner: interval is too small - %v, min=%v", interval, minInterval)
+		}
+		s.interval = interval
 		return nil
 	}
 }
@@ -133,7 +145,7 @@ func Format(f string) Option {
 func Prefix(p string) Option {
 	return func(s *Spinner) error {
 		width := s.frameWidth(p)
-		if width > MaxPrefixWidth {
+		if width > maxPrefixWidth {
 			return fmt.Errorf("spinner: prefix too long - %v", width)
 		}
 		s.prefix = p

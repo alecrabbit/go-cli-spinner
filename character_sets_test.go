@@ -30,7 +30,7 @@ func Test_checkCharSet(t *testing.T) {
 		},
 		{
 			"ambiguous widths char set",
-			args{[]string{"0", "  ", "0",}},
+			args{[]string{"0", "  ", "0"}},
 			true,
 		},
 	}
@@ -44,8 +44,8 @@ func Test_checkCharSet(t *testing.T) {
 }
 
 func returnBigCharSet(size int) []string {
-	big := make([]string, size + 5)
-	for i:= range big {
+	big := make([]string, size+5)
+	for i := range big {
 		big[i] = "-"
 	}
 	return big
