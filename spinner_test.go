@@ -11,7 +11,7 @@ import (
 // TestNewOk verifies that the returned instance is of the proper type
 func TestNewOk(t *testing.T) {
 	for i, cs := range CharSets {
-		s, _ := New(
+		s, err := New(
 			Variant(i),
 			Interval(cs.interval),
 			CharSet(cs.chars),
@@ -26,6 +26,10 @@ func TestNewOk(t *testing.T) {
 			Prefix("\x1b[38;5;161m>>\x1b[0m"),
 			FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
 		)
+		if err != nil {
+			t.Errorf("Unexpected error (%v) on set #%v", err, i)
+			return
+		}
 		tp := reflect.TypeOf(s).String()
 		if tp != "*spinner.Spinner" {
 			t.Errorf("New returned incorrect type kind=%d %v", i, tp)
@@ -34,6 +38,7 @@ func TestNewOk(t *testing.T) {
 		if s.Active() != false {
 			t.Errorf("Expected new instance to be inactive (%d)", i)
 		}
+
 	}
 }
 
