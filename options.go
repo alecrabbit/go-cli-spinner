@@ -22,7 +22,7 @@ const (
 	// maxPrefixWidth spinner's max prefix width
 	maxPrefixWidth = 10
 	// minInterval
-	minInterval = 50 * time.Millisecond
+	minInterval = 20 * time.Millisecond
 	// maxInterval
 	maxInterval = 5 * time.Second
 )

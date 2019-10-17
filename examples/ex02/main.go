@@ -11,7 +11,6 @@ import (
 	// "github.com/pkg/profile"
 
 	"github.com/alecrabbit/go-cli-spinner"
-	"github.com/alecrabbit/go-cli-spinner/color"
 )
 
 const dots = "...................."
@@ -43,11 +42,11 @@ func main() {
 
 	s, err := spinner.New(
 		// Set spinner variant
-		spinner.Variant(spinner.Snake2), // default spinner.Snake2
+		spinner.Variant(spinner.Clock), // default spinner.Snake2
 		// Override default refresh interval, each CharSet has it's own recommended refresh interval
-		// spinner.Interval(180 * time.Millisecond),
+		spinner.Interval(20 * time.Millisecond),
 		// Override default color level support, default: TColor256
-		spinner.ColorLevel(color.TNoColor),
+		// spinner.ColorLevel(color.TNoColor),
 		spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
 		// spinner.Order(spinner.Progress, spinner.Message, spinner.Message,spinner.Char, 4), // error
 		spinner.ProgressFormat("%6s"),             // default: "%s"
