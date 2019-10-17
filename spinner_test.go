@@ -42,6 +42,29 @@ func TestNewOk(t *testing.T) {
 	}
 }
 
+// TestNewOk verifies that the returned instance is of the proper type
+func TestDefaultRun(t *testing.T) {
+	s, err := New(
+		Interval(50 * time.Millisecond),
+	)
+	if err != nil {
+		t.Errorf("Unexpected error (%v)", err)
+		return
+	}
+	if s.Active() != false {
+		t.Errorf("Expected spinner to be inactive")
+	}
+	s.Start()
+	if s.Active() != true {
+		t.Errorf("Expected spinner to be active")
+	}
+	time.Sleep(200 * time.Millisecond)
+	s.Stop()
+	if s.Active() != false {
+		t.Errorf("Expected spinner to be inactive")
+	}
+}
+
 // TestSets verifies that set can be used
 func TestSets(t *testing.T) {
 	for idx, sp := range color.Prototypes {
