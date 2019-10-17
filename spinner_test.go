@@ -133,9 +133,6 @@ func TestNew(t *testing.T) {
 			args{Variant(12323)},
 			true,
 		},
-		//			"char set is too big",
-		//			args{returnBigCharSet(maxCharSetSize)},
-		//			true,
 		{
 			"CharSet is too big",
 			args{CharSet(returnBigCharSet(maxCharSetSize))},
