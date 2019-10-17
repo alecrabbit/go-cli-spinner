@@ -153,7 +153,7 @@ func Prefix(p string) Option {
 	return func(s *Spinner) error {
 		width := s.frameWidth(p)
 		if width > maxPrefixWidth {
-			return fmt.Errorf("spinner: prefix too long - %v", width)
+			return fmt.Errorf("spinner: prefix is too long - %v", width)
 		}
 		s.prefix = p
 		s.prefixWidth = width
@@ -172,7 +172,6 @@ func Reverse() Option {
 // FinalMessage sets spinner's final message
 func FinalMessage(m string) Option {
 	return func(s *Spinner) error {
-		// TODO: check for correct value
 		s.finalMessage = m
 		return nil
 	}
