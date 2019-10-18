@@ -220,4 +220,3 @@ Benchmarks
 // 	result = d
 // 	// fmt.Printf("Two %s", result)
 // }
-

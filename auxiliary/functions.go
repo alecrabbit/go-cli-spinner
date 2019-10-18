@@ -63,7 +63,7 @@ func Equal(a, b []int) bool {
 func Truncate(in string, w int, l ...interface{}) string {
 	end := "…"
 	if l != nil {
-		if v, ok := l[0].(string);  ok {
+		if v, ok := l[0].(string); ok {
 			end = v
 		}
 	}

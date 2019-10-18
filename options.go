@@ -185,7 +185,7 @@ func HideCursor(h bool) Option {
 	}
 }
 
-// HideCursor sets spinner's hideCursor flag
+// MaxMessageLength sets spinner's hideCursor flag
 func MaxMessageLength(l int) Option {
 	return func(s *Spinner) error {
 		if l < 0 {

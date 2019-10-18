@@ -36,7 +36,7 @@ func main() {
 		// Set spinner variant
 		spinner.Variant(spinner.Snake2), // default spinner.Snake2
 		// Override default refresh interval, each CharSet has it's own recommended refresh interval
-		spinner.Interval(80 * time.Millisecond),
+		spinner.Interval(80*time.Millisecond),
 		// Override default color level support, default: TColor256
 		// spinner.ColorLevel(color.TNoColor),
 		spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
