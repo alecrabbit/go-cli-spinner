@@ -36,7 +36,7 @@ func main() {
 		// Set spinner variant
 		spinner.Variant(spinner.Snake2), // default spinner.Snake2
 		// Override default refresh interval, each CharSet has it's own recommended refresh interval
-		spinner.Interval(20 * time.Millisecond),
+		spinner.Interval(80 * time.Millisecond),
 		// Override default color level support, default: TColor256
 		// spinner.ColorLevel(color.TNoColor),
 		spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
@@ -48,6 +48,7 @@ func main() {
 		// spinner.Prefix("\x1b[38;5;161m>>\x1b[0m"),
 		spinner.FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
 		spinner.Reverse(),
+		spinner.MaxMessageLength(10),
 		// spinner.HideCursor(false),
 	)
 	if err != nil {

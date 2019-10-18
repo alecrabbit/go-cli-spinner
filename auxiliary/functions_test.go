@@ -226,6 +226,16 @@ func TestTruncate(t *testing.T) {
 		},
 		{
 			"",
+			args{"string", 0, nil},
+			"…",
+		},
+		{
+			"",
+			args{"string", 0, ""},
+			"",
+		},
+		{
+			"",
 			args{"string", 4, "…"},
 			"stri…",
 		},

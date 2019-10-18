@@ -7,6 +7,9 @@
 ### Feature
 - `spinner.Message()` truncates message to predefined length
 
+### Fixed
+- unnecessary ellipsis
+
 
 <a name="0.0.5"></a>
 ## [0.0.5] - 2019-10-18
