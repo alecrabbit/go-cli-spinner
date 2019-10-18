@@ -6,10 +6,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
-	// "github.com/pkg/profile"
-
 	"github.com/alecrabbit/go-cli-spinner"
 )
 
@@ -20,10 +16,6 @@ func init() {
 }
 
 func main() {
-	// profile.CPUProfile, profile.MemProfile, profile.TraceProfile, profile.MutexProfile
-	// defer profile.Start(profile.TraceProfile, profile.ProfilePath("./profiling")).Stop()
-	// defer profile.Start(profile.CPUProfile, profile.ProfilePath("./profiling")).Stop()
-	// defer profile.Start(profile.MemProfile, profile.MemProfileRate(1), profile.ProfilePath("./profiling")).Stop()
 
 	messages := map[int]string{
 		0:  "Starting",
@@ -61,8 +53,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// spew.Dump(s)
-	spew.Dump(nil)
 	fmt.Println()
 
 	fmt.Print(dots)
