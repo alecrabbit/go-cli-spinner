@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Added
+- option `spinner.MaxMessageLength(int)`
 - function `Truncate(string, int, interface{})`
 
 ### Feature
