@@ -185,13 +185,25 @@ func HideCursor(h bool) Option {
 	}
 }
 
-// MaxMessageLength sets spinner's hideCursor flag
+// MaxMessageLength sets spinner's max message length
 func MaxMessageLength(l int) Option {
 	return func(s *Spinner) error {
 		if l < 0 {
 			l = 0
 		}
 		s.maxMessageWidth = l
+		return nil
+	}
+}
+
+// MessageEllipsis sets spinner's messageEllipsis
+func MessageEllipsis(l string) Option {
+	return func(s *Spinner) error {
+		width := s.frameWidth(l)
+		if width > 3 {
+			return fmt.Errorf("spinner: messageEllipsis is too long - %v", width)
+		}
+		s.messageEllipsis = l
 		return nil
 	}
 }

@@ -40,7 +40,8 @@ type Spinner struct {
 	prefix             string                   // spinner prefix
 	prefixWidth        int                      // width of prefix string
 	Writer             io.Writer                //
-	maxMessageWidth    int
+	maxMessageWidth    int                      //
+	messageEllipsis    string                   //
 }
 
 // New provides a pointer to an instance of Spinner
@@ -56,6 +57,7 @@ func New(options ...Option) (*Spinner, error) {
 		Writer:          colorable.NewColorableStderr(),
 		elementsOrder:   []int{Char, Progress, Message},
 		maxMessageWidth: 50,
+		messageEllipsis: "…",
 	}
 	// Default settings for spinner elements
 	s.charSettings = &elementSettings{
@@ -230,7 +232,7 @@ func (s *Spinner) Current() {
 
 // Message sets spinner message
 func (s *Spinner) Message(m string) {
-	m = auxiliary.Truncate(m, s.maxMessageWidth)
+	m = auxiliary.Truncate(m, s.maxMessageWidth, s.messageEllipsis)
 	s.l.Lock()
 	defer s.l.Unlock()
 	s.message.setCurrent(m)
