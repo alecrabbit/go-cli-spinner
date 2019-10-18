@@ -40,20 +40,22 @@ type Spinner struct {
 	prefix             string                   // spinner prefix
 	prefixWidth        int                      // width of prefix string
 	Writer             io.Writer                //
+	maxMessageWidth    int
 }
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
 	s := Spinner{
-		interval:      CharSets[Snake2].interval,
-		l:             &sync.RWMutex{},
-		colorLevel:    color.TColor256,
-		outputFormat:  "%s%s%s%s",
-		stop:          make(chan bool),
-		finalMessage:  "",
-		hideCursor:    true,
-		Writer:        colorable.NewColorableStderr(),
-		elementsOrder: []int{Char, Progress, Message},
+		interval:        CharSets[Snake2].interval,
+		l:               &sync.RWMutex{},
+		colorLevel:      color.TColor256,
+		outputFormat:    "%s%s%s%s",
+		stop:            make(chan bool),
+		finalMessage:    "",
+		hideCursor:      true,
+		Writer:          colorable.NewColorableStderr(),
+		elementsOrder:   []int{Char, Progress, Message},
+		maxMessageWidth: 50,
 	}
 	// Default settings for spinner elements
 	s.charSettings = &elementSettings{
@@ -228,6 +230,7 @@ func (s *Spinner) Current() {
 
 // Message sets spinner message
 func (s *Spinner) Message(m string) {
+	m = auxiliary.Truncate(m, s.maxMessageWidth)
 	s.l.Lock()
 	defer s.l.Unlock()
 	s.message.setCurrent(m)

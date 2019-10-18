@@ -58,10 +58,10 @@ func Equal(a, b []int) bool {
 }
 
 // Truncate sanitizes user names in an email
-func Truncate(in string, w int, l interface{}) string {
+func Truncate(in string, w int, l ...interface{}) string {
 	end := "…"
 	if l != nil {
-		if v, ok := l.(string);  ok {
+		if v, ok := l[0].(string);  ok {
 			end = v
 		}
 	}
