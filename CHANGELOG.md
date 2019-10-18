@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="0.0.6"></a>
+## [0.0.6] - 2019-10-18
 ### Added
 - option `spinner.MessageEllipsis(string)`
 - option `spinner.MaxMessageLength(int)`
@@ -39,5 +42,6 @@
 - internal package name `auxiliary`
 
 
-[Unreleased]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.5...HEAD
+[Unreleased]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.6...HEAD
+[0.0.6]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.5...0.0.6
 [0.0.5]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.4...0.0.5
