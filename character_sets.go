@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/mattn/go-runewidth"
+
+	"github.com/alecrabbit/go-cli-spinner/color"
 )
 
 const (
@@ -57,6 +59,29 @@ const Line = Simple
 type settings struct {
 	interval time.Duration // interval between spinner refreshes
 	chars    []string      //
+	palette  *palette      //
+}
+
+// palette ...
+type palette map[int]map[color.Level]int
+
+// defaultPalette ...
+var defaultPalette = palette{
+	Char: {
+		color.TTrueColor: color.C256Rainbow,
+		color.TColor256:  color.C256Rainbow,
+		color.TColor16:   color.CLightCyan,
+	},
+	Message: {
+		color.TTrueColor: color.CDark,
+		color.TColor256:  color.CDark,
+		color.TColor16:   color.CDark,
+	},
+	Progress: {
+		color.TTrueColor: color.C256YellowWhite,
+		color.TColor256:  color.C256YellowWhite,
+		color.TColor16:   color.CDark,
+	},
 }
 
 // CharSets contains the available character sets
@@ -77,54 +102,67 @@ var CharSets = map[int]settings{
 	Arrows01: {
 		120 * time.Millisecond,
 		[]string{"←", "↑", "→", "↓"},
+		&defaultPalette,
 	},
 	Arrows02: {
 		120 * time.Millisecond,
 		[]string{"↖", "↗", "↘", "↙"},
+		&defaultPalette,
 	},
 	Arrows03: {
 		120 * time.Millisecond,
 		[]string{"⇐", "⇖", "⇑", "⇗", "⇒", "⇘", "⇓", "⇙"},
+		&defaultPalette,
 	},
 	Arrows04: {
 		120 * time.Millisecond,
 		[]string{"▹▹▹▹▹", "▸▹▹▹▹", "▹▸▹▹▹", "▹▹▸▹▹", "▹▹▹▸▹", "▹▹▹▹▸"},
+		&defaultPalette,
 	},
 	Simple: {
 		120 * time.Millisecond,
 		[]string{"|", "\\", "─", "/"},
+		&defaultPalette,
 	},
 	Dev: { // Singe character used for dev purposes
 		400 * time.Millisecond,
 		[]string{"+"},
+		&defaultPalette,
 	},
 	Dev2: { // Number characters used for dev purposes
 		250 * time.Millisecond,
 		[]string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
+		&defaultPalette,
 	},
 	BlockVertical: {
 		120 * time.Millisecond,
 		[]string{"▁", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃", "▁"},
+		&defaultPalette,
 	},
 	BlockHorizontal: {
 		120 * time.Millisecond,
 		[]string{"▉", "▊", "▋", "▌", "▍", "▎", "▏", "▎", "▍", "▌", "▋", "▊", "▉"},
+		&defaultPalette,
 	},
 	BouncingBlock: {
 		120 * time.Millisecond,
 		[]string{"▖", "▘", "▝", "▗"},
+		&defaultPalette,
 	},
 	RotatingCircle: {
 		120 * time.Millisecond,
 		[]string{"◐", "◓", "◑", "◒"},
+		&defaultPalette,
 	},
 	Snake: {
 		150 * time.Millisecond,
 		[]string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
+		&defaultPalette,
 	},
 	Snake2: {
 		120 * time.Millisecond,
 		[]string{"⠏", "⠛", "⠹", "⢸", "⣰", "⣤", "⣆", "⡇"},
+		&defaultPalette,
 	},
 	FlyingDots: {
 		120 * time.Millisecond,
@@ -134,22 +172,27 @@ var CharSets = map[int]settings{
 			"⢋⠁", "⡋⠁", "⠍⠉", "⠋⠉", "⠋⠉", "⠉⠙", "⠉⠙", "⠉⠩", "⠈⢙", "⠈⡙", "⠈⠩", "⠀⢙", "⠀⡙", "⠀⠩", "⠀⢘", "⠀⡘", "⠀⠨",
 			"⠀⢐", "⠀⡐", "⠀⠠", "⠀⢀", "⠀⡀",
 		},
+		&defaultPalette,
 	},
 	FlyingLine: {
 		120 * time.Millisecond,
 		[]string{"|   ", " |  ", "  | ", "   |", "   |", "  | ", " |  ", "|   "},
+		&defaultPalette,
 	},
 	Dots10: {
 		120 * time.Millisecond,
 		[]string{"⢄", "⢂", "⢁", "⡁", "⡈", "⡐", "⡠"},
+		&defaultPalette,
 	},
 	Dots13: {
 		120 * time.Millisecond,
 		[]string{"⠁", "⠂", "⠄", "⡀", "⢀", "⠠", "⠐", "⠈"},
+		&defaultPalette,
 	},
 	Dots14: {
 		120 * time.Millisecond,
 		[]string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
+		&defaultPalette,
 	},
 	Dots21: {
 		120 * time.Millisecond,
@@ -157,6 +200,7 @@ var CharSets = map[int]settings{
 			"⠁", "⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄", "⠄",
 			"⠤", "⠠", "⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈", "⠈",
 		},
+		&defaultPalette,
 	},
 	Dots22: {
 		120 * time.Millisecond,
@@ -164,18 +208,22 @@ var CharSets = map[int]settings{
 			"⠈", "⠉", "⠋", "⠓", "⠒", "⠐", "⠐", "⠒", "⠖", "⠦", "⠤", "⠠",
 			"⠠", "⠤", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋", "⠉", "⠈",
 		},
+		&defaultPalette,
 	},
 	Dots26: {
 		120 * time.Millisecond,
 		[]string{"⢹", "⢺", "⢼", "⣸", "⣇", "⡧", "⡗", "⡏"},
+		&defaultPalette,
 	},
 	Blink: {
 		200 * time.Millisecond,
 		[]string{"▓", "▒", "░"},
+		&defaultPalette,
 	},
 	Toggle: {
 		250 * time.Millisecond,
 		[]string{"■", "□"},
+		&defaultPalette,
 	},
 	Dots23: {
 		120 * time.Millisecond,
@@ -183,14 +231,17 @@ var CharSets = map[int]settings{
 			"⠁", "⠉", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠤", "⠄",
 			"⠄", "⠤", "⠴", "⠲", "⠒", "⠂", "⠂", "⠒", "⠚", "⠙", "⠉", "⠁",
 		},
+		&defaultPalette,
 	},
 	Dots24: {
 		120 * time.Millisecond,
 		[]string{".  ", ".. ", "...", " ..", "  .", "   "},
+		&defaultPalette,
 	},
 	Dots25: {
 		120 * time.Millisecond,
 		[]string{"⠋", "⠙", "⠚", "⠒", "⠂", "⠂", "⠒", "⠲", "⠴", "⠦", "⠖", "⠒", "⠐", "⠐", "⠒", "⠓", "⠋"},
+		&defaultPalette,
 	},
 	// ToggleSmall: { // Incorrect width 2 instead of 1 (runewidth issue)
 	//     250,
@@ -236,9 +287,21 @@ func fillCharSets() {
 		halfClockChars2 = append(halfClockChars2, string([]rune{clockOneThirty + i}))
 	}
 	// Create clock sets
-	CharSets[Clock] = settings{150 * time.Millisecond, clockChars}
-	CharSets[HalfClock] = settings{300 * time.Millisecond, halfClockChars}
-	CharSets[HalfClock2] = settings{150 * time.Millisecond, halfClockChars2}
+	CharSets[Clock] = settings{
+		150 * time.Millisecond,
+		clockChars,
+		&defaultPalette,
+	}
+	CharSets[HalfClock] = settings{
+		300 * time.Millisecond,
+		halfClockChars,
+		&defaultPalette,
+	}
+	CharSets[HalfClock2] = settings{
+		150 * time.Millisecond,
+		halfClockChars2,
+		&defaultPalette,
+	}
 }
 
 func checkCharSet(c []string) error {

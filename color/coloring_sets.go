@@ -9,6 +9,7 @@ const (
 	CNoColor = iota
 	CDefault
 	CDark
+	CLightCyan
 	CBlink
 	CRedBoldItalic
 	C256Rainbow
@@ -34,6 +35,13 @@ var Prototypes = map[int]StylePrototype{
 		[][]int{},
 		func(a [][]int) []string {
 			return []string{"\x1b[2m%s\x1b[0m"}
+		},
+	},
+	CLightCyan: {
+		TColor16,
+		[][]int{},
+		func(a [][]int) []string {
+			return []string{"\x1b[96m%s\x1b[0m"}
 		},
 	},
 	CBlink: {

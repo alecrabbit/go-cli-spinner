@@ -46,8 +46,9 @@ type Spinner struct {
 
 // New provides a pointer to an instance of Spinner
 func New(options ...Option) (*Spinner, error) {
+	charSet := CharSets[Snake2]
 	s := Spinner{
-		interval:        CharSets[Snake2].interval,
+		interval:        charSet.interval,
 		l:               &sync.RWMutex{},
 		colorLevel:      color.TColor256,
 		outputFormat:    "%s%s%s%s",
@@ -61,18 +62,18 @@ func New(options ...Option) (*Spinner, error) {
 	}
 	// Default settings for spinner elements
 	s.charSettings = &elementSettings{
-		colorizingSet: color.C256Rainbow,
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		spacer:        " ",
-		charSet:       CharSets[Snake2].chars,
+		charSet:       charSet.chars,
 	}
 	s.messageSettings = &elementSettings{
-		colorizingSet: color.CDark,
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		spacer:        " ",
 	}
 	s.progressSettings = &elementSettings{
-		colorizingSet: color.C256YellowWhite,
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		auxFormat:     "%.0f%%",
 		spacer:        " ",
@@ -88,11 +89,12 @@ func New(options ...Option) (*Spinner, error) {
 			return nil, err
 		}
 	}
-	for _, entry := range s.elementsSettings {
-		if color.Prototypes[entry.colorizingSet].Level > s.colorLevel {
-			entry.colorizingSet = color.CNoColor
-		}
-	}
+
+	// for _, entry := range s.elementsSettings {
+	// 	if color.Prototypes[entry.colorizingSet].Level > s.colorLevel {
+	// 		entry.colorizingSet = color.CNoColor
+	// 	}
+	// }
 	// Create spinner elements
 	if err := s.createElements(); err != nil {
 		return nil, err
