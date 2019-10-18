@@ -197,3 +197,54 @@ func TestEqual(t *testing.T) {
 		})
 	}
 }
+
+func TestTruncate(t *testing.T) {
+	type args struct {
+		in string
+		w  int
+		l  interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			"",
+			args{"string", 4, ""},
+			"stri",
+		},
+		{
+			"",
+			args{"string", 4, "..."},
+			"stri...",
+		},
+		{
+			"",
+			args{"string", 4, nil},
+			"stri…",
+		},
+		{
+			"",
+			args{"string", 4, "…"},
+			"stri…",
+		},
+		{
+			"",
+			args{"H㐀〾▓朗퐭텟şüöžåйкл¤〾▓朗", 4, nil},
+			"H㐀〾▓…",
+		},
+		{
+			"",
+			args{"H㐀〾▓朗퐭텟şüöžåйкл¤〾▓朗", 7, ""},
+			"H㐀〾▓朗퐭텟",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Truncate(tt.args.in, tt.args.w, tt.args.l); got != tt.want {
+				t.Errorf("Truncate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
