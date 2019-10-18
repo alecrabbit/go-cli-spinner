@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Feature
+- option `spinner.ColorLevel(int)` has effect now
+
 
 <a name="0.0.6"></a>
 ## [0.0.6] - 2019-10-18
