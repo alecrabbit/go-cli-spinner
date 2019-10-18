@@ -101,6 +101,7 @@ func New(options ...Option) (*Spinner, error) {
 	// 		entry.colorizingSet = color.CNoColor
 	// 	}
 	// }
+
 	// Create spinner elements
 	if err := s.createElements(); err != nil {
 		return nil, err
