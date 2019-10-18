@@ -42,6 +42,7 @@ type Spinner struct {
 	Writer             io.Writer                //
 	maxMessageWidth    int                      //
 	messageEllipsis    string                   //
+	palette            *palette                 //
 }
 
 // New provides a pointer to an instance of Spinner
@@ -49,6 +50,7 @@ func New(options ...Option) (*Spinner, error) {
 	charSet := CharSets[Snake2]
 	s := Spinner{
 		interval:        charSet.interval,
+		palette:         charSet.palette,
 		l:               &sync.RWMutex{},
 		colorLevel:      color.TColor256,
 		outputFormat:    "%s%s%s%s",
@@ -62,18 +64,18 @@ func New(options ...Option) (*Spinner, error) {
 	}
 	// Default settings for spinner elements
 	s.charSettings = &elementSettings{
-		colorizingSet: color.CDefault,
+		colorizingSet: (*s.palette)[Char][s.colorLevel],
 		format:        "%s",
 		spacer:        " ",
 		charSet:       charSet.chars,
 	}
 	s.messageSettings = &elementSettings{
-		colorizingSet: color.CDefault,
+		colorizingSet: (*s.palette)[Message][s.colorLevel],
 		format:        "%s",
 		spacer:        " ",
 	}
 	s.progressSettings = &elementSettings{
-		colorizingSet: color.CDefault,
+		colorizingSet: (*s.palette)[Progress][s.colorLevel],
 		format:        "%s",
 		auxFormat:     "%.0f%%",
 		spacer:        " ",

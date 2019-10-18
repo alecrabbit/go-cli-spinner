@@ -48,7 +48,7 @@ func main() {
 		// spinner.Prefix("\x1b[38;5;161m>>\x1b[0m"),
 		spinner.FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
 		spinner.Reverse(),
-		spinner.MaxMessageLength(10),
+		// spinner.MaxMessageLength(10),
 		// spinner.HideCursor(false),
 	)
 	if err != nil {
