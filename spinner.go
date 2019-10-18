@@ -64,18 +64,18 @@ func New(options ...Option) (*Spinner, error) {
 	}
 	// Default settings for spinner elements
 	s.charSettings = &elementSettings{
-		colorizingSet: (*s.palette)[Char][s.colorLevel],
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		spacer:        " ",
 		charSet:       charSet.chars,
 	}
 	s.messageSettings = &elementSettings{
-		colorizingSet: (*s.palette)[Message][s.colorLevel],
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		spacer:        " ",
 	}
 	s.progressSettings = &elementSettings{
-		colorizingSet: (*s.palette)[Progress][s.colorLevel],
+		colorizingSet: color.CDefault,
 		format:        "%s",
 		auxFormat:     "%.0f%%",
 		spacer:        " ",
@@ -91,6 +91,10 @@ func New(options ...Option) (*Spinner, error) {
 			return nil, err
 		}
 	}
+	// Process s.palette values // TODO: maybe a method is needed here
+	s.charSettings.colorizingSet = (*s.palette)[Char][s.colorLevel]
+	s.messageSettings.colorizingSet = (*s.palette)[Message][s.colorLevel]
+	s.progressSettings.colorizingSet = (*s.palette)[Progress][s.colorLevel]
 
 	// for _, entry := range s.elementsSettings {
 	// 	if color.Prototypes[entry.colorizingSet].Level > s.colorLevel {

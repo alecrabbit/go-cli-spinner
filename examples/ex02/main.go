@@ -38,7 +38,7 @@ func main() {
 		// Override default refresh interval, each CharSet has it's own recommended refresh interval
 		spinner.Interval(80*time.Millisecond),
 		// Override default color level support, default: TColor256
-		// spinner.ColorLevel(color.TNoColor),
+		// spinner.ColorLevel(color.TColor16),
 		spinner.Order(spinner.Char, spinner.Progress, spinner.Message),
 		// spinner.Order(spinner.Progress, spinner.Message, spinner.Message,spinner.Char, 4), // error
 		spinner.ProgressFormat("%6s"),             // default: "%s"
