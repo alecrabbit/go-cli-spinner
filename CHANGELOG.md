@@ -2,7 +2,7 @@
 ## [Unreleased]
 
 ### Added
-- option `MessageEllipsis(string)`
+- option `spinner.MessageEllipsis(string)`
 - option `spinner.MaxMessageLength(int)`
 - function `Truncate(string, int, interface{})`
 
