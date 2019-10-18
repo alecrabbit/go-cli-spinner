@@ -37,6 +37,7 @@ func TestNewOk(t *testing.T) {
 			ProgressFormat("%6s"),
 			ProgressIndicatorFormat("%.1f%%"),
 			MessageFormat("(%s)"),
+			MaxMessageLength(50),
 			Format("-%s -"),
 			Prefix("\x1b[38;5;161m>>\x1b[0m"),
 			FinalMessage("\x1b[38;5;34mDone!\x1b[0m\n"),
@@ -169,6 +170,11 @@ func TestNew(t *testing.T) {
 			"Interval is too big",
 			args{Interval(10 * time.Second)},
 			true,
+		},
+		{
+			"MaxMessageLength is below 0",
+			args{MaxMessageLength(-1)},
+			false,
 		},
 	}
 	for _, tt := range tests {
