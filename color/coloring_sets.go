@@ -85,7 +85,7 @@ var Prototypes = map[int]StylePrototype{
 			{197},
 		},
 		func(a [][]int) []string {
-			a = multiply(a, 3)
+			a = multiply(a, 10)
 			r := make([]string, len(a))
 			for i, v := range a {
 				r[i] = fmt.Sprintf("\x1b[38;5;%vm%s\x1b[0m", v[0], "%s")
