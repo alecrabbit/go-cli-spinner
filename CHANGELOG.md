@@ -2,38 +2,37 @@
 ## [Unreleased]
 
 ### Added
+- function `Truncate(string, int, interface{})`
+
+### Feature
+- `spinner.Message()` truncates message to predefined length
+
+
+<a name="0.0.5"></a>
+## [0.0.5] - 2019-10-18
+### Changed
+- `Interval(time.Duration)` option function
+
+
+<a name="0.0.4"></a>
+## 0.0.4 - 2019-10-16
+### Added
 - new char set `HalfClock2`
 - option `spinner.CharSet([]string)`
 - option `spinner.Variant(int)`
-
-
-<a name="0.0.3"></a>
-## [0.0.3] - 2019-10-14
-### Added
 - option `spinner.ProgressIndicatorFormat(string)`
 - order option
 - `Reverse()` option
 - `Prefix()` option
+- new color set `C256YellowWhite`
+- Changelog
+- Example
+- `Reversed` - spin in the opposite direction
 
 ### Fixed
 - format artefacts
 - internal package name `auxiliary`
 
 
-<a name="0.0.2"></a>
-## [0.0.2] - 2019-09-26
-### Added
-- new color set `C256YellowWhite`
-
-
-<a name="0.0.1"></a>
-## 0.0.1 - 2019-09-22
-### Added
-- Changelog
-- Example
-- `Reversed` - spin in the opposite direction
-
-
-[Unreleased]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.3...HEAD
-[0.0.3]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.2...0.0.3
-[0.0.2]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.1...0.0.2
+[Unreleased]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.5...HEAD
+[0.0.5]: https://github.com/alecrabbit/go-cli-spinner/compare/0.0.4...0.0.5

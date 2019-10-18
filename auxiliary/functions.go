@@ -2,6 +2,8 @@ package auxiliary
 
 import (
 	"regexp"
+
+	"github.com/mattn/go-runewidth"
 )
 
 var regExp *regexp.Regexp // regExp instance
@@ -64,6 +66,9 @@ func Truncate(in string, w int, l ...interface{}) string {
 		if v, ok := l[0].(string);  ok {
 			end = v
 		}
+	}
+	if runewidth.StringWidth(StripANSI(in)) <= w {
+		end = ""
 	}
 	result := in
 	chars := 0
