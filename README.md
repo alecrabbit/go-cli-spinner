@@ -1,5 +1,7 @@
-# ```*** COMING SOON ***```
+
 # 🏵️  Go Console Spinner
+## UPD. development frozen 
+~~```*** COMING SOON ***```~~
 
 [![Build Status](https://travis-ci.com/alecrabbit/go-cli-spinner.svg?branch=master)](https://travis-ci.com/alecrabbit/go-cli-spinner)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alecrabbit/go-cli-spinner)](https://goreportcard.com/report/github.com/alecrabbit/go-cli-spinner)
